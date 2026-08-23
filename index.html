@@ -19,8 +19,17 @@
 			color: #e8ece4;
 			scrollbar-width: none;
 			-ms-overflow-style: none;
+			-webkit-font-smoothing: antialiased;
+			-moz-osx-font-smoothing: grayscale;
 		}
 		html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
+
+		.gpu-accelerated {
+			will-change: transform, opacity;
+			transform: translateZ(0);
+			backface-visibility: hidden;
+			-webkit-backface-visibility: hidden;
+		}
 
 		canvas {
 			position: fixed;
@@ -28,6 +37,8 @@
 			width: 100vw; height: 100vh;
 			z-index: 0;
 			will-change: transform;
+			transform: translateZ(0);
+			backface-visibility: hidden;
 		}
 
 		#scroll-container {
@@ -36,6 +47,7 @@
 			pointer-events: none;
 			will-change: transform;
 			contain: layout style;
+			transform: translateZ(0);
 		}
 
 		.section {
@@ -47,6 +59,8 @@
 			padding: 80px 40px;
 			pointer-events: none;
 			contain: layout style;
+			will-change: transform;
+			transform: translateZ(0);
 		}
 
 		.section * { pointer-events: auto; }
@@ -65,10 +79,12 @@
 			letter-spacing: 4px;
 			text-transform: uppercase;
 			opacity: 0;
-			transform: translateY(30px);
+			transform: translateY(30px) translateZ(0);
 			color: var(--color-label, rgba(210, 230, 160, 0.85));
 			font-weight: 500;
 			text-shadow: 0 1px 16px rgba(0,0,0,0.5);
+			will-change: transform, opacity;
+			backface-visibility: hidden;
 		}
 
 		.hero h1 {
@@ -78,10 +94,12 @@
 			line-height: 1.05;
 			letter-spacing: -1px;
 			opacity: 0;
-			transform: translateY(40px);
+			transform: translateY(40px) translateZ(0);
 			color: var(--color-heading, #f8fcf0);
 			text-shadow: 0 2px 30px rgba(0,0,0,0.6), 0 0px 80px rgba(0,0,0,0.4);
 			margin: 12px 0;
+			will-change: transform, opacity;
+			backface-visibility: hidden;
 		}
 
 		.hero h1 em {
@@ -95,9 +113,11 @@
 			line-height: 1.7;
 			max-width: 520px;
 			opacity: 0;
-			transform: translateY(30px);
+			transform: translateY(30px) translateZ(0);
 			color: var(--color-body, rgba(215, 230, 190, 0.7));
 			font-weight: 300;
+			will-change: transform, opacity;
+			backface-visibility: hidden;
 		}
 
 		.wind-btn {
@@ -117,7 +137,9 @@
 			cursor: pointer;
 			transition: all 0.4s;
 			opacity: 0;
-			transform: translateY(20px);
+			transform: translateY(20px) translateZ(0);
+			will-change: transform, opacity;
+			backface-visibility: hidden;
 		}
 
 		.wind-btn:hover {
@@ -146,6 +168,9 @@
 			align-items: center;
 			gap: 8px;
 			opacity: 0;
+			will-change: transform, opacity;
+			transform: translateZ(0);
+			backface-visibility: hidden;
 		}
 
 		.scroll-hint.revealed {
@@ -186,6 +211,8 @@
 			flex-direction: column;
 			gap: 40px;
 			text-align: center;
+			content-visibility: auto;
+			contain-intrinsic-size: 0 100vh;
 		}
 
 		.manifesto-label {
@@ -194,9 +221,11 @@
 			text-transform: uppercase;
 			color: rgba(230, 245, 120, 1);
 			opacity: 0;
-			transform: translateY(20px);
+			transform: translateY(20px) translateZ(0);
 			text-shadow: 0 0 20px rgba(230, 245, 120, 0.4), 0 1px 12px rgba(0,0,0,0.5);
 			font-weight: 600;
+			will-change: transform, opacity;
+			backface-visibility: hidden;
 		}
 
 		.manifesto h2 {
@@ -226,12 +255,16 @@
 			gap: 32px;
 			min-height: 100vh;
 			padding: 40px 40px;
+			content-visibility: auto;
+			contain-intrinsic-size: 0 100vh;
 		}
 
 		.pillars-header {
 			text-align: center;
 			opacity: 0;
-			transform: translateY(20px);
+			transform: translateY(20px) translateZ(0);
+			will-change: transform, opacity;
+			backface-visibility: hidden;
 		}
 
 		.pillars-header span {
@@ -257,10 +290,12 @@
 			border-radius: 8px;
 			overflow: hidden;
 			opacity: 0;
-			transform: translateY(40px);
+			transform: translateY(40px) translateZ(0);
 			background: rgba(10, 18, 10, 0.55);
 			border: 1px solid rgba(140, 180, 120, 0.12);
 			contain: layout style paint;
+			will-change: transform, opacity;
+			backface-visibility: hidden;
 		}
 
 		/* Rectangle collage: 4col x 3row - 6 items */
@@ -313,6 +348,8 @@
 			flex-direction: column;
 			gap: 30px;
 			text-align: center;
+			content-visibility: auto;
+			contain-intrinsic-size: 0 60vh;
 		}
 
 		.stats-label {
@@ -321,8 +358,10 @@
 			text-transform: uppercase;
 			color: rgba(230, 245, 120, 1);
 			opacity: 0;
-			transform: translateY(20px);
+			transform: translateY(20px) translateZ(0);
 			text-shadow: 0 0 20px rgba(230, 245, 120, 0.4), 0 1px 12px rgba(0,0,0,0.5);
+			will-change: transform, opacity;
+			backface-visibility: hidden;
 			font-weight: 600;
 		}
 
@@ -363,6 +402,9 @@
 			padding: 28px 52px;
 			opacity: 0.8;
 			transition: opacity 0.3s;
+			will-change: transform;
+			transform: translateZ(0);
+			backface-visibility: hidden;
 		}
 
 		.brand-logo-item:hover {
@@ -414,6 +456,8 @@
 			gap: 20px;
 			text-align: center;
 			min-height: 80vh;
+			content-visibility: auto;
+			contain-intrinsic-size: 0 80vh;
 		}
 
 		.quote-section blockquote {
@@ -447,6 +491,8 @@
 			min-height: 100vh;
 			padding: 0 40px;
 			margin-bottom: 0;
+			content-visibility: auto;
+			contain-intrinsic-size: 0 100vh;
 		}
 
 		.cta-section h2 {
@@ -617,6 +663,9 @@
 			pointer-events: none;
 			opacity: 1;
 			transition: opacity 0.6s;
+			will-change: transform;
+			transform: translateZ(0);
+			backface-visibility: hidden;
 		}
 
 		.nav-float.visible { opacity: 1; }
@@ -759,10 +808,11 @@
 
 		.revealed {
 			opacity: 1 !important;
-			transform: translateY(0) !important;
+			transform: translateY(0) translateZ(0) !important;
 			transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
 						transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
 			will-change: opacity, transform;
+			backface-visibility: hidden;
 		}
 
 		.delay-1 { transition-delay: 0.1s !important; }

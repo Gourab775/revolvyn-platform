@@ -15,13 +15,13 @@
 		}
 		html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
 		/* Page transition overlay */
-		.page-transition {
+		.page-transition { will-change: opacity, transform; transform: translateZ(0); backface-visibility: hidden;
 			position: fixed; inset: 0; background: #000; z-index: 9999;
 			pointer-events: none; opacity: 0;
 			transition: opacity 0.2s ease;
 		}
 		.page-transition.active { opacity: 1; }
-		.nav-float { position: fixed; top: 24px; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: 0 40px; z-index: 100; pointer-events: none; }
+		.nav-float { position: fixed; top: 24px; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: 0 40px; z-index: 100; pointer-events: none; will-change: transform; transform: translateZ(0); backface-visibility: hidden; }
 		.nav-logo { font-family: 'Playfair Display', serif; font-size: 18px; color: rgba(245, 250, 230, 0.8); letter-spacing: 1px; pointer-events: auto; cursor: pointer; }
 		.nav-links { display: flex; gap: 28px; pointer-events: auto; }
 		.nav-links a { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: rgba(215, 230, 190, 0.55); text-decoration: none; transition: color 0.3s; font-weight: 500; }
@@ -31,18 +31,18 @@
 		.nav-hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
 		.nav-hamburger.open span:nth-child(2) { opacity: 0; }
 		.nav-hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
-		.nav-mobile-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(8, 12, 5, 0.95); z-index: 99; flex-direction: column; align-items: center; justify-content: center; gap: 32px; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+		.nav-mobile-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(8, 12, 5, 0.95); z-index: 99; flex-direction: column; align-items: center; justify-content: center; gap: 32px; opacity: 0; pointer-events: none; will-change: opacity, transform; transform: translateZ(0); backface-visibility: hidden; transition: opacity 0.3s ease; }
 		.nav-mobile-overlay.open { opacity: 1; pointer-events: auto; }
 		.nav-mobile-overlay a { font-size: 14px; letter-spacing: 3px; text-transform: uppercase; color: rgba(215, 230, 190, 0.7); text-decoration: none; transition: color 0.3s; font-weight: 500; }
 		.nav-mobile-overlay a:hover { color: rgba(230, 245, 120, 0.95); }
 		@media (max-width: 768px) { .nav-float { padding: 0 16px; top: 14px; } .nav-links { display: none; } .nav-hamburger { display: flex; } .nav-mobile-overlay { display: flex; } }
 
-		.page-hero { position: relative; min-height: 50vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 120px 40px 60px; background: radial-gradient(ellipse at 50% 80%, rgba(20, 40, 10, 0.5) 0%, #000 70%); }
+		.page-hero { position: relative; min-height: 50vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 120px 40px 60px; background: radial-gradient(ellipse at 50% 80%, rgba(20, 40, 10, 0.5) 0%, #000 70%);  content-visibility: auto; contain: layout style;}
 		.page-hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(36px, 6vw, 64px); color: rgba(248, 252, 240, 0.95); letter-spacing: 2px; margin-bottom: 16px; opacity: 0; transform: translateY(30px); transition: all 0.9s cubic-bezier(0.16, 1, 0.3, 1); }
 		.page-hero p { font-size: 15px; color: rgba(215, 230, 190, 0.5); max-width: 520px; line-height: 1.7; font-weight: 300; opacity: 0; transform: translateY(20px); transition: all 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.15s; }
 		.page-hero.revealed h1, .page-hero.revealed p { opacity: 1; transform: translateY(0); }
 
-		.page-content { max-width: 1100px; margin: 0 auto; padding: 80px 40px; }
+		.page-content { content-visibility: auto; contain: layout style; max-width: 1100px; margin: 0 auto; padding: 80px 40px; }
 		.section-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: rgba(210, 230, 160, 0.45); margin-bottom: 40px; font-weight: 500; }
 
 		.contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; }
@@ -110,7 +110,7 @@
 		@media (max-width: 768px) {
 			.site-footer-inner { grid-template-columns: 1fr; gap: 30px; }
 			.contact-grid { grid-template-columns: 1fr; gap: 32px; }
-			.page-content { padding: 48px 16px; }
+			.page-content { content-visibility: auto; contain: layout style; padding: 48px 16px; }
 			.contact-info h3 { font-size: 20px; }
 			.contact-detail { gap: 10px; margin-bottom: 16px; }
 			.contact-detail-icon { width: 36px; height: 36px; font-size: 14px; }
@@ -122,13 +122,21 @@
 			.sf-bottom { flex-direction: column; gap: 12px; text-align: center; }
 		}
 		@media (max-width: 480px) {
-			.page-hero { padding: 100px 16px 32px; min-height: 40vh; }
+			.page-hero { padding: 100px 16px 32px; min-height: 40vh;  content-visibility: auto; contain: layout style;}
 			.contact-grid { gap: 24px; }
 			.contact-info p { font-size: 13px; }
 			.form-group label { font-size: 9px; }
 		}
-		@media (prefers-reduced-motion: reduce) { .page-transition { display: none; } .form-submit { transition: none; } }
-	</style>
+		@media (prefers-reduced-motion: reduce) { .page-transition { will-change: opacity, transform; transform: translateZ(0); backface-visibility: hidden; display: none; } .form-submit { transition: none; } }
+	
+/* GPU Acceleration Global */
+.gpu-layer { will-change: transform; transform: translateZ(0); backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.page-transition { will-change: opacity, transform; transform: translateZ(0); backface-visibility: hidden; will-change: opacity, transform; transform: translateZ(0); backface-visibility: hidden; }
+.nav-float { will-change: transform; transform: translateZ(0); backface-visibility: hidden; }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(24px) translateZ(0); } to { opacity: 1; transform: translateY(0) translateZ(0); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes marqueeScroll { from { transform: translateX(0) translateZ(0); } to { transform: translateX(-50%) translateZ(0); } }
+</style>
 </head>
 <body>
 	<div class="page-transition" id="pageTransition"></div>
@@ -312,4 +320,7 @@
 	</script>
 </body>
 </html>
+
+
+
 
