@@ -4,6 +4,7 @@
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 	<title>REVOLVYN</title>
+<link rel="icon" href="favicon.png" type="image/png">
 	<style>
 		@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
 
@@ -733,7 +734,7 @@
 		@media (max-width: 480px) {
 			.section { padding: 36px 14px; }
 			.site-footer { padding: 32px 14px 20px; }
-			.portfolio-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 90px; gap: 4px; }
+			.portfolio-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 100px; gap: 4px; }
 			.brand-logo-item { min-width: 160px; height: 110px; padding: 12px 20px; }
 			.hero h1 { font-size: clamp(28px, 10vw, 48px); }
 			.manifesto h2 { font-size: clamp(16px, 4vw, 28px); }
@@ -842,24 +843,24 @@
 			<div class="pillars-header" data-reveal>
 				<span>Portfolio</span>
 			</div>
-			<div class="portfolio-grid">
+		<div class="portfolio-grid">
 				<div class="portfolio-item" data-reveal data-delay="1" data-order="1">
-					<video muted loop playsinline preload="none" data-src="https://video.wixstatic.com/video/4c7a69_14df8fc89d244a96b8926669d3d7db8d/360p/mp4/file.mp4"></video>
+					<video muted loop playsinline preload="auto" src="https://video.wixstatic.com/video/4c7a69_14df8fc89d244a96b8926669d3d7db8d/360p/mp4/file.mp4"></video>
 				</div>
 				<div class="portfolio-item" data-reveal data-delay="2" data-order="2">
-					<video muted loop playsinline preload="none" data-src="https://video.wixstatic.com/video/4c7a69_e9c69930b4f74394a7a24aaa079c9e50/720p/mp4/file.mp4"></video>
+					<video muted loop playsinline preload="auto" src="https://video.wixstatic.com/video/4c7a69_e9c69930b4f74394a7a24aaa079c9e50/360p/mp4/file.mp4"></video>
 				</div>
 				<div class="portfolio-item" data-reveal data-delay="3" data-order="3">
-					<video muted loop playsinline preload="none" data-src="https://video.wixstatic.com/video/4c7a69_0abcdc24eaed4b3e95a67da99aa1a2b0/1080p/mp4/file.mp4"></video>
+					<video muted loop playsinline preload="auto" src="https://video.wixstatic.com/video/4c7a69_0abcdc24eaed4b3e95a67da99aa1a2b0/360p/mp4/file.mp4"></video>
 				</div>
 				<div class="portfolio-item" data-reveal data-delay="1" data-order="4">
-					<video muted loop playsinline preload="none" data-src="https://video.wixstatic.com/video/4c7a69_ae60f198c15a4dabbec575bb07569699/720p/mp4/file.mp4"></video>
+					<video muted loop playsinline preload="none" data-src="https://video.wixstatic.com/video/4c7a69_ae60f198c15a4dabbec575bb07569699/360p/mp4/file.mp4"></video>
 				</div>
 				<div class="portfolio-item" data-reveal data-delay="2" data-order="5">
-					<video muted loop playsinline preload="none" data-src="https://video.wixstatic.com/video/4c7a69_95ce005d31f74d3bb9dbc36e126d5556/1080p/mp4/file.mp4"></video>
+					<video muted loop playsinline preload="none" data-src="https://video.wixstatic.com/video/4c7a69_95ce005d31f74d3bb9dbc36e126d5556/360p/mp4/file.mp4"></video>
 				</div>
 				<div class="portfolio-item" data-reveal data-delay="3" data-order="6">
-					<video muted loop playsinline preload="none" data-src="https://video.wixstatic.com/video/4c7a69_1e1da840cb98495a85faf9d92e5b7cb8/1080p/mp4/file.mp4"></video>
+					<video muted loop playsinline preload="none" data-src="https://video.wixstatic.com/video/4c7a69_1e1da840cb98495a85faf9d92e5b7cb8/360p/mp4/file.mp4"></video>
 				</div>
 			</div>
 			<a href="portfolio.html" class="portfolio-view-more" data-reveal data-delay="2">View More ?</a>
@@ -1575,27 +1576,38 @@
 		document.querySelectorAll('[data-reveal]').forEach(el => revealObserver.observe(el));
 
 		// --- Video Play/Pause on Visibility ---------------------------------
+		function playVideoSafe(video) {
+			if (!video.src && video.dataset.src) {
+				video.src = video.dataset.src;
+				video.load();
+			}
+			video.play().catch(() => {
+				video.muted = true;
+				video.play().catch(() => {});
+			});
+		}
 		const videoObserver = new IntersectionObserver((entries) => {
 			entries.forEach(entry => {
 				const video = entry.target;
 				if (entry.isIntersecting) {
-					if (!video.src && video.dataset.src) {
-						video.src = video.dataset.src;
-						video.addEventListener('loadeddata', () => {
-							video.play().catch(() => {});
-						}, { once: true });
-						setTimeout(() => video.play().catch(() => {}), 1500);
-					} else {
-						video.play().catch(() => {});
-					}
+					playVideoSafe(video);
 				} else {
 					video.pause();
 				}
 			});
-		}, { threshold: 0.05 });
+		}, { threshold: 0.01, rootMargin: '100px' });
 
 		document.querySelectorAll('.portfolio-item video').forEach(video => {
 			videoObserver.observe(video);
+			video.addEventListener('error', () => {
+				if (video.dataset.src && !video.dataset.retried) {
+					video.dataset.retried = '1';
+					setTimeout(() => {
+						video.src = video.dataset.src;
+						video.load();
+					}, 2000);
+				}
+			});
 		});
 
 		// Force reveal the scroll hint after a brief delay

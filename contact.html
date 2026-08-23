@@ -1,9 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-	<title>Contact Us — REVOLVYN</title>
+	<title>Contact Us â€” REVOLVYN</title>
+<link rel="icon" href="favicon.png" type="image/png">
 	<style>
 		@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
 		*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -159,7 +160,7 @@
 		<div class="contact-grid">
 			<div class="contact-info" data-reveal>
 				<h3>Get in Touch</h3>
-				<p>Whether you're a brand looking for cinematic content or a creator ready to scale — we're here to make it happen.</p>
+				<p>Whether you're a brand looking for cinematic content or a creator ready to scale â€” we're here to make it happen.</p>
 				<div class="contact-detail">
 					<div><div class="contact-detail-label">Email</div><div class="contact-detail-text">revolvynmedia@gmail.com</div></div>
 				</div>
@@ -170,7 +171,7 @@
 					<div><div class="contact-detail-label">Office</div><div class="contact-detail-text">Kolkata, India</div></div>
 				</div>
 				<div class="contact-detail">
-					<div><div class="contact-detail-label">Hours</div><div class="contact-detail-text">Mon – Fri, 10:00 AM – 5:00 PM IST</div></div>
+					<div><div class="contact-detail-label">Hours</div><div class="contact-detail-text">Mon â€“ Fri, 10:00 AM â€“ 5:00 PM IST</div></div>
 				</div>
 			</div>
 
@@ -183,14 +184,14 @@
 						<select id="cfService" required><option value="">Select a service...</option><option>Growth Consulting</option><option>Performance Marketing(Meta)</option><option>Influencer Marketing</option><option>SEO & Website</option><option>Content Production</option><option>Social Media Management</option><option>AI Content Production</option><option>Full-Service Package</option></select>
 					</div>
 					<div class="form-group"><label>Project Details</label><textarea id="cfMessage" placeholder="Tell us about your project, goals, and timeline..."></textarea></div>
-					<button type="submit" class="form-submit" id="cfSubmit">Send Message →</button>
+					<button type="submit" class="form-submit" id="cfSubmit">Send Message â†’</button>
 					<div class="form-status" id="cfStatus"></div>
 				</form>
 			</div>
 		</div>
 
 		<div class="map-placeholder" data-reveal>
-			<p>REVOLVYN Headquarters — Kolkata, India</p>
+			<p>REVOLVYN Headquarters â€” Kolkata, India</p>
 		</div>
 	</div>
 
@@ -202,12 +203,12 @@
 		<div class="sf-col"><div class="sf-col-title">Connect</div><a href="contact.html">Contact</a><a href="partnerships.html">Partnerships</a><a href="careers.html">Careers</a></div>
 		</div>
 		<div class="sf-bottom">
-			<span class="sf-copy">© 2026 REVOLVYN. All futures reserved.</span>
+			<span class="sf-copy">Â© 2026 REVOLVYN. All futures reserved.</span>
 			<div class="sf-socials"><a href="https://www.instagram.com/revolvynmedia?igsi=bmFlaHFyMG92eDNk" target="_blank" rel="noopener">Instagram</a><a href="https://www.facebook.com/share/1F5rfL4tPS/?mibextid=LQQJ4d" target="_blank" rel="noopener">Facebook</a><a href="https://www.youtube.com/@REVOLVYNMEDIA" target="_blank" rel="noopener">YouTube</a></div>
 		</div>
 	</footer>
 	<script>
-		/* ===== CONFIG — change these two values ===== */
+		/* ===== CONFIG â€” change these two values ===== */
 		const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwoD22hMiNmAnzIFKAbN8MXwvIfB50AIFDgDa8SahQlIkb4FCSecsCiiUAex7b4R4IK5g/exec';
 		/* ============================================ */
 
@@ -294,13 +295,13 @@
 					const errMsg = (result && result.message) ? result.message : 'Submission failed. Please email us directly at revolvynmedia@gmail.com';
 					showStatus('error', errMsg);
 				}
-				cfSubmit.textContent = 'Send Message →';
+				cfSubmit.textContent = 'Send Message â†’';
 				cfSubmit.disabled = false;
 				isSubmitting = false;
 			} catch (err) {
 				isSubmitting = false;
 				cfSubmit.disabled = false;
-				cfSubmit.textContent = 'Send Message →';
+				cfSubmit.textContent = 'Send Message â†’';
 				if (err.name === 'AbortError') {
 					showStatus('error', 'Request timed out. Please check your connection and try again.');
 				} else {

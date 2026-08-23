@@ -1,670 +1,905 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-	<title>Project — REVOLVYN</title>
-	<style>
-		@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
-		*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-		html, body {
-			width: 100%; height: 100vh; background: #000;
-			overflow: hidden; font-family: 'Inter', system-ui, sans-serif;
-			color: #e8ece4; scrollbar-width: none; -ms-overflow-style: none;
-		}
-		html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="no-referrer">
+<title>REVOLVYN</title>
+<link rel="icon" href="favicon.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+body { font-family: 'Inter', sans-serif; background: #0f0f0f; color: #f1f1f1; min-height: 100vh; overflow-x: hidden; touch-action: manipulation; -webkit-touch-callout: none; }
+a { text-decoration: none; color: inherit; }
+button { border: none; cursor: pointer; font-family: inherit; }
 
-		.page-transition {
-			position: fixed; inset: 0; background: #000; z-index: 9999;
-			pointer-events: none; opacity: 0; transition: opacity 0.2s ease;
-		}
-		.page-transition.active { opacity: 1; }
+::-webkit-scrollbar { width: 0; height: 0; }
+* { scrollbar-width: none; -ms-overflow-style: none; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; }
+::selection { background: transparent; }
+input, textarea { user-select: text; -webkit-user-select: text; }
 
-		/* Nav */
-		.nav-float {
-			position: fixed; top: 0; left: 0; right: 0;
-			display: flex; justify-content: space-between; align-items: center;
-			padding: 20px 40px; z-index: 100; pointer-events: none;
-			background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, transparent 100%);
-		}
-		.nav-logo {
-			font-family: 'Playfair Display', serif; font-size: 18px;
-			color: rgba(245, 250, 230, 0.9); letter-spacing: 1px;
-			pointer-events: auto; cursor: pointer;
-		}
-		.nav-links { display: flex; gap: 28px; pointer-events: auto; }
-		.nav-links a {
-			font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
-			color: rgba(215, 230, 190, 0.6); text-decoration: none;
-			transition: color 0.3s; font-weight: 500;
-		}
-		.nav-links a:hover, .nav-links a.active { color: rgba(230, 245, 120, 0.95); }
-		.nav-hamburger {
-			display: none; flex-direction: column; gap: 5px;
-			background: none; border: none; cursor: pointer;
-			padding: 6px; pointer-events: auto; z-index: 200;
-		}
-		.nav-hamburger span {
-			display: block; width: 22px; height: 2px;
-			background: rgba(215, 230, 190, 0.8); border-radius: 2px;
-			transition: all 0.3s ease;
-		}
-		.nav-hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
-		.nav-hamburger.open span:nth-child(2) { opacity: 0; }
-		.nav-hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
-		.nav-mobile-overlay {
-			display: none; position: fixed; inset: 0;
-			background: rgba(8, 12, 5, 0.97); z-index: 99;
-			flex-direction: column; align-items: center; justify-content: center;
-			gap: 32px; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
-		}
-		.nav-mobile-overlay.open { opacity: 1; pointer-events: auto; }
-		.nav-mobile-overlay a {
-			font-size: 14px; letter-spacing: 3px; text-transform: uppercase;
-			color: rgba(215, 230, 190, 0.7); text-decoration: none;
-			transition: color 0.3s; font-weight: 500;
-		}
-		.nav-mobile-overlay a:hover { color: rgba(230, 245, 120, 0.95); }
-		@media (max-width: 768px) {
-			.nav-float { padding: 14px 16px; }
-			.nav-links { display: none; }
-			.nav-hamburger { display: flex; }
-			.nav-mobile-overlay { display: flex; }
-		}
+.nav-float { position: fixed; top: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; z-index: 100; pointer-events: none; background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, transparent 100%); }
+.nav-logo { font-family: 'Playfair Display', serif; font-size: 18px; color: rgba(245, 250, 230, 0.9); letter-spacing: 1px; pointer-events: auto; cursor: pointer; }
+.nav-links { display: flex; gap: 28px; pointer-events: auto; }
+.nav-links a { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: rgba(215, 230, 190, 0.6); text-decoration: none; transition: color 0.3s; font-weight: 500; }
+.nav-links a:hover { color: rgba(230, 245, 120, 0.95); }
+.nav-hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 6px; pointer-events: auto; z-index: 200; }
+.nav-hamburger span { display: block; width: 22px; height: 2px; background: rgba(215, 230, 190, 0.8); border-radius: 2px; transition: all 0.3s ease; }
+.nav-hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+.nav-hamburger.open span:nth-child(2) { opacity: 0; }
+.nav-hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+.nav-mobile-overlay { display: none; position: fixed; inset: 0; background: rgba(8, 12, 5, 0.97); z-index: 99; flex-direction: column; align-items: center; justify-content: center; gap: 32px; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+.nav-mobile-overlay.open { opacity: 1; pointer-events: auto; }
+.nav-mobile-overlay a { font-size: 14px; letter-spacing: 3px; text-transform: uppercase; color: rgba(215, 230, 190, 0.7); text-decoration: none; transition: color 0.3s; font-weight: 500; }
+.nav-mobile-overlay a:hover { color: rgba(230, 245, 120, 0.95); }
 
-		/* Back button */
-		.back-btn {
-			position: fixed; top: 80px; left: 40px; z-index: 90;
-			display: inline-flex; align-items: center; gap: 8px;
-			font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
-			color: rgba(215, 230, 190, 0.5); text-decoration: none;
-			transition: color 0.3s; font-weight: 500;
-			pointer-events: auto; cursor: pointer;
-		}
-		.back-btn:hover { color: rgba(230, 245, 120, 0.95); }
-		.back-btn svg {
-			width: 16px; height: 16px; stroke: currentColor; fill: none;
-			stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
-		}
-		@media (max-width: 768px) {
-			.back-btn { top: 70px; left: 16px; }
-		}
+.main-layout { display: flex; max-width: 1800px; margin: 80px auto 0; padding: 0 24px; gap: 24px; }
+.main-content { flex: 1; min-width: 0; }
+.sidebar { width: 402px; flex-shrink: 0; position: sticky; top: 72px; height: calc(100vh - 80px); display: flex; flex-direction: column; }
+.sidebar-section { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.sidebar-title { font-size: 16px; font-weight: 600; margin-bottom: 12px; flex-shrink: 0; }
+.sidebar-scroll { flex: 1; overflow-y: auto; padding-right: 4px; }
 
-		/* Main Layout - Split Screen */
-		.video-layout {
-			display: flex;
-			height: 100vh;
-			width: 100%;
-			overflow: hidden;
-		}
+/* Video Player */
+.video-player-wrapper { position: relative; width: 100%; border-radius: 12px; overflow: hidden; background: #000; aspect-ratio: 16 / 9; cursor: pointer; }
+.video-player-wrapper video { width: 100%; height: 100%; display: block; }
+.video-controls { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85)); padding: 40px 12px 10px; opacity: 0; transition: opacity 0.3s; z-index: 3; }
+.video-player-wrapper:hover .video-controls { opacity: 1; }
+.progress-bar-container { width: 100%; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; cursor: pointer; margin-bottom: 8px; transition: height 0.15s; }
+.progress-bar-container:hover { height: 6px; }
+.progress-bar { height: 100%; background: #e6f578; border-radius: 2px; width: 0%; position: relative; transition: width 0.1s linear; }
+.progress-bar::after { content: ''; position: absolute; right: -6px; top: 50%; transform: translateY(-50%); width: 12px; height: 12px; background: #e6f578; border-radius: 50%; opacity: 0; transition: opacity 0.15s; }
+.progress-bar-container:hover .progress-bar::after { opacity: 1; }
+.controls-row { display: flex; align-items: center; justify-content: space-between; }
+.controls-left, .controls-right { display: flex; align-items: center; gap: 12px; }
+.ctrl-btn { background: none; color: #fff; font-size: 18px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: background 0.2s; }
+.ctrl-btn:hover { background: rgba(255,255,255,0.15); }
+.time-display { color: #ddd; font-size: 13px; font-weight: 400; }
+.big-play-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 68px; height: 48px; background: rgba(0,0,0,0.7); border-radius: 14px; display: flex; align-items: center; justify-content: center; transition: transform 0.2s, background 0.2s; z-index: 4; }
+.big-play-btn:hover { transform: translate(-50%, -50%) scale(1.08); background: rgba(0,0,0,0.85); }
+.big-play-btn svg { width: 24px; height: 24px; fill: #fff; }
+.big-play-btn.hidden { display: none; }
 
-		/* Left - Video Player */
-		.video-panel {
-			flex: 0 0 58%;
-			position: relative;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			background: #000;
-			overflow: hidden;
-			height: 100%;
-		}
-		.video-panel video {
-			width: 100%;
-			height: 100%;
-			object-fit: contain;
-			opacity: 0;
-			transition: opacity 0.8s ease;
-			contain: layout style paint;
-		}
-		.video-panel video.loaded { opacity: 1; }
+.video-nav-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; z-index: 3; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+.video-player-wrapper:hover .video-nav-overlay { opacity: 1; }
+.video-nav-btn { pointer-events: all; width: 44px; height: 44px; background: rgba(0,0,0,0.6); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 20px; transition: background 0.2s, transform 0.2s; backdrop-filter: blur(4px); }
+.video-nav-btn:hover { background: rgba(0,0,0,0.85); transform: scale(1.1); }
+.video-nav-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
 
-		/* Portrait video in left panel */
-		.video-panel.portrait-mode video {
-			max-width: 340px;
-			max-height: 80vh;
-			border-radius: 16px;
-			box-shadow: 0 20px 80px rgba(0,0,0,0.8);
-		}
+.video-loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 12px; color: #aaa; font-size: 13px; z-index: 1; }
+.video-loading.hidden { display: none; }
+.loading-spinner { width: 36px; height: 36px; border: 3px solid rgba(255,255,255,0.15); border-top-color: #e6f578; border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.video-error { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #aaa; font-size: 14px; text-align: center; z-index: 1; }
 
-		/* Landscape video in left panel */
-		.video-panel.landscape-mode video {
-			width: 100%; height: 100%;
-			max-width: 100%; max-height: 100%;
-			border-radius: 0;
-		}
+/* Video Info */
+.video-info { padding: 16px 0 8px; }
+.video-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 600; line-height: 1.4; color: #fff; }
+.channel-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-top: 14px; }
+.channel-info { display: flex; align-items: center; gap: 12px; }
+.channel-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #e6f578, #b4dc64); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; color: #000; flex-shrink: 0; }
+.channel-name { font-weight: 600; font-size: 15px; }
+.channel-subs { font-size: 12px; color: #aaa; }
+.action-buttons { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.like-dislike-btn { display: flex; background: rgba(255,255,255,0.1); border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
+.like-dislike-btn button { padding: 8px 16px; color: #f1f1f1; font-size: 13px; font-weight: 500; background: none; display: flex; align-items: center; gap: 6px; transition: background 0.2s; }
+.like-dislike-btn button:first-child { border-right: 1px solid rgba(255,255,255,0.15); }
+.like-dislike-btn button:hover { background: rgba(255,255,255,0.1); }
+.like-dislike-btn button.active { color: #e6f578; }
+.like-dislike-btn svg { width: 18px; height: 18px; fill: currentColor; }
+.share-btn { background: rgba(255,255,255,0.1); color: #f1f1f1; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 6px; transition: background 0.2s; border: 1px solid rgba(255,255,255,0.1); }
+.share-btn:hover { background: rgba(255,255,255,0.2); }
+.share-btn svg { width: 18px; height: 18px; fill: currentColor; }
+.work-btn { background: linear-gradient(135deg, #e6f578, #b4dc64); color: #000; padding: 8px 20px; border-radius: 24px; font-size: 13px; font-weight: 600; transition: transform 0.2s, box-shadow 0.2s; display: inline-flex; align-items: center; }
+.work-btn:hover { transform: scale(1.04); box-shadow: 0 2px 12px rgba(180,220,100,0.3); }
 
-		/* Fullscreen video */
-		.video-panel:fullscreen video,
-		.video-panel:-webkit-full-screen video {
-			width: 100vw; height: 100vh;
-			object-fit: contain;
-		}
+/* Description Box */
+.desc-box { background: rgba(255,255,255,0.05); border-radius: 10px; padding: 12px 14px; margin-top: 14px; cursor: pointer; max-height: 80px; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s; border: 1px solid rgba(255,255,255,0.05); }
+.desc-box.expanded { max-height: 600px; padding: 16px; }
+.desc-meta { font-size: 14px; font-weight: 600; margin-bottom: 6px; color: #aaa; }
+.desc-text { font-size: 14px; line-height: 1.6; color: #ccc; }
+.desc-tags { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+.desc-box:not(.expanded) .desc-tags { display: none; }
+.desc-tag { color: #e6f578; font-size: 12px; font-weight: 500; }
+.desc-toggle { font-size: 12px; font-weight: 600; margin-top: 6px; color: #aaa; }
 
-		/* Video controls */
-		.video-controls {
-			position: absolute; bottom: 0; left: 0; right: 0;
-			padding: 16px 24px 20px; z-index: 10;
-			display: flex; align-items: center; gap: 12px;
-			background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
-			opacity: 0; transition: opacity 0.3s;
-		}
-		.video-panel:hover .video-controls { opacity: 1; }
-		.ctrl-btn {
-			background: none; border: none; cursor: pointer; padding: 4px;
-			display: flex; align-items: center; justify-content: center;
-		}
-		.ctrl-btn svg {
-			width: 18px; height: 18px; stroke: rgba(230, 245, 120, 0.8); fill: none;
-			stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
-			transition: stroke 0.2s;
-		}
-		.ctrl-btn:hover svg { stroke: rgba(230, 245, 120, 1); }
-		.progress-bar {
-			flex: 1; height: 3px; background: rgba(255,255,255,0.15);
-			border-radius: 2px; cursor: pointer; position: relative;
-			overflow: hidden;
-		}
-		.progress-fill {
-			height: 100%; background: rgba(230, 245, 120, 0.8);
-			border-radius: 2px; width: 0%; transition: width 0.1s linear;
-		}
-		.time-display {
-			font-size: 11px; color: rgba(215, 230, 190, 0.6);
-			font-variant-numeric: tabular-nums; min-width: 80px; text-align: right;
-		}
+/* Comments */
+.comments-section { margin-top: 20px; }
+.comments-header { font-size: 16px; font-weight: 600; margin-bottom: 16px; display: flex; align-items: center; gap: 24px; }
+.comments-header span:last-child { font-size: 14px; color: #aaa; }
+.comment-input-row { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 24px; }
+.comment-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; flex-shrink: 0; }
+.comment-input { flex: 1; background: transparent; border: none; border-bottom: 1px solid #555; color: #f1f1f1; font-size: 14px; padding: 8px 0; outline: none; font-family: inherit; }
+.comment-input::placeholder { color: #717171; }
+.comment-input:focus { border-bottom-color: #e6f578; }
+.comment-item { display: flex; gap: 10px; margin-bottom: 18px; animation: fadeIn 0.4s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.comment-body { flex: 1; }
+.comment-author { font-size: 13px; font-weight: 600; }
+.comment-time { font-size: 12px; color: #aaa; font-weight: 400; margin-left: 8px; }
+.comment-text { font-size: 14px; color: #ccc; margin-top: 4px; line-height: 1.5; }
+.comment-actions { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
+.comment-action-btn { background: none; color: #aaa; font-size: 12px; display: flex; align-items: center; gap: 4px; padding: 4px 0; }
+.comment-action-btn:hover { color: #f1f1f1; }
+.comment-action-btn svg { width: 16px; height: 16px; fill: currentColor; }
 
-		/* Right - Info Panel */
-		.info-panel {
-			flex: 0 0 42%;
-			padding: 100px 48px 40px 48px;
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
-			overflow-y: auto;
-			height: 100%;
-		}
-		.brand-tag {
-			display: inline-block; padding: 6px 16px;
-			background: rgba(230, 245, 120, 0.08); border: 1px solid rgba(230, 245, 120, 0.2);
-			border-radius: 24px; margin-bottom: 16px; width: fit-content;
-			font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
-			color: rgba(230, 245, 120, 0.9); font-weight: 500;
-		}
-		.brand-title {
-			font-family: 'Playfair Display', serif;
-			font-size: clamp(28px, 3vw, 42px);
-			color: rgba(245, 250, 230, 0.95); font-weight: 400;
-			line-height: 1.15; margin-bottom: 24px;
-		}
-		.info-divider {
-			width: 48px; height: 1px;
-			background: rgba(230, 245, 120, 0.3);
-			margin: 0 0 24px;
-		}
-		.info-description {
-			font-size: 15px; line-height: 1.8;
-			color: rgba(215, 230, 190, 0.55);
-			margin-bottom: 40px;
-		}
+/* Sidebar items - Desktop */
+.sidebar-item { display: flex; gap: 8px; margin-bottom: 10px; cursor: pointer; border-radius: 8px; overflow: hidden; transition: background 0.2s; padding: 4px; }
+.sidebar-item:hover { background: rgba(255,255,255,0.05); }
+.sidebar-thumb { width: 168px; height: 94px; border-radius: 8px; overflow: hidden; position: relative; flex-shrink: 0; background: #272727; }
+.sidebar-thumb canvas { width: 100%; height: 100%; object-fit: cover; display: block; position: absolute; top: 0; left: 0; z-index: 1; transition: opacity 0.3s; }
+.sidebar-thumb video { width: 100%; height: 100%; object-fit: cover; display: block; position: absolute; top: 0; left: 0; z-index: 2; opacity: 0; transition: opacity 0.3s; }
+.sidebar-item:hover .sidebar-thumb video { opacity: 1; }
+.sidebar-item:hover .sidebar-thumb canvas { opacity: 0; }
+.sidebar-thumb .thumb-play { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 32px; height: 22px; background: rgba(0,0,0,0.7); border-radius: 6px; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; z-index: 3; pointer-events: none; }
+.sidebar-thumb .thumb-play svg { width: 12px; height: 12px; fill: #fff; }
+.sidebar-item-info { padding: 4px 0; min-width: 0; flex: 1; }
+.sidebar-item-title { font-size: 13px; font-weight: 500; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
-		/* Details */
-		.details-list {
-			display: flex; flex-direction: column; gap: 20px;
-			padding: 24px 0;
-			border-top: 1px solid rgba(230, 245, 120, 0.08);
-			border-bottom: 1px solid rgba(230, 245, 120, 0.08);
-			margin-bottom: 40px;
-		}
-		.detail-row {
-			display: flex; justify-content: space-between; align-items: center;
-			opacity: 0; transform: translateY(12px);
-			transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-		}
-		.detail-row.revealed { opacity: 1; transform: translateY(0); }
-		.detail-label {
-			font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
-			color: rgba(230, 245, 120, 0.5);
-		}
-		.detail-value {
-			font-family: 'Playfair Display', serif; font-size: 15px;
-			color: rgba(245, 250, 230, 0.9);
-		}
+/* Mobile horizontal scroll section */
+.mobile-more-section { display: none; margin-top: 28px; }
+.mobile-more-title { font-size: 16px; font-weight: 600; margin-bottom: 12px; }
+.mobile-more-scroll { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 8px; -webkit-overflow-scrolling: touch; }
+.mobile-more-scroll .sidebar-item { flex-shrink: 0; width: 280px; flex-direction: column; scroll-snap-align: start; margin-bottom: 0; padding: 0; }
+.mobile-more-scroll .sidebar-thumb { width: 100%; height: 158px; }
+.mobile-more-scroll .sidebar-item-info { padding: 8px 2px 0; }
 
-		/* Project Nav */
-		.project-nav {
-			display: flex; justify-content: space-between; align-items: center;
-			padding-top: 24px;
-		}
-		.nav-link {
-			display: flex; align-items: center; gap: 10px;
-			font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
-			color: rgba(215, 230, 190, 0.5); text-decoration: none;
-			transition: color 0.3s; font-weight: 500; cursor: pointer;
-		}
-		.nav-link:hover { color: rgba(230, 245, 120, 0.95); }
-		.nav-link svg {
-			width: 16px; height: 16px; stroke: currentColor; fill: none;
-			stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
-		}
-		.nav-link .nav-label {
-			font-size: 9px; letter-spacing: 2px; color: rgba(215, 230, 190, 0.35);
-			display: block;
-		}
-		.nav-link .nav-brand {
-			font-family: 'Playfair Display', serif; font-size: 13px;
-			color: rgba(245, 250, 230, 0.8); display: block;
-		}
-		.nav-link:hover .nav-brand { color: rgba(230, 245, 120, 0.95); }
-
-		/* CTA */
-		.project-cta {
-			text-align: center; padding: 0;
-		}
-		.project-cta a {
-			display: inline-block; padding: 14px 40px;
-			border: 1px solid rgba(180, 220, 100, 0.25); border-radius: 40px;
-			color: rgba(200, 230, 130, 0.8); font-size: 11px;
-			letter-spacing: 2px; text-transform: uppercase; text-decoration: none;
-			transition: all 0.3s; font-weight: 500;
-			background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(10px);
-		}
-		.project-cta a:hover {
-			background: rgba(180, 220, 100, 0.1);
-			border-color: rgba(180, 220, 100, 0.5);
-			color: rgba(230, 245, 120, 0.95);
-		}
-		@media (max-width: 768px) {
-			.project-cta {
-				position: fixed; bottom: 0; left: 0; right: 0;
-				z-index: 50; padding: 16px;
-				background: linear-gradient(to top, rgba(0,0,0,0.95) 60%, transparent 100%);
-			}
-			.project-cta a {
-				padding: 12px 32px; font-size: 10px;
-				background: rgba(0,0,0,0.7);
-			}
-		}
-
-		/* Tablet */
-		@media (max-width: 1024px) {
-			.video-panel { flex: 0 0 52%; }
-			.info-panel { flex: 0 0 48%; padding: 100px 32px 40px; }
-		}
-
-		/* Mobile */
-		@media (max-width: 768px) {
-			html, body { height: auto; overflow: auto; }
-
-			.video-layout {
-				flex-direction: column;
-				height: auto;
-				overflow: visible;
-			}
-
-			.back-btn { top: 60px; left: 16px; font-size: 10px; z-index: 110; }
-
-			.video-panel {
-				flex: none;
-				width: 100%;
-				height: 56vw;
-				min-height: 200px;
-				position: relative;
-				margin-top: 0;
-			}
-
-			.video-panel.landscape-mode video {
-				width: 100%; height: 100%;
-				object-fit: contain; border-radius: 0;
-			}
-
-			.video-panel.portrait-mode video {
-				max-width: 55vw;
-				max-height: 50vw;
-				border-radius: 12px;
-			}
-
-			.video-panel .video-controls {
-				opacity: 1 !important;
-				padding: 10px 16px 14px;
-				gap: 8px;
-			}
-			.ctrl-btn svg { width: 16px; height: 16px; }
-			.time-display { font-size: 10px; min-width: 60px; }
-			.progress-bar { height: 3px; }
-
-			.info-panel {
-				flex: none;
-				width: 100%;
-				padding: 24px 16px 80px;
-				overflow: visible;
-			}
-
-			.brand-tag { margin-bottom: 10px; font-size: 9px; }
-			.brand-title { font-size: 22px; margin-bottom: 16px; }
-			.info-divider { margin: 0 0 16px; }
-			.info-description { font-size: 13px; line-height: 1.7; margin-bottom: 24px; }
-
-			.details-list { gap: 12px; padding: 16px 0; margin-bottom: 24px; }
-			.detail-row { opacity: 1; transform: none; }
-			.detail-label { font-size: 9px; }
-			.detail-value { font-size: 13px; }
-
-			.project-nav {
-				padding-top: 16px;
-				gap: 12px;
-			}
-			.nav-link .nav-brand { font-size: 12px; }
-
-			.project-cta {
-				position: relative;
-				padding: 20px 16px 40px;
-			}
-			.project-cta a { padding: 12px 32px; font-size: 10px; }
-		}
-
-		@media (max-width: 400px) {
-			.video-panel { height: 50vw; min-height: 180px; }
-			.video-panel.portrait-mode video {
-				max-width: 65vw;
-				max-height: 55vw;
-			}
-			.brand-title { font-size: 20px; }
-			.info-description { font-size: 12px; }
-		}
-
-		@media (prefers-reduced-motion: reduce) {
-			.detail-row { transition: opacity 0.2s; transform: none; }
-			.page-transition { transition: none; }
-		}
-	</style>
+@media (max-width: 1024px) {
+  .sidebar { display: none; }
+  .mobile-more-section { display: block; }
+  .main-layout { padding: 0 16px; }
+}
+@media (max-width: 768px) {
+  .nav-float { padding: 14px 16px; }
+  .nav-links { display: none; }
+  .nav-hamburger { display: flex; }
+  .nav-mobile-overlay { display: flex; }
+  .main-layout { padding: 0 12px; }
+  .video-title { font-size: 17px; }
+  .channel-row { flex-direction: column; align-items: flex-start; }
+  .action-buttons { width: 100%; }
+  .like-dislike-btn, .share-btn, .work-btn { flex: 1; justify-content: center; }
+  .mobile-more-scroll .sidebar-item { width: 240px; }
+  .mobile-more-scroll .sidebar-thumb { height: 135px; }
+}
+@media (max-width: 400px) {
+  .nav-float { padding: 10px 14px; }
+  .nav-logo { font-size: 15px; }
+  .video-info { padding: 10px 0 6px; }
+  .video-title { font-size: 15px; }
+  .action-buttons { flex-wrap: wrap; }
+  .like-dislike-btn button { padding: 6px 10px; font-size: 12px; }
+  .share-btn { padding: 6px 12px; font-size: 12px; }
+  .work-btn { padding: 6px 14px; font-size: 12px; }
+}
+</style>
 </head>
 <body>
-	<div class="page-transition" id="pageTransition"></div>
 
-	<nav class="nav-float">
-		<div class="nav-logo" onclick="smoothNavigate('index.html')" style="cursor:pointer">REVOLVYN</div>
-		<div class="nav-links">
-			<a href="index.html" onclick="smoothNavigate(event, 'index.html')">About Us</a>
-			<a href="portfolio.html" onclick="smoothNavigate(event, 'portfolio.html')">Portfolio</a>
-			<a href="brands.html" onclick="smoothNavigate(event, 'brands.html')">Brands</a>
-			<a href="services.html" onclick="smoothNavigate(event, 'services.html')">Services</a>
-			<a href="contact.html" onclick="smoothNavigate(event, 'contact.html')">Contact Us</a>
-		</div>
-		<button class="nav-hamburger" id="navHamburger" aria-label="Menu"><span></span><span></span><span></span></button>
-	</nav>
-	<div class="nav-mobile-overlay" id="navMobileOverlay">
-		<a href="index.html" onclick="smoothNavigate(event, 'index.html')">About Us</a>
-		<a href="portfolio.html" onclick="smoothNavigate(event, 'portfolio.html')">Portfolio</a>
-		<a href="brands.html" onclick="smoothNavigate(event, 'brands.html')">Brands</a>
-		<a href="services.html" onclick="smoothNavigate(event, 'services.html')">Services</a>
-		<a href="contact.html" onclick="smoothNavigate(event, 'contact.html')">Contact Us</a>
-	</div>
+<nav class="nav-float">
+  <div class="nav-logo" onclick="smoothNavigate('index.html')" style="cursor:pointer">REVOLVYN</div>
+  <div class="nav-links">
+    <a href="index.html" onclick="smoothNavigate(event, 'index.html')">About Us</a>
+    <a href="portfolio.html" onclick="smoothNavigate(event, 'portfolio.html')">Portfolio</a>
+    <a href="brands.html" onclick="smoothNavigate(event, 'brands.html')">Brands</a>
+    <a href="services.html" onclick="smoothNavigate(event, 'services.html')">Services</a>
+    <a href="contact.html" onclick="smoothNavigate(event, 'contact.html')">Contact Us</a>
+  </div>
+  <button class="nav-hamburger" id="navHamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+<div class="nav-mobile-overlay" id="navMobileOverlay">
+  <a href="index.html" onclick="smoothNavigate(event, 'index.html')">About Us</a>
+  <a href="portfolio.html" onclick="smoothNavigate(event, 'portfolio.html')">Portfolio</a>
+  <a href="brands.html" onclick="smoothNavigate(event, 'brands.html')">Brands</a>
+  <a href="services.html" onclick="smoothNavigate(event, 'services.html')">Services</a>
+  <a href="contact.html" onclick="smoothNavigate(event, 'contact.html')">Contact Us</a>
+</div>
 
-	<a class="back-btn" onclick="smoothNavigate('portfolio.html')" style="cursor:pointer">
-		<svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-		Back to Portfolio
-	</a>
+<div class="main-layout">
+  <div class="main-content">
+    <div class="video-player-wrapper" id="videoWrapper">
+      <video id="mainVideo" preload="metadata" playsinline></video>
+      <div class="video-loading" id="videoLoading">
+        <div class="loading-spinner"></div>
+        <span>Loading video...</span>
+      </div>
+      <div class="video-error" id="videoError" style="display:none">
+        <span>Video unavailable. <a href="portfolio.html" style="color:#e6f578;text-decoration:underline">View on portfolio</a></span>
+      </div>
+      <button class="big-play-btn" id="bigPlayBtn" onclick="togglePlay()">
+        <svg viewBox="0 0 24 24"><polygon points="9.5,7.5 16.5,12 9.5,16.5"/></svg>
+      </button>
+      <div class="video-nav-overlay">
+        <button class="video-nav-btn" id="overlayPrev" onclick="event.stopPropagation();navigateProject(-1)">&#10094;</button>
+        <button class="video-nav-btn" id="overlayNext" onclick="event.stopPropagation();navigateProject(1)">&#10095;</button>
+      </div>
+      <div class="video-controls" id="videoControls">
+        <div class="progress-bar-container" id="progressBar" onclick="seekVideo(event)">
+          <div class="progress-bar" id="progressFill"></div>
+        </div>
+        <div class="controls-row">
+          <div class="controls-left">
+            <button class="ctrl-btn" id="playPauseBtn" onclick="togglePlay()">&#9654;</button>
+            <button class="ctrl-btn" id="muteBtn" onclick="toggleMute()">&#128266;</button>
+            <span class="time-display" id="timeDisplay">0:00 / 0:00</span>
+          </div>
+          <div class="controls-right">
+            <button class="ctrl-btn" onclick="toggleFullscreen()">&#9974;</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-	<div class="video-layout">
-		<!-- Left: Video Player -->
-		<div class="video-panel" id="videoPanel">
-			<video id="mainVideo" loop playsinline preload="auto"></video>
-			<div class="video-controls" id="videoControls">
-				<button class="ctrl-btn" id="playPauseBtn" onclick="togglePlay()">
-					<svg id="playIcon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-					<svg id="pauseIcon" viewBox="0 0 24 24" style="display:none"><line x1="6" y1="4" x2="6" y2="20"/><line x1="18" y1="4" x2="18" y2="20"/></svg>
-				</button>
-				<button class="ctrl-btn" id="muteBtn" onclick="toggleMute()">
-					<svg id="unmuteIcon" viewBox="0 0 24 24" style="display:none"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
-					<svg id="muteIcon" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
-				</button>
-				<div class="progress-bar" id="progressBar" onclick="seekVideo(event)">
-					<div class="progress-fill" id="progressFill"></div>
-				</div>
-				<div class="time-display" id="timeDisplay">0:00 / 0:00</div>
-				<button class="ctrl-btn" id="fullscreenBtn" onclick="toggleFullscreen()">
-					<svg viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
-				</button>
-			</div>
-		</div>
+    <div class="video-info">
+      <h1 class="video-title" id="videoTitle">Loading...</h1>
+      <div class="channel-row">
+        <a href="index.html" class="channel-info" style="cursor:pointer">
+          <div class="channel-avatar">R</div>
+          <div>
+            <div class="channel-name">REVOLVYN</div>
+            <div class="channel-subs">Creative Studio</div>
+          </div>
+        </a>
+        <div class="action-buttons">
+          <div class="like-dislike-btn">
+            <button id="likeBtn" onclick="toggleLike()">
+              <svg viewBox="0 0 24 24"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 2 7.59 8.59C7.22 8.95 7 9.45 7 10v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>
+              <span id="likeCount">0</span>
+            </button>
+            <button id="dislikeBtn" onclick="toggleDislike()">
+              <svg viewBox="0 0 24 24"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 22l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"/></svg>
+            </button>
+          </div>
+          <button class="share-btn" onclick="shareVideo()">
+            <svg viewBox="0 0 24 24"><path d="M14 9V3L22 12 14 21V15C8.44 15 4.78 17.03 2 21 3.11 15.33 6.67 9.67 14 9Z"/></svg>
+            Share
+          </button>
+          <a href="index.html#contact" class="work-btn">Work With Us</a>
+        </div>
+      </div>
+    </div>
 
-		<!-- Right: Info Panel -->
-		<div class="info-panel">
-			<div class="brand-tag" id="brandTag"></div>
-			<h1 class="brand-title" id="projectTitle"></h1>
-			<div class="info-divider"></div>
-			<div class="info-description" id="projectDesc"></div>
-			<div class="details-list">
-				<div class="detail-row">
-					<span class="detail-label">Client</span>
-					<span class="detail-value" id="detailClient"></span>
-				</div>
-				<div class="detail-row">
-					<span class="detail-label">Category</span>
-					<span class="detail-value" id="detailCategory"></span>
-				</div>
-				<div class="detail-row">
-					<span class="detail-label">Services</span>
-					<span class="detail-value" id="detailServices"></span>
-				</div>
-			</div>
-			<div class="project-nav" id="projectNav">
-				<a class="nav-link" id="prevLink">
-					<svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-					<div><span class="nav-label">Previous</span><span class="nav-brand" id="prevBrand"></span></div>
-				</a>
-				<a class="nav-link" id="nextLink" style="text-align:right;">
-					<div><span class="nav-label">Next</span><span class="nav-brand" id="nextBrand"></span></div>
-					<svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-				</a>
-			</div>
-		</div>
-	</div>
+    <div class="desc-box" id="descBox" onclick="toggleDesc()">
+      <div class="desc-meta" id="descMeta">0 views</div>
+      <div class="desc-text" id="descText">Description loading...</div>
+      <div class="desc-tags" id="descTags"></div>
+      <div class="desc-toggle" id="descToggle">Show more</div>
+    </div>
 
-	<div class="project-cta">
-		<a href="contact.html" onclick="smoothNavigate(event, 'contact.html')">Start a Project &rarr;</a>
-	</div>
+    <div class="comments-section">
+      <div class="comments-header">
+        <span>Comments</span>
+        <span id="commentCount">0</span>
+      </div>
+      <div class="comment-input-row">
+        <div class="comment-avatar" style="background:linear-gradient(135deg,#a78bfa,#7c3aed)">Y</div>
+        <input type="text" class="comment-input" placeholder="Add a comment..." id="commentInput" onkeydown="handleCommentKey(event)">
+      </div>
+      <div id="commentsContainer"></div>
+    </div>
 
-	<script>
-		const transition = document.getElementById('pageTransition');
-		function smoothNavigate(e, url) {
-			if (e && e.preventDefault) e.preventDefault();
-			if (!url && typeof e === 'string') url = e;
-			transition.classList.add('active');
-			setTimeout(() => { window.location.href = url; }, 200);
-		}
+    <div class="mobile-more-section" id="mobileMoreSection">
+      <div class="mobile-more-title">More from REVOLVYN</div>
+      <div class="mobile-more-scroll" id="mobileMoreContainer"></div>
+    </div>
+  </div>
 
-		const navHamburger = document.getElementById('navHamburger');
-		const navMobileOverlay = document.getElementById('navMobileOverlay');
-		navHamburger.addEventListener('click', () => {
-			navHamburger.classList.toggle('open');
-			navMobileOverlay.classList.toggle('open');
-		});
-		navMobileOverlay.querySelectorAll('a').forEach(a => {
-			a.addEventListener('click', () => {
-				navHamburger.classList.remove('open');
-				navMobileOverlay.classList.remove('open');
-			});
-		});
+  <div class="sidebar" id="desktopSidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-title">More from REVOLVYN</div>
+      <div class="sidebar-scroll" id="sidebarContainer"></div>
+    </div>
+  </div>
+</div>
 
-		const allProjects = [
-			{ brand: "ELEVENLABS", title: "ElevenLabs", desc: "ElevenLabs is an AI voice technology brand.", video: "https://video.wixstatic.com/video/4c7a69_14df8fc89d244a96b8926669d3d7db8d/360p/mp4/file.mp4", orient: "landscape" },
-			{ brand: "ELEVENLABS", title: "ElevenLabs", desc: "ElevenLabs is an AI voice technology brand.", video: "https://video.wixstatic.com/video/4c7a69_d70cd22e3f424a88a11add0aaa8715e0/360p/mp4/file.mp4", orient: "landscape" },
-			{ brand: "ELEVENLABS", title: "ElevenLabs", desc: "ElevenLabs is an AI voice technology brand.", video: "https://video.wixstatic.com/video/4c7a69_686d4b3aa59148239d4a71b3de795c6c/360p/mp4/file.mp4", orient: "landscape" },
-			{ brand: "ELEVENLABS", title: "ElevenLabs", desc: "ElevenLabs is an AI voice technology brand.", video: "https://video.wixstatic.com/video/4c7a69_23f184027c3549bd99bb139ab1069ccf/360p/mp4/file.mp4", orient: "landscape" },
-			{ brand: "ELEVENLABS", title: "ElevenLabs", desc: "ElevenLabs is an AI voice technology brand.", video: "https://video.wixstatic.com/video/4c7a69_0b31155196524c02b137c09a4adc76f3/360p/mp4/file.mp4", orient: "landscape" },
-			{ brand: "FLEXER AI", title: "Flexer AI", desc: "Flexer AI is an AI-powered automation brand.", video: "https://video.wixstatic.com/video/4c7a69_222842af6e0041df96c38a0f441f9bea/360p/mp4/file.mp4", orient: "landscape" },
-			{ brand: "LOVABLE", title: "Lovable", desc: "Lovable is a digital creation and app-building platform.", video: "https://video.wixstatic.com/video/4c7a69_5668e652a6884cd8836549b78cf45743/360p/mp4/file.mp4", orient: "landscape" },
-			{ brand: "OG USERNAMES", title: "OG Usernames", desc: "OG Usernames is a digital identity and username brand.", video: "https://video.wixstatic.com/video/4c7a69_79283b4698b040f89bffa697139f5979/360p/mp4/file.mp4", orient: "portrait" },
-			{ brand: "TRIVX", title: "Trivx", desc: "Trivx is a technology and innovation brand.", video: "https://video.wixstatic.com/video/4c7a69_141b2d08cb6748bb987c19f0b683e40f/360p/mp4/file.mp4", orient: "landscape" },
-			{ brand: "SONEPAR", title: "Sonepar", desc: "Sonepar Automation Expo is an industrial automation brand.", video: "https://video.wixstatic.com/video/4c7a69_1e1da840cb98495a85faf9d92e5b7cb8/1080p/mp4/file.mp4", orient: "landscape" },
-			{ brand: "MARK VIBE", title: "Mark Vibe", desc: "Mark Vibe is a creative and lifestyle brand.", video: "https://video.wixstatic.com/video/4c7a69_1c35e20217e14a8db126397e5e2029e8/1080p/mp4/file.mp4", orient: "landscape" },
-			{ brand: "CRISPANA", title: "Crispana", desc: "Crispana is a food and lifestyle brand.", video: "https://video.wixstatic.com/video/4c7a69_95ce005d31f74d3bb9dbc36e126d5556/1080p/mp4/file.mp4", orient: "landscape" },
-			{ brand: "MR NUTTS OATS", title: "Mr Nutts Oats", desc: "Mr Nutts Oats is a health food and breakfast brand.", video: "https://video.wixstatic.com/video/4c7a69_cca1cedb933341988f871a0cdbba540b/1080p/mp4/file.mp4", orient: "landscape" },
-			{ brand: "MR NUTTS OATS", title: "Mr Nutts Oats", desc: "Mr Nutts Oats is a health food and breakfast brand.", video: "https://video.wixstatic.com/video/4c7a69_deb755ab4ad04c829c94225ee5df4860/1080p/mp4/file.mp4", orient: "landscape" },
-			{ brand: "OXINKLE", title: "Oxinkle", desc: "Oxinkle is a modern consumer brand.", video: "https://video.wixstatic.com/video/4c7a69_6e96bd03ea484471b4b8e5df3ec24506/1080p/mp4/file.mp4", orient: "landscape" },
-			{ brand: "DALEN BELTS", title: "Dalen Belts", desc: "Dalen Belts is a fashion accessories brand.", video: "https://video.wixstatic.com/video/4c7a69_a17b296ca1544a43bbc4e618676526f6/1080p/mp4/file.mp4", orient: "landscape" },
-			{ brand: "CRISPANA", title: "Crispana", desc: "Crispana is a food and lifestyle brand.", video: "https://video.wixstatic.com/video/4c7a69_bf6bc2180a9f4cebaa869ab4b2e2b8a4/720p/mp4/file.mp4", orient: "landscape" },
-			{ brand: "EATFESTO", title: "EatFesto", desc: "EatFesto is a food and dining-focused brand.", video: "https://video.wixstatic.com/video/4c7a69_0abcdc24eaed4b3e95a67da99aa1a2b0/1080p/mp4/file.mp4", orient: "portrait" },
-			{ brand: "EATFESTO", title: "EatFesto", desc: "EatFesto is a food and dining-focused brand.", video: "https://video.wixstatic.com/video/4c7a69_c46cfd63cd96443badd9a27a0665fdff/1080p/mp4/file.mp4", orient: "portrait" },
-			{ brand: "TEZZO", title: "Tezzo", desc: "Tezzo is a modern lifestyle-oriented brand.", video: "https://video.wixstatic.com/video/4c7a69_50273e50f63d448e818bd9122e3fc5e1/720p/mp4/file.mp4", orient: "landscape" },
-			{ brand: "NIKE", title: "Nike", desc: "Nike is a globally recognized sportswear and lifestyle brand.", video: "https://video.wixstatic.com/video/4c7a69_e9c69930b4f74394a7a24aaa079c9e50/720p/mp4/file.mp4", orient: "landscape" },
-			{ brand: "NIKE", title: "Nike", desc: "Nike is a globally recognized sportswear and lifestyle brand.", video: "https://video.wixstatic.com/video/4c7a69_b378be38f16a4a48885fc3ef997da7c6/720p/mp4/file.mp4", orient: "landscape" },
-			{ brand: "NIKE", title: "Nike", desc: "Nike is a globally recognized sportswear and lifestyle brand.", video: "https://video.wixstatic.com/video/4c7a69_52ab300a0f5d4f3eb2e022531b7f5f26/720p/mp4/file.mp4", orient: "landscape" },
-			{ brand: "PROSKIRE", title: "Proskire", desc: "Proskire is a performance and lifestyle-focused brand.", video: "https://video.wixstatic.com/video/4c7a69_e0893a64f65d45c288100d58ed3ac6e7/720p/mp4/file.mp4", orient: "landscape" },
-			{ brand: "RELANCE", title: "Relance", desc: "Relance is a contemporary consumer brand.", video: "https://video.wixstatic.com/video/4c7a69_ae60f198c15a4dabbec575bb07569699/720p/mp4/file.mp4", orient: "landscape" },
-			{ brand: "KERASTASE", title: "Kerastase", desc: "Kerastase is a premium professional haircare brand.", video: "https://video.wixstatic.com/video/4c7a69_85112fcc1b354ceba8e9b7400194de5a/720p/mp4/file.mp4", orient: "landscape" },
-			{ brand: "MEDICINE MAMA", title: "Medicine Mama", desc: "Medicine Mama is a natural beauty and skincare brand.", video: "https://video.wixstatic.com/video/4c7a69_6e02f73ac2854749902a919538d625f4/720p/mp4/file.mp4", orient: "landscape" },
-			{ brand: "KORA ORGANIC", title: "KORA Organics", desc: "KORA Organics is a skincare and wellness brand.", video: "https://video.wixstatic.com/video/4c7a69_dc3f7913414e4dbe8f3bc3cdd7f07116/480p/mp4/file.mp4", orient: "portrait" },
-			{ brand: "DIOR", title: "Dior", desc: "Dior is a globally renowned luxury fashion and beauty house.", video: "https://video.wixstatic.com/video/4c7a69_f41b341b60e34a8193adb23bb5b7f217/480p/mp4/file.mp4", orient: "portrait" },
-			{ brand: "CARATLANE", title: "CaratLane", desc: "CaratLane is a modern jewelry brand.", video: "https://video.wixstatic.com/video/4c7a69_14a8db37650e4e048c74550cdc0850bd/360p/mp4/file.mp4", orient: "portrait" },
-			{ brand: "INSTA360", title: "Insta360", desc: "Insta360 is an action camera and imaging technology brand.", video: "https://video.wixstatic.com/video/4c7a69_13620f51b0ed46c5914c8523b4a77218/720p/mp4/file.mp4", orient: "portrait" },
-			{ brand: "NOTHING", title: "Nothing", desc: "Nothing is a consumer technology brand.", video: "https://video.wixstatic.com/video/4c7a69_a9f35c5bc14746b1af9e2afae93f07e3/360p/mp4/file.mp4", orient: "portrait" },
-			{ brand: "CAFE", title: "Cafe Project", desc: "Cafe-focused content designed around food, atmosphere, and lifestyle.", video: "https://video.wixstatic.com/video/4c7a69_0e60df56daa74e448177aac81ff654ce/720p/mp4/file.mp4", orient: "landscape" },
-			{ brand: "CAFE", title: "Cafe Project", desc: "Cafe-focused content designed around food, atmosphere, and lifestyle.", video: "https://video.wixstatic.com/video/4c7a69_498dc7119da64efc845ed771d89eb7e6/720p/mp4/file.mp4", orient: "landscape" }
-		];
+<script>
+const projects = [
+  { brand: "ELEVENLABS", desc: "ElevenLabs is an AI voice technology brand.", video: "https://video.wixstatic.com/video/4c7a69_14df8fc89d244a96b8926669d3d7db8d/360p/mp4/file.mp4", orient: "landscape", order: 1 },
+  { brand: "ELEVENLABS", desc: "ElevenLabs is an AI voice technology brand.", video: "https://video.wixstatic.com/video/4c7a69_d70cd22e3f424a88a11add0aaa8715e0/360p/mp4/file.mp4", orient: "landscape", order: 2 },
+  { brand: "ELEVENLABS", desc: "ElevenLabs is an AI voice technology brand.", video: "https://video.wixstatic.com/video/4c7a69_686d4b3aa59148239d4a71b3de795c6c/360p/mp4/file.mp4", orient: "landscape", order: 3 },
+  { brand: "ELEVENLABS", desc: "ElevenLabs is an AI voice technology brand.", video: "https://video.wixstatic.com/video/4c7a69_23f184027c3549bd99bb139ab1069ccf/360p/mp4/file.mp4", orient: "landscape", order: 4 },
+  { brand: "ELEVENLABS", desc: "ElevenLabs is an AI voice technology brand.", video: "https://video.wixstatic.com/video/4c7a69_0b31155196524c02b137c09a4adc76f3/360p/mp4/file.mp4", orient: "landscape", order: 5 },
+  { brand: "FLEXER AI", desc: "Flexer AI is an AI-powered automation brand.", video: "https://video.wixstatic.com/video/4c7a69_222842af6e0041df96c38a0f441f9bea/360p/mp4/file.mp4", orient: "landscape", order: 6 },
+  { brand: "LOVABLE", desc: "Lovable is a digital creation and app-building platform.", video: "https://video.wixstatic.com/video/4c7a69_5668e652a6884cd8836549b78cf45743/360p/mp4/file.mp4", orient: "landscape", order: 7 },
+  { brand: "OG USERNAMES", desc: "OG Usernames is a digital identity and username brand.", video: "https://video.wixstatic.com/video/4c7a69_79283b4698b040f89bffa697139f5979/360p/mp4/file.mp4", orient: "portrait", order: 8 },
+  { brand: "TRIVX", desc: "Trivx is a technology and innovation brand.", video: "https://video.wixstatic.com/video/4c7a69_141b2d08cb6748bb987c19f0b683e40f/360p/mp4/file.mp4", orient: "landscape", order: 9 },
+  { brand: "SONEPAR", desc: "Sonepar Automation Expo is an industrial automation brand.", video: "https://video.wixstatic.com/video/4c7a69_1e1da840cb98495a85faf9d92e5b7cb8/1080p/mp4/file.mp4", orient: "landscape", order: 10 },
+  { brand: "MARK VIBE", desc: "Mark Vibe is a creative and lifestyle brand.", video: "https://video.wixstatic.com/video/4c7a69_1c35e20217e14a8db126397e5e2029e8/1080p/mp4/file.mp4", orient: "landscape", order: 11 },
+  { brand: "CRISPANA", desc: "Crispana is a food and lifestyle brand.", video: "https://video.wixstatic.com/video/4c7a69_95ce005d31f74d3bb9dbc36e126d5556/1080p/mp4/file.mp4", orient: "landscape", order: 12 },
+  { brand: "MR NUTTS OATS", desc: "Mr Nutts Oats is a health food and breakfast brand.", video: "https://video.wixstatic.com/video/4c7a69_cca1cedb933341988f871a0cdbba540b/1080p/mp4/file.mp4", orient: "landscape", order: 13 },
+  { brand: "MR NUTTS OATS", desc: "Mr Nutts Oats is a health food and breakfast brand.", video: "https://video.wixstatic.com/video/4c7a69_deb755ab4ad04c829c94225ee5df4860/1080p/mp4/file.mp4", orient: "landscape", order: 14 },
+  { brand: "OXINKLE", desc: "Oxinkle is a modern consumer brand.", video: "https://video.wixstatic.com/video/4c7a69_6e96bd03ea484471b4b8e5df3ec24506/1080p/mp4/file.mp4", orient: "landscape", order: 15 },
+  { brand: "DALEN BELTS", desc: "Dalen Belts is a fashion accessories brand.", video: "https://video.wixstatic.com/video/4c7a69_a17b296ca1544a43bbc4e618676526f6/1080p/mp4/file.mp4", orient: "landscape", order: 16 },
+  { brand: "CRISPANA", desc: "Crispana is a food and lifestyle brand.", video: "https://video.wixstatic.com/video/4c7a69_bf6bc2180a9f4cebaa869ab4b2e2b8a4/720p/mp4/file.mp4", orient: "landscape", order: 17 },
+  { brand: "EATFESTO", desc: "EatFesto is a food and dining-focused brand.", video: "https://video.wixstatic.com/video/4c7a69_0abcdc24eaed4b3e95a67da99aa1a2b0/1080p/mp4/file.mp4", orient: "portrait", order: 18 },
+  { brand: "EATFESTO", desc: "EatFesto is a food and dining-focused brand.", video: "https://video.wixstatic.com/video/4c7a69_c46cfd63cd96443badd9a27a0665fdff/1080p/mp4/file.mp4", orient: "portrait", order: 19 },
+  { brand: "TEZZO", desc: "Tezzo is a modern lifestyle-oriented brand.", video: "https://video.wixstatic.com/video/4c7a69_50273e50f63d448e818bd9122e3fc5e1/720p/mp4/file.mp4", orient: "landscape", order: 20 },
+  { brand: "NIKE", desc: "Nike is a globally recognized sportswear and lifestyle brand.", video: "https://video.wixstatic.com/video/4c7a69_e9c69930b4f74394a7a24aaa079c9e50/720p/mp4/file.mp4", orient: "landscape", order: 21 },
+  { brand: "NIKE", desc: "Nike is a globally recognized sportswear and lifestyle brand.", video: "https://video.wixstatic.com/video/4c7a69_b378be38f16a4a48885fc3ef997da7c6/720p/mp4/file.mp4", orient: "landscape", order: 22 },
+  { brand: "NIKE", desc: "Nike is a globally recognized sportswear and lifestyle brand.", video: "https://video.wixstatic.com/video/4c7a69_52ab300a0f5d4f3eb2e022531b7f5f26/720p/mp4/file.mp4", orient: "landscape", order: 23 },
+  { brand: "PROSKIRE", desc: "Proskire is a performance and lifestyle-focused brand.", video: "https://video.wixstatic.com/video/4c7a69_e0893a64f65d45c288100d58ed3ac6e7/720p/mp4/file.mp4", orient: "landscape", order: 24 },
+  { brand: "RELANCE", desc: "Relance is a contemporary consumer brand.", video: "https://video.wixstatic.com/video/4c7a69_ae60f198c15a4dabbec575bb07569699/720p/mp4/file.mp4", orient: "landscape", order: 25 },
+  { brand: "KERASTASE", desc: "Kerastase is a premium professional haircare brand.", video: "https://video.wixstatic.com/video/4c7a69_85112fcc1b354ceba8e9b7400194de5a/720p/mp4/file.mp4", orient: "landscape", order: 26 },
+  { brand: "MEDICINE MAMA", desc: "Medicine Mama is a natural beauty and skincare brand.", video: "https://video.wixstatic.com/video/4c7a69_6e02f73ac2854749902a919538d625f4/720p/mp4/file.mp4", orient: "landscape", order: 27 },
+  { brand: "KORA ORGANIC", desc: "KORA Organics is a skincare and wellness brand.", video: "https://video.wixstatic.com/video/4c7a69_dc3f7913414e4dbe8f3bc3cdd7f07116/480p/mp4/file.mp4", orient: "portrait", order: 28 },
+  { brand: "DIOR", desc: "Dior is a globally renowned luxury fashion and beauty house.", video: "https://video.wixstatic.com/video/4c7a69_f41b341b60e34a8193adb23bb5b7f217/480p/mp4/file.mp4", orient: "portrait", order: 29 },
+  { brand: "CARATLANE", desc: "CaratLane is a modern jewelry brand.", video: "https://video.wixstatic.com/video/4c7a69_14a8db37650e4e048c74550cdc0850bd/360p/mp4/file.mp4", orient: "portrait", order: 30 },
+  { brand: "INSTA360", desc: "Insta360 is an action camera and imaging technology brand.", video: "https://video.wixstatic.com/video/4c7a69_13620f51b0ed46c5914c8523b4a77218/720p/mp4/file.mp4", orient: "portrait", order: 31 },
+  { brand: "NOTHING", desc: "Nothing is a consumer technology brand.", video: "https://video.wixstatic.com/video/4c7a69_a9f35c5bc14746b1af9e2afae93f07e3/360p/mp4/file.mp4", orient: "portrait", order: 32 },
+  { brand: "CAFE", desc: "Cafe-focused content designed around food, atmosphere, and lifestyle.", video: "https://video.wixstatic.com/video/4c7a69_0e60df56daa74e448177aac81ff654ce/720p/mp4/file.mp4", orient: "landscape", order: 33 },
+  { brand: "CAFE", desc: "Cafe-focused content designed around food, atmosphere, and lifestyle.", video: "https://video.wixstatic.com/video/4c7a69_498dc7119da64efc845ed771d89eb7e6/720p/mp4/file.mp4", orient: "landscape", order: 34 },
+  { brand: "REVOLVYN", desc: "REVOLVYN is a creative studio specializing in branding and digital experiences.", video: "https://video.wixstatic.com/video/4c7a69_470a7de15ddb4b71b27d47a776e35e65/480p/mp4/file.mp4", orient: "landscape", order: 35 },
+  { brand: "REVOLVYN", desc: "REVOLVYN is a creative studio specializing in branding and digital experiences.", video: "https://video.wixstatic.com/video/4c7a69_3aa97884f07d4cf19f58421b187bbb69/480p/mp4/file.mp4", orient: "portrait", order: 36 },
+  { brand: "REVOLVYN", desc: "REVOLVYN is a creative studio specializing in branding and digital experiences.", video: "https://video.wixstatic.com/video/4c7a69_87e22c95016e4e9b90ce9cd6e4bebd25/480p/mp4/file.mp4", orient: "landscape", order: 37 },
+  { brand: "REVOLVYN", desc: "REVOLVYN is a creative studio specializing in branding and digital experiences.", video: "https://video.wixstatic.com/video/4c7a69_4d67c09711c44b2bb98a610db0486e91/480p/mp4/file.mp4", orient: "landscape", order: 38 }
+];
 
-		const params = new URLSearchParams(window.location.search);
-		const brand = params.get('brand') || 'NIKE';
-		const title = params.get('title') || 'Nike';
-		const desc = params.get('desc') || '';
-		const videoUrl = params.get('video') || '';
-		const orient = params.get('orient') || 'landscape';
-		const currentIndex = parseInt(params.get('index') || '0', 10);
+projects.sort((a, b) => a.order - b.order);
 
-		const currentProject = allProjects[currentIndex] || {
-			brand, title, desc, video: videoUrl, orient,
-			category: params.get('category') || 'Brand Campaign',
-			services: params.get('services') || 'Brand Film'
-		};
+const descBank = {
+  "ELEVENLABS": [
+    "Pioneering AI voice technology that transforms how creators and businesses produce natural-sounding speech. A complete brand identity built for the future of audio.",
+    "Crafting a bold visual identity for the world's most advanced AI voice platform. From UI to motion, every pixel reflects innovation and human-like precision.",
+    "A sleek, futuristic brand system designed to match ElevenLabs' cutting-edge语音synthesis technology. Dark tones, fluid motion, and tech-forward aesthetics."
+  ],
+  "FLEXER AI": [
+    "Building the visual language for an AI-powered automation platform. Clean interfaces, dynamic motion graphics, and a brand identity that screams efficiency.",
+    "A modern brand system for Flexer AI — where intelligent automation meets stunning design. Sharp visuals, smooth transitions, and a tech-first identity."
+  ],
+  "LOVABLE": [
+    "Designing a warm, approachable brand for a platform that turns ideas into apps. Playful colors, friendly typography, and a voice that invites creativity.",
+    "A complete brand refresh for Lovable — making app creation feel effortless and fun. Every visual element reflects joy, simplicity, and innovation."
+  ],
+  "OG USERNAMES": [
+    "Building a premium digital identity brand. Bold typography, sleek dark aesthetics, and a visual system that commands attention in the digital space.",
+    "Crafting the brand for OG Usernames — where digital identity meets street culture. Raw, authentic, and unapologetically bold."
+  ],
+  "TRIVX": [
+    "A technology brand brought to life through sharp visuals and forward-thinking design. Innovation reflected in every frame, every transition, every detail.",
+    "Designing the visual identity for Trivx — a brand at the intersection of technology and creativity. Modern, minimal, and impactful."
+  ],
+  "SONEPAR": [
+    "Industrial automation meets premium branding. A powerful visual system designed for Sonepar's Automation Expo — showcasing the future of manufacturing.",
+    "Bold, technical, and commanding — the Sonepar Automation Expo brand identity captures the scale and ambition of industrial innovation."
+  ],
+  "MARK VIBE": [
+    "A creative lifestyle brand brought to life with vibrant visuals and an energetic spirit. Every piece of content radiates positivity and creative expression.",
+    "Designing the brand universe for Mark Vibe — where creativity, lifestyle, and culture collide. Bold colors, dynamic motion, and authentic storytelling."
+  ],
+  "CRISPANA": [
+    "A food and lifestyle brand with warmth at its core. Natural tones, appetizing visuals, and a brand identity that makes every dish look irresistible.",
+    "Crafting the visual language for Crispana — blending culinary artistry with stunning brand design. Fresh, organic, and effortlessly beautiful."
+  ],
+  "MR NUTTS OATS": [
+    "Health food branding that energizes. A vibrant, wholesome brand identity for Mr Nutts Oats — making breakfast the most exciting meal of the day.",
+    "Designing a fun, nutritious brand experience for Mr Nutts Oats. Playful packaging, bold colors, and content that makes healthy eating irresistible."
+  ],
+  "OXINKLE": [
+    "A modern consumer brand with a sleek, contemporary edge. Minimal design, premium feel, and a visual identity that stands out in any market.",
+    "Building the brand for Oxinkle — where modern design meets everyday luxury. Clean lines, sophisticated palettes, and understated elegance."
+  ],
+  "DALEN BELTS": [
+    "Fashion accessories branding at its finest. A premium visual identity for Dalen Belts — showcasing craftsmanship, style, and attention to detail.",
+    "Crafting the brand for Dalen Belts — where fashion meets function. Rich textures, elegant motion, and a timeless aesthetic."
+  ],
+  "EATFESTO": [
+    "A food and dining brand that celebrates flavor and community. Warm visuals, rich colors, and content that makes your mouth water.",
+    "Designing the EatFesto brand — where every meal becomes an experience. Authentic, appetizing, and full of culinary passion."
+  ],
+  "TEZZO": [
+    "A modern lifestyle brand with contemporary sensibilities. Sleek visuals, lifestyle-driven content, and a brand identity that resonates with the modern consumer.",
+    "Building the Tezzo brand universe — where modern living meets creative expression. Sophisticated, stylish, and effortlessly cool."
+  ],
+  "NIKE": [
+    "World-class sportswear content for the iconic Nike brand. High-energy visuals, powerful storytelling, and athletic aesthetics that inspire movement.",
+    "Crafting premium content for Nike — where performance meets style. Dynamic motion, bold compositions, and the spirit of athletic excellence."
+  ],
+  "PROSKIRE": [
+    "Performance-driven brand content for Proskire. A visual identity built for athletes and achievers — bold, energetic, and results-focused.",
+    "Designing the Proskire brand experience — where performance meets lifestyle. High-impact visuals and an empowering brand narrative."
+  ],
+  "RELANCE": [
+    "A contemporary consumer brand brought to life through modern design and authentic storytelling. Fresh perspectives, bold choices, and genuine connections.",
+    "Building the Relance brand — where contemporary design meets consumer culture. Clean, confident, and unmistakably modern."
+  ],
+  "KERASTASE": [
+    "Premium haircare branding for the luxury Kerastase line. Elegant visuals, sophisticated motion, and a brand identity worthy of salon excellence.",
+    "Crafting the visual world for Kerastase — where science meets luxury beauty. Refined aesthetics, premium textures, and aspirational content."
+  ],
+  "MEDICINE MAMA": [
+    "Natural beauty branding rooted in authenticity. A warm, earthy brand identity for Medicine Mama — celebrating the power of natural skincare.",
+    "Designing the Medicine Mama brand — where nature meets nurturing. Organic visuals, gentle motion, and a brand that feels like home."
+  ],
+  "KORA ORGANIC": [
+    "Organic skincare branding with a wellness-first approach. Clean, natural visuals for KORA Organics — promoting beauty from the inside out.",
+    "Crafting the KORA Organics brand experience — where organic luxury meets mindful beauty. Pure, radiant, and sustainably elegant."
+  ],
+  "DIOR": [
+    "Luxury fashion content for the legendary Dior house. Timeless elegance, haute couture aesthetics, and a visual language of pure sophistication.",
+    "Designing premium content for Dior — where heritage meets modern luxury. Refined beauty, artistic vision, and iconic brand storytelling."
+  ],
+  "CARATLANE": [
+    "Modern jewelry branding that celebrates everyday sparkle. A fresh, approachable brand identity for CaratLane — making fine jewelry accessible and exciting.",
+    "Crafting the CaratLane brand — where modern jewelry meets digital innovation. Brilliant visuals, warm tones, and content that shines."
+  ],
+  "INSTA360": [
+    "Action camera branding that captures every angle. Bold, dynamic content for Insta360 — showcasing the thrill of immersive storytelling.",
+    "Designing the Insta360 brand experience — where technology meets adventure. 360-degree visuals, dynamic motion, and a brand built for explorers."
+  ],
+  "NOTHING": [
+    "Consumer technology branding with a minimalist edge. The Nothing brand identity — where transparent design meets raw innovation.",
+    "Crafting content for Nothing — a brand that strips tech to its essence. Monochrome aesthetics, transparent elements, and bold simplicity."
+  ],
+  "CAFE": [
+    "Cafe lifestyle content that captures the warmth and atmosphere of specialty coffee. Rich tones, cozy aesthetics, and a brand that feels like home.",
+    "Designing cafe content — where every cup tells a story. Warm lighting, artisan details, and an atmosphere you can almost smell."
+  ],
+  "REVOLVYN": [
+    "The REVOLVYN creative studio brand — where vision meets execution. A bold, distinctive identity that showcases our passion for exceptional design.",
+    "Crafting our own brand story. REVOLVYN represents the intersection of creativity, strategy, and stunning visual execution.",
+    "Our studio, our craft. REVOLVYN — delivering world-class branding and digital experiences for forward-thinking brands."
+  ]
+};
 
-		document.title = `${currentProject.title} — REVOLVYN`;
+const commentBank = [
+  { author: "Alex Morgan", avatar: "A", color: "#f87171", texts: [
+    "This is absolutely incredible work! The attention to detail is unmatched.",
+    "The creative direction here is next level. Pure art.",
+    "I keep coming back to watch this. So well executed.",
+    "The pacing and visual flow is perfect. Bravo!",
+    "This sets a new standard. Absolutely phenomenal."
+  ]},
+  { author: "Sarah Chen", avatar: "S", color: "#60a5fa", texts: [
+    "The color grading is chef's kiss. Everything pops perfectly.",
+    "Love how this captures the brand essence so well.",
+    "This is what professional content looks like. Stunning.",
+    "The motion graphics are incredibly smooth. Great work!",
+    "Every frame could be a poster. Insane quality."
+  ]},
+  { author: "Marcus Rivera", avatar: "M", color: "#34d399", texts: [
+    "The storytelling in this video is so compelling.",
+    "From concept to execution - this is masterclass level.",
+    "The energy and vibe of this is exactly right. Perfect mood.",
+    "Clean transitions, great music sync, wonderful overall.",
+    "This has such a premium feel. The quality shines through."
+  ]},
+  { author: "Priya Kapoor", avatar: "P", color: "#fbbf24", texts: [
+    "The brand identity comes through so strongly here. Love it!",
+    "This is the kind of content that makes people stop scrolling.",
+    "Visually stunning. The composition is really well thought out.",
+    "Great use of color and contrast. Really draws the eye.",
+    "The production value on this is through the roof."
+  ]},
+  { author: "James Wilson", avatar: "J", color: "#f472b6", texts: [
+    "This video tells a complete story in such a short time. Impressive.",
+    "The quality of work keeps getting better and better.",
+    "Really love the aesthetic choices here. Everything feels intentional.",
+    "This is how you showcase a brand. Top notch work.",
+    "The smooth transitions really make this stand out. Great editing."
+  ]},
+  { author: "Meera Singh", avatar: "M", color: "#818cf8", texts: [
+    "Absolutely mesmerizing. The visual quality is outstanding.",
+    "Each shot is carefully crafted. You can see the expertise.",
+    "The rhythm and flow keeps you engaged from start to finish.",
+    "This is high-end creative work. Really impressive execution.",
+    "Love the attention to detail in every single frame."
+  ]},
+  { author: "David Park", avatar: "D", color: "#fb923c", texts: [
+    "The way light and shadow are used here is masterful.",
+    "This has such a cinematic quality to it. Beautiful work.",
+    "The creative vision behind this is crystal clear. Love it.",
+    "Incredible how much story is packed into this short format.",
+    "The production quality rivals major agency work."
+  ]},
+  { author: "Aisha Rahman", avatar: "A", color: "#2dd4bf", texts: [
+    "This is gold standard content creation. Everything is on point.",
+    "The brand storytelling here is so authentic and powerful.",
+    "Really dig the visual language used throughout this piece.",
+    "This video has such a strong identity. Incredible work!",
+    "The motion design elements add so much depth. Brilliant!"
+  ]},
+  { author: "Ryan O'Brien", avatar: "R", color: "#a78bfa", texts: [
+    "Clean, modern, and impactful. Exactly what great content should be.",
+    "The cinematography here is really top-notch. Every shot counts.",
+    "This is the kind of work that inspires other creators.",
+    "Love how the music and visuals complement each other.",
+    "The pacing is spot on. Keeps you hooked the entire time."
+  ]},
+  { author: "Zara Khan", avatar: "Z", color: "#e879f9", texts: [
+    "The visual storytelling here is absolutely captivating.",
+    "Such a polished final product. You can see the dedication.",
+    "This has such a distinctive style. Really memorable.",
+    "The attention to color palette and mood is exceptional.",
+    "This is creative work at its finest."
+  ]},
+  { author: "Nathan Lee", avatar: "N", color: "#38bdf8", texts: [
+    "This video has incredible energy. The whole vibe is perfect.",
+    "The transitions are so smooth - great technical execution.",
+    "Really love how the brand personality shines through.",
+    "This is exactly the kind of content that makes an impact.",
+    "Outstanding work. The quality is consistently excellent."
+  ]},
+  { author: "Elena Volkov", avatar: "E", color: "#fb7185", texts: [
+    "The artistic direction here is phenomenal. So visually rich.",
+    "This is what happens when talent meets great direction.",
+    "Every detail has been considered. The result is spectacular.",
+    "The dynamic range and visual depth is really impressive.",
+    "This video is a masterclass in brand content creation."
+  ]}
+];
 
-		document.getElementById('brandTag').textContent = currentProject.brand;
-		document.getElementById('projectTitle').textContent = currentProject.title;
-		document.getElementById('projectDesc').textContent = currentProject.desc;
-		document.getElementById('detailClient').textContent = currentProject.brand;
-		document.getElementById('detailCategory').textContent = currentProject.category;
-		document.getElementById('detailServices').textContent = currentProject.services;
+let currentIndex = 0;
+let descExpanded = false;
+let liked = false;
+let disliked = false;
+let currentProject = null;
+let baseLikeCount = 0;
 
-		const videoPanel = document.getElementById('videoPanel');
-		const videoLayout = document.querySelector('.video-layout');
-		if (currentProject.orient === 'portrait') {
-			videoPanel.classList.add('portrait-mode');
-		} else {
-			videoPanel.classList.add('landscape-mode');
-		}
+function seededRandom(seed) {
+  let x = Math.sin(seed * 9301 + 49297) * 49297;
+  return x - Math.floor(x);
+}
 
-		const mainVideo = document.getElementById('mainVideo');
-		const progressFill = document.getElementById('progressFill');
-		const timeDisplay = document.getElementById('timeDisplay');
-		const playIcon = document.getElementById('playIcon');
-		const pauseIcon = document.getElementById('pauseIcon');
-		const unmuteIcon = document.getElementById('unmuteIcon');
-		const muteIcon = document.getElementById('muteIcon');
-		let isPlaying = false;
-		let isMuted = false;
+function getParam(name) {
+  return new URLSearchParams(window.location.search).get(name) || '';
+}
 
-		mainVideo.src = currentProject.video;
-		mainVideo.muted = false;
+function smoothNavigate(url) {
+  document.body.style.opacity = '0';
+  document.body.style.transition = 'opacity 0.3s';
+  setTimeout(() => { window.location.href = url; }, 300);
+}
 
-		mainVideo.addEventListener('canplay', () => {
-			mainVideo.classList.add('loaded');
-			mainVideo.play().catch(() => {});
-			isPlaying = true;
-			playIcon.style.display = 'none';
-			pauseIcon.style.display = 'block';
-		}, { once: true });
+function buildUrl(p, idx) {
+  return 'video.html?brand=' + encodeURIComponent(p.brand) + '&title=' + encodeURIComponent(p.brand) + '&desc=' + encodeURIComponent(p.desc) + '&video=' + encodeURIComponent(p.video) + '&orient=' + p.orient + '&index=' + idx;
+}
 
-		mainVideo.addEventListener('timeupdate', () => {
-			if (mainVideo.duration) {
-				const pct = (mainVideo.currentTime / mainVideo.duration) * 100;
-				progressFill.style.width = pct + '%';
-				timeDisplay.textContent = formatTime(mainVideo.currentTime) + ' / ' + formatTime(mainVideo.duration);
-			}
-		});
+function navigateProject(direction) {
+  const newIndex = currentIndex + direction;
+  if (newIndex >= 0 && newIndex < projects.length) {
+    smoothNavigate(buildUrl(projects[newIndex], newIndex));
+  }
+}
 
-		function formatTime(s) {
-			const m = Math.floor(s / 60);
-			const sec = Math.floor(s % 60);
-			return m + ':' + (sec < 10 ? '0' : '') + sec;
-		}
+function togglePlay() {
+  const video = document.getElementById('mainVideo');
+  const bigPlay = document.getElementById('bigPlayBtn');
+  const playPause = document.getElementById('playPauseBtn');
+  if (video.paused) {
+    video.play().then(() => {
+      bigPlay.classList.add('hidden');
+      playPause.innerHTML = '&#9646;&#9646;';
+    }).catch(() => {
+      video.muted = true;
+      video.play().then(() => {
+        bigPlay.classList.add('hidden');
+        playPause.innerHTML = '&#9646;&#9646;';
+        document.getElementById('muteBtn').innerHTML = '&#128263;';
+      }).catch(()=>{});
+    });
+  } else {
+    video.pause();
+    bigPlay.classList.remove('hidden');
+    playPause.innerHTML = '&#9654;';
+  }
+}
 
-		function togglePlay() {
-			if (isPlaying) {
-				mainVideo.pause();
-				playIcon.style.display = 'block';
-				pauseIcon.style.display = 'none';
-				isPlaying = false;
-			} else {
-				mainVideo.play().catch(() => {});
-				playIcon.style.display = 'none';
-				pauseIcon.style.display = 'block';
-				isPlaying = true;
-			}
-		}
+function toggleMute() {
+  const video = document.getElementById('mainVideo');
+  video.muted = !video.muted;
+  document.getElementById('muteBtn').innerHTML = video.muted ? '&#128263;' : '&#128266;';
+}
 
-		function toggleMute() {
-			isMuted = !isMuted;
-			mainVideo.muted = isMuted;
-			unmuteIcon.style.display = isMuted ? 'block' : 'none';
-			muteIcon.style.display = isMuted ? 'none' : 'block';
-		}
+function seekVideo(e) {
+  const video = document.getElementById('mainVideo');
+  const bar = document.getElementById('progressBar');
+  const rect = bar.getBoundingClientRect();
+  video.currentTime = ((e.clientX - rect.left) / rect.width) * video.duration;
+}
 
-		function seekVideo(e) {
-			const bar = document.getElementById('progressBar');
-			const rect = bar.getBoundingClientRect();
-			const pct = (e.clientX - rect.left) / rect.width;
-			mainVideo.currentTime = pct * mainVideo.duration;
-		}
+function toggleFullscreen() {
+  const wrapper = document.getElementById('videoWrapper');
+  if (!document.fullscreenElement) wrapper.requestFullscreen().catch(()=>{});
+  else document.exitFullscreen();
+}
 
-		function toggleFullscreen() {
-			const el = videoPanel;
-			const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement;
-			if (!isFullscreen) {
-				if (el.requestFullscreen) el.requestFullscreen();
-				else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-			} else {
-				if (document.exitFullscreen) document.exitFullscreen();
-				else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-			}
-		}
+function toggleLike() { liked = !liked; if (liked) disliked = false; updateLikeUI(); }
+function toggleDislike() { disliked = !disliked; if (disliked) liked = false; updateLikeUI(); }
 
-		document.getElementById('prevLink').onclick = (e) => {
-			e.preventDefault();
-			const prevIdx = (currentIndex - 1 + allProjects.length) % allProjects.length;
-			const p = allProjects[prevIdx];
-			smoothNavigate('video.html?' + new URLSearchParams({
-				brand: p.brand, title: p.title, desc: p.desc,
-				video: p.video, orient: p.orient, index: String(prevIdx)
-			}).toString());
-		};
-		document.getElementById('nextLink').onclick = (e) => {
-			e.preventDefault();
-			const nextIdx = (currentIndex + 1) % allProjects.length;
-			const n = allProjects[nextIdx];
-			smoothNavigate('video.html?' + new URLSearchParams({
-				brand: n.brand, title: n.title, desc: n.desc,
-				video: n.video, orient: n.orient, index: String(nextIdx)
-			}).toString());
-		};
+function updateLikeUI() {
+  document.getElementById('likeBtn').classList.toggle('active', liked);
+  document.getElementById('dislikeBtn').classList.toggle('active', disliked);
+  document.getElementById('likeCount').textContent = liked ? (baseLikeCount + 1) : baseLikeCount;
+}
 
-		const prevProject = allProjects[(currentIndex - 1 + allProjects.length) % allProjects.length];
-		const nextProject = allProjects[(currentIndex + 1) % allProjects.length];
-		document.getElementById('prevBrand').textContent = prevProject.brand;
-		document.getElementById('nextBrand').textContent = nextProject.brand;
+function shareVideo() {
+  const url = window.location.href;
+  const title = currentProject ? currentProject.brand : 'REVOLVYN';
+  if (navigator.share) {
+    navigator.share({ title: title, url: url }).catch(() => {});
+  } else if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(() => showShareToast()).catch(() => fallbackCopy(url));
+  } else {
+    fallbackCopy(url);
+  }
+}
+function fallbackCopy(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text; ta.style.position = 'fixed'; ta.style.left = '-9999px';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); showShareToast(); } catch(e) {}
+  document.body.removeChild(ta);
+}
+function showShareToast() {
+  let toast = document.getElementById('shareToast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'shareToast';
+    toast.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(230,245,120,0.95);color:#000;padding:10px 24px;border-radius:8px;font-size:14px;font-weight:600;z-index:9999;opacity:0;transition:opacity 0.3s;pointer-events:none;';
+    document.body.appendChild(toast);
+  }
+  toast.textContent = 'Link copied!';
+  toast.style.opacity = '1';
+  setTimeout(() => { toast.style.opacity = '0'; }, 2000);
+}
 
-		const revealObserver = new IntersectionObserver((entries) => {
-			entries.forEach(entry => {
-				if (entry.isIntersecting) {
-					entry.target.classList.add('revealed');
-					revealObserver.unobserve(entry.target);
-				}
-			});
-		}, { threshold: 0.1, rootMargin: '50px 0px' });
+function toggleDesc() {
+  descExpanded = !descExpanded;
+  document.getElementById('descBox').classList.toggle('expanded', descExpanded);
+  document.getElementById('descToggle').textContent = descExpanded ? 'Show less' : 'Show more';
+}
 
-		document.querySelectorAll('.detail-row').forEach(item => revealObserver.observe(item));
-	</script>
+function handleCommentKey(e) {
+  if (e.key === 'Enter') {
+    const input = document.getElementById('commentInput');
+    const text = input.value.trim();
+    if (text) {
+      addComment('You', 'Y', 'linear-gradient(135deg,#e6f578,#b4dc64)', 'Just now', text);
+      input.value = '';
+    }
+  }
+}
+
+function addComment(author, avatar, color, time, text) {
+  const container = document.getElementById('commentsContainer');
+  container.insertAdjacentHTML('afterbegin', `<div class="comment-item">
+    <div class="comment-avatar" style="background:${color}">${avatar}</div>
+    <div class="comment-body">
+      <span class="comment-author">${author}<span class="comment-time">${time}</span></span>
+      <div class="comment-text">${text.replace(/</g,'&lt;')}</div>
+      <div class="comment-actions">
+        <button class="comment-action-btn"><svg viewBox="0 0 24 24"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 2 7.59 8.59C7.22 8.95 7 9.45 7 10v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg></button>
+        <button class="comment-action-btn">Reply</button>
+      </div>
+    </div>
+  </div>`);
+  document.getElementById('commentCount').textContent = container.querySelectorAll('.comment-item').length;
+}
+
+function formatTime(s) {
+  if (isNaN(s)) return '0:00';
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return m + ':' + (sec < 10 ? '0' : '') + sec;
+}
+
+function toggleMobileMenu() {
+  const h = document.getElementById('navHamburger');
+  const o = document.getElementById('navMobileOverlay');
+  h.classList.toggle('open'); o.classList.toggle('open');
+}
+document.addEventListener('DOMContentLoaded', () => {
+  const h = document.getElementById('navHamburger');
+  const o = document.getElementById('navMobileOverlay');
+  h.addEventListener('click', toggleMobileMenu);
+  o.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { h.classList.remove('open'); o.classList.remove('open'); }));
+});
+
+function renderSidebarItems(containerId, isMobile) {
+  const container = document.getElementById(containerId);
+  const related = projects.filter((_, i) => i !== currentIndex);
+  container.innerHTML = related.map((p) => {
+    const origIdx = projects.indexOf(p);
+    return `<div class="sidebar-item" data-index="${origIdx}">
+      <div class="sidebar-thumb">
+        <canvas width="336" height="188" decoding="async"></canvas>
+        <video muted loop preload="none" data-src="${p.video}"></video>
+      </div>
+      <div class="sidebar-item-info">
+        <div class="sidebar-item-title">${p.brand}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const items = container.querySelectorAll('.sidebar-item');
+  const thumbQueue = [];
+  let processing = false;
+
+  items.forEach(item => {
+    const idx = parseInt(item.dataset.index);
+    const vid = item.querySelector('video');
+    const cvs = item.querySelector('canvas');
+    const ctx = cvs.getContext('2d');
+    let thumbReady = false;
+    let glimpseInterval = null;
+
+    item.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      smoothNavigate(buildUrl(projects[idx], idx) + '&autoplay=1');
+    });
+
+    item.addEventListener('mouseenter', () => {
+      if (thumbReady) {
+        vid.currentTime = 0;
+        vid.play().catch(()=>{});
+        glimpseInterval = setInterval(() => { vid.pause(); }, 1800);
+        return;
+      }
+      if (!vid.dataset.src) return;
+      vid.src = vid.dataset.src;
+      vid.load();
+      vid.addEventListener('loadeddata', function onLoadData() {
+        vid.removeEventListener('loadeddata', onLoadData);
+        vid.currentTime = Math.min(vid.duration * 0.35, 2);
+      });
+      vid.addEventListener('seeked', function onSeeked() {
+        vid.removeEventListener('seeked', onSeeked);
+        try {
+          ctx.drawImage(vid, 0, 0, cvs.width, cvs.height);
+          thumbReady = true;
+          vid.currentTime = 0;
+          vid.play().catch(()=>{});
+          glimpseInterval = setInterval(() => { vid.pause(); }, 1800);
+        } catch(e) {}
+      });
+    });
+
+    item.addEventListener('mouseleave', () => {
+      if (glimpseInterval) { clearInterval(glimpseInterval); glimpseInterval = null; }
+      vid.pause();
+      if (!thumbReady) { vid.removeAttribute('src'); vid.load(); }
+      else { vid.currentTime = 0; }
+    });
+
+    thumbQueue.push({ item, vid, cvs, ctx, thumbReady: () => thumbReady });
+  });
+
+  function processQueue() {
+    if (processing || thumbQueue.length === 0) return;
+    processing = true;
+    const entry = thumbQueue.shift();
+    if (entry.thumbReady()) { processing = false; processQueue(); return; }
+    if (!entry.vid.dataset.src) { processing = false; processQueue(); return; }
+
+    entry.vid.src = entry.vid.dataset.src;
+    entry.vid.load();
+    entry.vid.addEventListener('loadeddata', function onLD() {
+      entry.vid.removeEventListener('loadeddata', onLD);
+      entry.vid.currentTime = Math.min(entry.vid.duration * 0.35, 2);
+    });
+    entry.vid.addEventListener('seeked', function onSK() {
+      entry.vid.removeEventListener('seeked', onSK);
+      try { entry.ctx.drawImage(entry.vid, 0, 0, entry.cvs.width, entry.cvs.height); } catch(e) {}
+      entry.vid.removeAttribute('src');
+      entry.vid.load();
+      processing = false;
+      setTimeout(processQueue, 80);
+    });
+    entry.vid.addEventListener('error', function onER() {
+      entry.vid.removeEventListener('error', onER);
+      processing = false;
+      setTimeout(processQueue, 200);
+    });
+  }
+
+  if (!isMobile) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) processQueue(); });
+    }, { root: document.getElementById('sidebarContainer'), rootMargin: '200px' });
+    observer.observe(container);
+    processQueue();
+  }
+}
+
+function loadProject() {
+  const idx = parseInt(getParam('index')) || 0;
+  currentIndex = Math.min(idx, projects.length - 1);
+  currentProject = projects[currentIndex];
+
+  document.getElementById('videoTitle').textContent = currentProject.brand;
+  baseLikeCount = Math.floor(seededRandom(currentIndex + 1) * 800) + 20;
+  liked = false;
+  disliked = false;
+  updateLikeUI();
+
+  document.getElementById('descMeta').innerHTML = `${Math.floor(seededRandom(currentIndex + 100) * 45000) + 500} views`;
+
+  const descs = descBank[currentProject.brand] || [currentProject.desc];
+  const descIdx = Math.floor(seededRandom(currentIndex + 70) * descs.length);
+  document.getElementById('descText').textContent = descs[descIdx];
+
+  const tags = [currentProject.brand.toLowerCase(), currentProject.orient, 'branding', 'design'];
+  document.getElementById('descTags').innerHTML = tags.map(t => `<span class="desc-tag">#${t}</span>`).join('');
+
+  const video = document.getElementById('mainVideo');
+  const loadingEl = document.getElementById('videoLoading');
+  const errorEl = document.getElementById('videoError');
+  const bigPlay = document.getElementById('bigPlayBtn');
+
+  loadingEl.classList.remove('hidden');
+  loadingEl.querySelector('span').textContent = 'Loading video...';
+  errorEl.style.display = 'none';
+  bigPlay.classList.add('hidden');
+  video.removeAttribute('src');
+  video.load();
+
+  video.src = currentProject.video;
+
+  video.oncanplay = function() {
+    loadingEl.classList.add('hidden');
+    bigPlay.classList.remove('hidden');
+    video.oncanplay = null;
+    if (getParam('autoplay') === '1') {
+      video.play().then(() => {
+        bigPlay.classList.add('hidden');
+        document.getElementById('playPauseBtn').innerHTML = '&#9646;&#9646;';
+      }).catch(() => {
+        video.muted = true;
+        video.play().then(() => {
+          bigPlay.classList.add('hidden');
+          document.getElementById('playPauseBtn').innerHTML = '&#9646;&#9646;';
+          document.getElementById('muteBtn').innerHTML = '&#128263;';
+        }).catch(()=>{});
+      });
+    }
+  };
+
+  video.onerror = function() {
+    loadingEl.classList.add('hidden');
+    errorEl.style.display = 'block';
+    video.onerror = null;
+  };
+
+  document.getElementById('overlayPrev').disabled = currentIndex <= 0;
+  document.getElementById('overlayNext').disabled = currentIndex >= projects.length - 1;
+
+  const commentsContainer = document.getElementById('commentsContainer');
+  commentsContainer.innerHTML = '';
+  const numComments = Math.floor(seededRandom(currentIndex + 50) * 6) + 2;
+  const usedComments = new Set();
+  for (let i = 0; i < numComments; i++) {
+    const bankIdx = Math.floor(seededRandom(currentIndex * 100 + i) * commentBank.length);
+    const bank = commentBank[bankIdx];
+    const textIdx = Math.floor(seededRandom(currentIndex * 200 + i) * bank.texts.length);
+    const key = bankIdx + '-' + textIdx;
+    if (usedComments.has(key)) continue;
+    usedComments.add(key);
+    const timeAgo = ['1 day ago', '3 days ago', '1 week ago', '2 weeks ago', '1 month ago', 'Just now'][Math.floor(seededRandom(currentIndex * 300 + i) * 6)];
+    addComment(bank.author, bank.avatar, bank.color, timeAgo, bank.texts[textIdx]);
+  }
+
+  renderSidebarItems('sidebarContainer', false);
+  renderSidebarItems('mobileMoreContainer', true);
+
+  video.ontimeupdate = function() {
+    if (video.duration) {
+      document.getElementById('progressFill').style.width = ((video.currentTime / video.duration) * 100) + '%';
+      document.getElementById('timeDisplay').textContent = formatTime(video.currentTime) + ' / ' + formatTime(video.duration);
+    }
+  };
+
+  video.onended = function() {
+    document.getElementById('bigPlayBtn').classList.remove('hidden');
+    document.getElementById('playPauseBtn').innerHTML = '&#9654;';
+  };
+
+  video.onclick = togglePlay;
+}
+
+document.addEventListener('DOMContentLoaded', loadProject);
+</script>
 </body>
 </html>

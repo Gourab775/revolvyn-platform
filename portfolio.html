@@ -1,9 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-	<title>Portfolio — REVOLVYN</title>
+	<title>Portfolio â€” REVOLVYN</title>
+<link rel="icon" href="favicon.png" type="image/png">
 	<style>
 		@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
 		*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -348,7 +349,7 @@
 				index: String(i)
 			}).toString();
 
-			item.onclick = () => smoothNavigate('video.html?' + params);
+			item.onclick = () => smoothNavigate('video.html?' + params + '&autoplay=1');
 
 			const preload = i < 6 ? 'auto' : 'none';
 			const srcAttr = i < 6 ? `src="${project.video}"` : '';
@@ -439,3 +440,4 @@
 	</footer>
 </body>
 </html>
+
