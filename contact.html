@@ -12,6 +12,7 @@
 			width: 100%; min-height: 100%; background: #000;
 			overflow-x: hidden; font-family: 'Inter', system-ui, sans-serif;
 			color: #e8ece4; scrollbar-width: none; -ms-overflow-style: none;
+			-webkit-touch-callout: none; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;
 		}
 		html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
 		/* Page transition overlay */
@@ -21,7 +22,7 @@
 			transition: opacity 0.2s ease;
 		}
 		.page-transition.active { opacity: 1; }
-		will-change: transform; }
+.nav-float { position: fixed; top: 24px; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: 0 40px; z-index: 100; pointer-events: none; }
 		.nav-logo { font-family: 'Playfair Display', serif; font-size: 18px; color: rgba(245, 250, 230, 0.8); letter-spacing: 1px; pointer-events: auto; cursor: pointer; }
 		.nav-links { display: flex; gap: 28px; pointer-events: auto; }
 		.nav-links a { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: rgba(215, 230, 190, 0.55); text-decoration: none; transition: color 0.3s; font-weight: 500; }
@@ -31,7 +32,7 @@
 		.nav-hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
 		.nav-hamburger.open span:nth-child(2) { opacity: 0; }
 		.nav-hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
-		will-change: opacity; transition: opacity 0.3s ease; }
+.nav-mobile-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(8, 12, 5, 0.95); z-index: 99; flex-direction: column; align-items: center; justify-content: center; gap: 32px; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
 		.nav-mobile-overlay.open { opacity: 1; pointer-events: auto; }
 		.nav-mobile-overlay a { font-size: 14px; letter-spacing: 3px; text-transform: uppercase; color: rgba(215, 230, 190, 0.7); text-decoration: none; transition: color 0.3s; font-weight: 500; }
 		.nav-mobile-overlay a:hover { color: rgba(230, 245, 120, 0.95); }
@@ -318,6 +319,8 @@
 	</script>
 </body>
 </html>
+
+
 
 
 

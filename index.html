@@ -9,19 +9,14 @@
 		@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
 
 		*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
 		html, body {
-			width: 100%;
-			min-height: 100%;
-			background: #000;
-			overflow-x: hidden;
-			font-family: 'Inter', system-ui, sans-serif;
-			color: #e8ece4;
-			scrollbar-width: none;
-			-ms-overflow-style: none;
-			-webkit-font-smoothing: antialiased;
-			-moz-osx-font-smoothing: grayscale;
+			width: 100%; min-height: 100%; background: #000; overflow-x: hidden;
+			font-family: 'Inter', system-ui, sans-serif; color: #e8ece4;
+			scrollbar-width: none; -ms-overflow-style: none;
+			-webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+			-webkit-touch-callout: none; user-select: none; -webkit-user-select: none;
 		}
+		input, textarea, [contenteditable] { user-select: auto; -webkit-user-select: auto; }
 		html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
 
 		.gpu-accelerated {
@@ -1918,4 +1913,5 @@ font-weight: 600;
 	</script>
 </body>
 </html>
+
 

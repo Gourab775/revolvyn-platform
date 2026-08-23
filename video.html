@@ -16,7 +16,7 @@ a { text-decoration: none; color: inherit; }
 button { border: none; cursor: pointer; font-family: inherit; }
 
 ::-webkit-scrollbar { width: 0; height: 0; }
-* { scrollbar-width: none; -ms-overflow-style: none; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; }
+* { scrollbar-width: none; -ms-overflow-style: none; -webkit-touch-callout: none; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; }
 ::selection { background: transparent; }
 input, textarea { user-select: text; -webkit-user-select: text; }
 
@@ -179,10 +179,6 @@ input, textarea { user-select: text; -webkit-user-select: text; }
 }
 
 /* GPU Acceleration Global */
-.gpu-layer {}
-.page-transition { will-change: opacity, transform;
-}
-will-change: transform; }
 @keyframes fadeInUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes marqueeScroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }

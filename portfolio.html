@@ -8,11 +8,8 @@
 	<style>
 		@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
 		*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-		html, body {
-			width: 100%; min-height: 100%; background: #000;
-			overflow-x: hidden; font-family: 'Inter', system-ui, sans-serif;
-			color: #e8ece4; scrollbar-width: none; -ms-overflow-style: none;
-		}
+		html, body { width: 100%; min-height: 100%; background: #000; overflow-x: hidden; font-family: 'Inter', system-ui, sans-serif; color: #e8ece4; scrollbar-width: none; -webkit-touch-callout: none; user-select: none; -webkit-user-select: none; }
+		input, textarea, [contenteditable] { user-select: auto; -webkit-user-select: auto; }
 		html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
 
 		.page-transition {
@@ -233,7 +230,7 @@ transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
 .gpu-layer {}
 .page-transition { will-change: opacity, transform;
 }
-will-change: transform; }
+.nav-float { position: fixed; top: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; z-index: 100; pointer-events: none; }
 @keyframes fadeInUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes marqueeScroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
@@ -448,6 +445,9 @@ will-change: transform; }
 	</footer>
 </body>
 </html>
+
+
+
 
 
 
