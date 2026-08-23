@@ -993,32 +993,26 @@ font-weight: 600;
 		import { dof } from 'three/addons/tsl/display/DepthOfFieldNode.js';
 
 		const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || innerWidth < 768;
+		// Force dedicated GPU — always request high-performance when not low-end.
+		// 'powerPreference: high-performance' is the API that tells the browser
+		// to use the dedicated GPU (NVIDIA/AMD) instead of integrated (Intel/UHD).
+		// Browser decides which adapter to use — if dedicated exists, it picks that.
 		const isLowEnd = isMobile || (navigator.deviceMemory && navigator.deviceMemory < 4) || (navigator.hardwareConcurrency && navigator.hardwareConcurrency < 4);
+		const powerPref = isLowEnd ? 'low-power' : 'high-performance';
 
-		// Detect GPU capability — dedicated vs integrated
-		async function detectGPU() {
+		// Warm up a WebGL context with high-performance to force browser GPU init
+		(function warmGPU() {
 			try {
-				if (navigator.gpu) {
-					const adapter = await navigator.gpu.requestAdapter({ powerPreference: 'high-performance' });
-					if (adapter) return { type: 'webgpu', dedicated: adapter.deviceType === 'discrete-gpu' || adapter.features.size > 10 };
-				}
-			} catch (e) {}
-			try {
-				const testCanvas = document.createElement('canvas');
-				const gl = testCanvas.getContext('webgl2') || testCanvas.getContext('webgl');
+				const c = document.createElement('canvas');
+				const gl = c.getContext('webgl2', { powerPreference: 'high-performance', desynchronized: true })
+					|| c.getContext('webgl', { powerPreference: 'high-performance' });
 				if (gl) {
-					const dbg = gl.getExtension('WEBGL_debug_renderer_info');
-					const gpuRenderer = dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : '';
-					const isDedicated = /NVIDIA|RTX|GTX|Radeon|GeForce|AMD|Discrete/i.test(gpuRenderer);
+					const ext = gl.getExtension('WEBGL_debug_renderer_info');
+					if (ext) console.log('GPU:', gl.getParameter(ext.UNMASKED_RENDERER_WEBGL));
 					gl.getExtension('WEBGL_lose_context')?.loseContext();
-					return { type: 'webgl', dedicated: isDedicated, renderer: gpuRenderer };
 				}
 			} catch (e) {}
-			return { type: 'software', dedicated: false };
-		}
-
-		const gpuInfo = await detectGPU();
-		const powerPref = gpuInfo.dedicated ? 'high-performance' : 'low-power';
+		})();
 
 		// Promote visible videos to GPU compositor layer for smooth playback
 		const _videoObserver = new IntersectionObserver((entries) => {
