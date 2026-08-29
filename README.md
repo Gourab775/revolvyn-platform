@@ -1,6 +1,6 @@
 # REVOLVYN — Next-Gen Digital Marketing Showcase
 
-Live Demo: https://gourab775.github.io/REVOLVYN
+Live Demo: https://revolvyn-site.vercel.app
 
 Category: Creative Agency / Brand Showcase Platform
 
@@ -67,7 +67,7 @@ Requirements: modern browser with WebGPU/WebGL2 for the field effect; gracefully
 
 Static output — copy the repository to any host:
 
-- **GitHub Pages** — Push to `main`, enable Pages (root). Live at https://gourab775.github.io/REVOLVYN
+- **GitHub Pages** — Push to `main`, enable Pages (root). Live at https://revolvyn-site.vercel.app
 - **Vercel** — Import repo; `vercel.json` handles routing (`{"rewrites":[{"source":"/(.*)","destination":"/$1"}]}`-style)
 - **Netlify / EdgeOne Pages / S3 + CloudFront** — Drag-and-drop or `npx serve` build not required
 
