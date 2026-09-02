@@ -57,24 +57,28 @@ function estimateInitialTier() {
 	if (score >= 8) return 'ULTRA';
 	if (score >= 5) return 'HIGH';
 	if (score >= 2) return 'MEDIUM';
-	return 'LOW';
+	if (score >= 0) return 'LOW';
+	return 'DIM_LOW';
 }
 
 // --- Quality Tiers ---
+// All tiers use BLADE_COUNT blades covering the same field area.
+// Only rendering parameters change: DPR and DoF bokeh scale.
 const QUALITY_TIERS = {
-	ULTRA: { bladeRenderCount: 120000, dprCap: 2.5, dof: true,  antialias: true,  label: 'ULTRA' },
-	HIGH:  { bladeRenderCount: 100000, dprCap: 2.0, dof: true,  antialias: true,  label: 'HIGH' },
-	MEDIUM:{ bladeRenderCount:  70000, dprCap: 1.5, dof: true,  antialias: true,  label: 'MEDIUM' },
-	LOW:   { bladeRenderCount:  40000, dprCap: 1.0, dof: false, antialias: false, label: 'LOW' },
+	ULTRA:   { dprCap: 2.5, dofBokeh: 12.5, label: 'ULTRA' },
+	HIGH:    { dprCap: 2.0, dofBokeh: 10.0, label: 'HIGH' },
+	MEDIUM:  { dprCap: 1.5, dofBokeh: 7.0,  label: 'MEDIUM' },
+	LOW:     { dprCap: 1.0, dofBokeh: 4.0,  label: 'LOW' },
+	DIM_LOW: { dprCap: 0.75, dofBokeh: 0,   label: 'DIM_LOW' },
 };
-const TIER_ORDER = ['LOW', 'MEDIUM', 'HIGH', 'ULTRA'];
+const TIER_ORDER = ['DIM_LOW', 'LOW', 'MEDIUM', 'HIGH', 'ULTRA'];
 
 // --- Initial Tier ---
 let currentTierName = estimateInitialTier();
 const initialTier = QUALITY_TIERS[currentTierName];
 console.log(`Initial tier: ${currentTierName} | GPU: ${_gpuRenderer || 'unknown'} | Cores: ${navigator.hardwareConcurrency || '?'} | RAM: ${navigator.deviceMemory || '?'} GB`);
 
-const powerPref = currentTierName === 'LOW' ? 'low-power' : 'high-performance';
+const powerPref = (currentTierName === 'LOW' || currentTierName === 'DIM_LOW') ? 'low-power' : 'high-performance';
 
 // --- GPU Warmup ---
 export function warmGPU() {
@@ -193,8 +197,8 @@ const midColor = uniform(new THREE.Color('#2d4e0e'));
 // --- DoF Uniforms ---
 const focusDistanceU = uniform(31.83);
 const focalLengthU = uniform(10.0);
-const bokehScaleU = uniform(12.5);
-let dofEnabled = initialTier.dof;
+const bokehScaleU = uniform(initialTier.dofBokeh);
+let dofEnabled = initialTier.dofBokeh > 0;
 
 // Mouse-world distance for auto-focus
 let mouseFocusDist = 10.0;
@@ -707,7 +711,9 @@ export function updateCamera(cam, dt) {
 
 			focusDistanceU.value += (targetFocus - focusDistanceU.value) * Math.min(1, dt * 8);
 			focalLengthU.value += (cam.fl - focalLengthU.value) * Math.min(1, dt * 6);
-			bokehScaleU.value += (cam.bk - bokehScaleU.value) * Math.min(1, dt * 6);
+			if (!_bokehOverride) {
+				bokehScaleU.value += (cam.bk - bokehScaleU.value) * Math.min(1, dt * 6);
+			}
 		}
 	}
 }
@@ -785,6 +791,10 @@ const HIGH_FPS_THRESHOLD = 62;
 const LOW_FRAMES_TO_STEP_DOWN = 60;
 const HIGH_FRAMES_TO_STEP_UP = 180;
 
+let _pendingTierResize = false;
+
+let _bokehOverride = false;
+
 function applyTier(tierName) {
 	const tier = QUALITY_TIERS[tierName];
 	if (!tier || tierName === currentTierName) return;
@@ -793,18 +803,27 @@ function applyTier(tierName) {
 	currentTierName = tierName;
 
 	renderDpr = Math.min(devicePixelRatio, tier.dprCap);
-	renderer.setPixelRatio(renderDpr);
-	renderer.setSize(innerWidth, innerHeight);
+	_pendingTierResize = true;
 
-	if (tier.dof && !globalDofEnabled) {
+	bokehScaleU.value = tier.dofBokeh;
+	_bokehOverride = true;
+
+	if (tier.dofBokeh > 0 && !globalDofEnabled) {
 		globalDofEnabled = true;
 		if (!dofEnabled) { dofEnabled = true; rebuildPipeline(); }
-	} else if (!tier.dof && globalDofEnabled) {
+	} else if (tier.dofBokeh === 0 && globalDofEnabled) {
 		globalDofEnabled = false;
 		if (dofEnabled) { dofEnabled = false; rebuildPipeline(); }
 	}
 
-	console.log(`Quality: ${prevTier} → ${tierName} | DPR: ${renderDpr.toFixed(1)} | DoF: ${tier.dof} | AvgFPS: ${_avgFps.toFixed(1)}`);
+	console.log(`Quality: ${prevTier} → ${tierName} | DPR: ${renderDpr.toFixed(2)} | DoF: ${tier.dofBokeh > 0 ? 'ON' : 'OFF'} | Bokeh: ${tier.dofBokeh} | AvgFPS: ${_avgFps.toFixed(1)}`);
+}
+
+export function applyPendingResize() {
+	if (!_pendingTierResize) return;
+	_pendingTierResize = false;
+	renderer.setPixelRatio(renderDpr);
+	renderer.setSize(innerWidth, innerHeight);
 }
 
 function checkAdaptation() {
@@ -887,9 +906,9 @@ function updateDebugOverlay() {
 		`CPU: ${navigator.hardwareConcurrency || '?'} cores`,
 		`RAM: ${navigator.deviceMemory || '?'} GB`,
 		`Browser DPR: ${devicePixelRatio}`,
-		`Render DPR: ${renderDpr.toFixed(1)}`,
+		`Render DPR: ${renderDpr.toFixed(2)}`,
 		`Blades: ${grass.count} / ${BLADE_COUNT}`,
-		`DoF: ${dofEnabled ? 'ON' : 'OFF'}`,
+		`DoF: ${dofEnabled ? 'ON' : 'OFF'} (bokeh: ${bokehScaleU.value.toFixed(1)})`,
 		`FPS: ${_currentFps.toFixed(1)}`,
 		`Avg FPS: ${_avgFps.toFixed(1)}`,
 		`Step down in: ${nextStepDown}f`,

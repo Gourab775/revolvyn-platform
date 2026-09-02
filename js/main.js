@@ -1,4 +1,4 @@
-import { warmGPU, initRenderer, bootScene, lerpCam, updateCamera, updateScene, cameraPath, renderer, startQualityMeasurement, updateQuality } from './three-scene.js';
+import { warmGPU, initRenderer, bootScene, lerpCam, updateCamera, updateScene, cameraPath, renderer, startQualityMeasurement, updateQuality, applyPendingResize } from './three-scene.js';
 import { initScrollSync, updateScroll, updateProgressbar, updateScrollHint, updateFooterVisibility } from './scroll.js';
 import { initNavigation } from './navigation.js';
 import { initVideos } from './videos.js';
@@ -52,6 +52,8 @@ const clock = new THREE.Clock();
 
 function animate() {
 	const dt = Math.min(clock.getDelta(), 0.05);
+
+	applyPendingResize();
 
 	const currentScrollT = updateScroll(dt);
 	const cam = lerpCam(currentScrollT);
