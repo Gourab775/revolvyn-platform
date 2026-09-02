@@ -792,10 +792,6 @@ function applyTier(tierName) {
 	const prevTier = currentTierName;
 	currentTierName = tierName;
 
-	renderDpr = Math.min(devicePixelRatio, tier.dprCap);
-	renderer.setPixelRatio(renderDpr);
-	renderer.setSize(innerWidth, innerHeight);
-
 	grass.count = tier.bladeRenderCount;
 
 	if (tier.dof && !globalDofEnabled) {
