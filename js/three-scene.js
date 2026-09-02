@@ -278,7 +278,7 @@ const computeUpdateFn = Fn(() => {
 	bend.w.assign(mix(bend.w, totalPushZ, lm));
 });
 
-let computeUpdate = computeUpdateFn.compute(initialTier.bladeRenderCount);
+let computeUpdate = computeUpdateFn.compute(BLADE_COUNT);
 
 // --- Blade Geometry ---
 function createBladeGeometry() {
@@ -798,7 +798,6 @@ function applyTier(tierName) {
 	renderer.setPixelRatio(renderDpr);
 	renderer.setSize(innerWidth, innerHeight);
 
-	computeUpdate = computeUpdateFn.compute(tier.bladeRenderCount);
 	grass.count = tier.bladeRenderCount;
 
 	if (tier.dof && !globalDofEnabled) {
