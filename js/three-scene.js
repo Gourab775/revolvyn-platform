@@ -359,7 +359,7 @@ grassMat.transparent = true;
 // --- Instances ---
 const bladeGeo = createBladeGeometry();
 const grass = new THREE.InstancedMesh(bladeGeo, grassMat, BLADE_COUNT);
-grass.count = initialTier.bladeRenderCount;
+grass.count = BLADE_COUNT;
 grass.frustumCulled = false;
 scene.add(grass);
 const dummy = new THREE.Object3D();
@@ -792,13 +792,50 @@ function applyTier(tierName) {
 	const prevTier = currentTierName;
 	currentTierName = tierName;
 
-	grass.count = tier.bladeRenderCount;
+	renderDpr = Math.min(devicePixelRatio, tier.dprCap);
+	renderer.setPixelRatio(renderDpr);
+	renderer.setSize(innerWidth, innerHeight);
 
-	console.log(`Quality: ${prevTier} → ${tierName} | Blades: ${tier.bladeRenderCount} | AvgFPS: ${_avgFps.toFixed(1)}`);
+	if (tier.dof && !globalDofEnabled) {
+		globalDofEnabled = true;
+		if (!dofEnabled) { dofEnabled = true; rebuildPipeline(); }
+	} else if (!tier.dof && globalDofEnabled) {
+		globalDofEnabled = false;
+		if (dofEnabled) { dofEnabled = false; rebuildPipeline(); }
+	}
+
+	console.log(`Quality: ${prevTier} → ${tierName} | DPR: ${renderDpr.toFixed(1)} | DoF: ${tier.dof} | AvgFPS: ${_avgFps.toFixed(1)}`);
 }
 
 function checkAdaptation() {
-	return;
+	if (!_measurementActive) return;
+	if (_frameCount < 30) return;
+
+	const now = performance.now();
+	if (now - _lastTierChangeTime < TIER_COOLDOWN_MS) return;
+
+	const currentIdx = TIER_ORDER.indexOf(currentTierName);
+
+	if (_avgFps < LOW_FPS_THRESHOLD && currentIdx > 0) {
+		_consecutiveLowFrames++;
+		_consecutiveHighFrames = 0;
+		if (_consecutiveLowFrames >= LOW_FRAMES_TO_STEP_DOWN) {
+			applyTier(TIER_ORDER[currentIdx - 1]);
+			_consecutiveLowFrames = 0;
+			_lastTierChangeTime = now;
+		}
+	} else if (_avgFps > HIGH_FPS_THRESHOLD && currentIdx < TIER_ORDER.length - 1) {
+		_consecutiveHighFrames++;
+		_consecutiveLowFrames = 0;
+		if (_consecutiveHighFrames >= HIGH_FRAMES_TO_STEP_UP) {
+			applyTier(TIER_ORDER[currentIdx + 1]);
+			_consecutiveHighFrames = 0;
+			_lastTierChangeTime = now;
+		}
+	} else {
+		_consecutiveLowFrames = 0;
+		_consecutiveHighFrames = 0;
+	}
 }
 
 export function startQualityMeasurement() {
