@@ -226,7 +226,7 @@ export const computeInit = Fn(() => {
 })().compute(BLADE_COUNT);
 
 // --- Compute Update ---
-const computeUpdateFn = Fn(() => {
+export const computeUpdate = Fn(() => {
 	const blade = bladeData.element(instanceIndex);
 	const bend = bendState.element(instanceIndex);
 	const bx = blade.x;
@@ -276,9 +276,7 @@ const computeUpdateFn = Fn(() => {
 	const lm = select(targetMag.greaterThan(currentMag), deltaTime.mul(12.0), deltaTime.mul(1)).saturate();
 	bend.z.assign(mix(bend.z, totalPushX, lm));
 	bend.w.assign(mix(bend.w, totalPushZ, lm));
-});
-
-let computeUpdate = computeUpdateFn.compute(BLADE_COUNT);
+})().compute(BLADE_COUNT);
 
 // --- Blade Geometry ---
 function createBladeGeometry() {
