@@ -794,15 +794,7 @@ function applyTier(tierName) {
 
 	grass.count = tier.bladeRenderCount;
 
-	if (tier.dof && !globalDofEnabled) {
-		globalDofEnabled = true;
-		if (!dofEnabled) { dofEnabled = true; rebuildPipeline(); }
-	} else if (!tier.dof && globalDofEnabled) {
-		globalDofEnabled = false;
-		if (dofEnabled) { dofEnabled = false; rebuildPipeline(); }
-	}
-
-	console.log(`Quality: ${prevTier} → ${tierName} | Blades: ${tier.bladeRenderCount} | DPR: ${renderDpr.toFixed(1)} | DoF: ${tier.dof} | AvgFPS: ${_avgFps.toFixed(1)}`);
+	console.log(`Quality: ${prevTier} → ${tierName} | Blades: ${tier.bladeRenderCount} | AvgFPS: ${_avgFps.toFixed(1)}`);
 }
 
 function checkAdaptation() {
