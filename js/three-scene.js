@@ -798,34 +798,7 @@ function applyTier(tierName) {
 }
 
 function checkAdaptation() {
-	if (!_measurementActive) return;
-	if (_frameCount < 30) return;
-
-	const now = performance.now();
-	if (now - _lastTierChangeTime < TIER_COOLDOWN_MS) return;
-
-	const currentIdx = TIER_ORDER.indexOf(currentTierName);
-
-	if (_avgFps < LOW_FPS_THRESHOLD && currentIdx > 0) {
-		_consecutiveLowFrames++;
-		_consecutiveHighFrames = 0;
-		if (_consecutiveLowFrames >= LOW_FRAMES_TO_STEP_DOWN) {
-			applyTier(TIER_ORDER[currentIdx - 1]);
-			_consecutiveLowFrames = 0;
-			_lastTierChangeTime = now;
-		}
-	} else if (_avgFps > HIGH_FPS_THRESHOLD && currentIdx < TIER_ORDER.length - 1) {
-		_consecutiveHighFrames++;
-		_consecutiveLowFrames = 0;
-		if (_consecutiveHighFrames >= HIGH_FRAMES_TO_STEP_UP) {
-			applyTier(TIER_ORDER[currentIdx + 1]);
-			_consecutiveHighFrames = 0;
-			_lastTierChangeTime = now;
-		}
-	} else {
-		_consecutiveLowFrames = 0;
-		_consecutiveHighFrames = 0;
-	}
+	return;
 }
 
 export function startQualityMeasurement() {
