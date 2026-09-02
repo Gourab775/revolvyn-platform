@@ -10,11 +10,10 @@ import { dof } from 'three/addons/tsl/display/DepthOfFieldNode.js';
 // --- Device Detection ---
 export const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || innerWidth < 768;
 export const isLowEnd = isMobile || (navigator.deviceMemory && navigator.deviceMemory < 4) || (navigator.hardwareConcurrency && navigator.hardwareConcurrency < 4);
-const isMidRange = !isLowEnd && !isMobile && ((navigator.deviceMemory && navigator.deviceMemory < 8) || (navigator.hardwareConcurrency && navigator.hardwareConcurrency < 6));
 const powerPref = isLowEnd ? 'low-power' : 'high-performance';
 
 // --- Adaptive Quality Tiers ---
-export const qualityTier = isLowEnd ? 0 : isMidRange ? 1 : 2; // 0=low, 1=mid, 2=high
+export const qualityTier = isLowEnd ? 0 : 2;
 
 // --- GPU Warmup ---
 export function warmGPU() {
@@ -31,7 +30,7 @@ export function warmGPU() {
 }
 
 // --- Constants ---
-const BLADE_COUNT = qualityTier === 0 ? 40000 : qualityTier === 1 ? 80000 : 120000;
+const BLADE_COUNT = 120000;
 const FIELD_SIZE = 30;
 const BACKGROUND_HEX = '#000000';
 const GROUND_HEX = '#000000';
@@ -79,7 +78,7 @@ camera.lookAt(0, 0, 0);
 
 // --- Renderer ---
 export const renderer = new THREE.WebGPURenderer({ antialias: !isLowEnd, powerPreference: powerPref });
-const maxDPR = isLowEnd ? 1.0 : isMidRange ? Math.min(devicePixelRatio, 1.5) : (window.innerWidth < 1200 ? 1.5 : Math.min(devicePixelRatio, 2));
+const maxDPR = window.innerWidth < 1200 ? 1.5 : Math.min(devicePixelRatio, 2);
 renderer.setPixelRatio(maxDPR);
 renderer.setSize(innerWidth, innerHeight);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -336,8 +335,8 @@ const sceneColor = scenePass.getTextureNode('output');
 const sceneViewZ = scenePass.getViewZNode();
 const dofOutput = dof(sceneColor, sceneViewZ, focusDistanceU, focalLengthU, bokehScaleU);
 
-// Disable DoF on low-end devices and reduce bokeh scale on mid-range
-const globalDofEnabledInit = !isLowEnd;
+// Disable DoF on mobile devices
+const globalDofEnabledInit = !isMobile;
 postProcessing.outputNode = globalDofEnabledInit ? dofOutput : sceneColor;
 if (!globalDofEnabledInit) dofEnabled = false;
 postProcessing.needsUpdate = true;
@@ -394,7 +393,7 @@ window.addEventListener('resize', () => {
 	resizeTimeout = setTimeout(() => {
 		camera.aspect = innerWidth / innerHeight;
 		camera.updateProjectionMatrix();
-		const dpr = isLowEnd ? 1.0 : isMidRange ? Math.min(devicePixelRatio, 1.5) : Math.min(devicePixelRatio, 2);
+		const dpr = Math.min(devicePixelRatio, 2);
 		renderer.setPixelRatio(dpr);
 		renderer.setSize(innerWidth, innerHeight);
 	}, 200);
@@ -404,7 +403,7 @@ window.addEventListener('resize', () => {
 export let windBurst = 0;
 let _baseWindSpeed = 1.3;
 let _baseWindAmp = 0.21;
-let globalDofEnabled = !isLowEnd;
+let globalDofEnabled = !isMobile;
 
 // --- Camera Path ---
 // [scroll, posX, posY, posZ, lookX, lookY, lookZ, focusDist, autoFocus, dofOn, focalLen, bokehScale, afSpeed, afMin, afMax]
@@ -734,9 +733,7 @@ export async function bootScene() {
 
 	renderer.domElement.style.opacity = '0';
 	renderer.domElement.style.transition = 'opacity 0.4s ease';
-	// Fewer warmup renders on low-end (1 vs 3 on desktop)
-	const warmupFrames = isLowEnd ? 1 : 3;
-	for (let i = 0; i < warmupFrames; i++) {
+	for (let i = 0; i < 3; i++) {
 		renderer.compute(computeUpdate);
 		postProcessing.render();
 		await new Promise(r => requestAnimationFrame(r));
