@@ -4,8 +4,12 @@
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 	<title>REVOLVYN</title>
-<link rel="icon" href="favicon.png" type="image/png">
-	
+	<link rel="icon" href="favicon.png" type="image/png">
+	<link rel="stylesheet" href="css/main.css">
+	<link rel="stylesheet" href="css/sections.css">
+	<link rel="stylesheet" href="css/navigation.css">
+	<link rel="stylesheet" href="css/footer.css">
+	<link rel="stylesheet" href="css/responsive.css">
 
 	<script type="importmap">
 		{
@@ -17,26 +21,25 @@
 			}
 		}
 	</script>
-  <link rel="stylesheet" href="css/styles.css">
+	<script type="module" src="js/main.js"></script>
 </head>
 
 <body>
 	<!-- Loading Screen -->
-	<div id="loadingScreen" style="position:fixed;inset:0;z-index:99999;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.6s ease,visibility 0.6s ease;">
-		<div style="text-align:center;">
-			<div style="font-family:'Playfair Display',serif;font-size:clamp(28px,5vw,42px);color:rgba(248,252,240,0.9);letter-spacing:4px;margin-bottom:32px;opacity:0;transform:translateY(20px);animation:loadFadeUp 0.8s ease forwards 0.2s;">REVOLVYN</div>
-			<div style="width:120px;height:1px;background:rgba(140,180,120,0.1);margin:0 auto 24px;position:relative;overflow:hidden;">
-				<div style="position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(230,245,120,0.8),transparent);animation:loadSweep 1.2s ease-in-out infinite;"></div>
+	<div id="loadingScreen">
+		<div class="loading-inner">
+			<div class="loading-brand">REVOLVYN</div>
+			<div class="loading-bar-track">
+				<div class="loading-bar-sweep"></div>
 			</div>
-			<div style="font-size:10px;letter-spacing:4px;text-transform:uppercase;color:rgba(210,230,160,0.4);opacity:0;animation:loadFadeUp 0.8s ease forwards 0.5s;">Loading Experience</div>
+			<div class="loading-label">Loading Experience</div>
 		</div>
 	</div>
-	
 
 	<div class="progress-bar" id="progressBar"></div>
 
 	<nav class="nav-float" id="navFloat">
-		<div class="nav-logo" onclick="window.location.href='index.html'" style="cursor:pointer">REVOLVYN</div>
+		<div class="nav-logo">REVOLVYN</div>
 		<div class="nav-links">
 			<a href="javascript:void(0)" data-nav="1">About Us</a>
 			<a href="javascript:void(0)" data-nav="2">Portfolio</a>
@@ -181,7 +184,7 @@
 			</div>
 		</div>
 		<div class="sf-bottom">
-			<span class="sf-copy">© 2026 REVOLVYN. All futures reserved.</span>
+			<span class="sf-copy">&copy; 2026 REVOLVYN. All futures reserved.</span>
 			<div class="sf-socials">
 				<a href="https://www.instagram.com/revolvynmedia?igsi=bmFlaHFyMG92eDNk" target="_blank" rel="noopener">Instagram</a>
 				<a href="https://www.facebook.com/share/1F5rfL4tPS/?mibextid=LQQJ4d" target="_blank" rel="noopener">Facebook</a>
@@ -190,9 +193,5 @@
 		</div>
 		</div>
 	</footer>
-
-	<script type="module" src="js/app.js"></script>
 </body>
 </html>
-
-

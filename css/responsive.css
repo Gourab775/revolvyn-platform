@@ -1,0 +1,44 @@
+/* Responsive Media Queries */
+@media (max-width: 1024px) {
+	.section { padding: 80px 32px; }
+	.section-label { margin-bottom: 28px; }
+	.site-footer-inner { gap: 32px; }
+}
+@media (max-width: 768px) {
+	.nav-float { padding: 0 16px; top: 14px; }
+	.nav-links { display: none; }
+	.nav-hamburger { display: flex; }
+	.nav-mobile-overlay { display: flex; }
+	.section { padding: 48px 16px; contain: none; }
+	.stats-section { contain: none; }
+	.section-label { margin-bottom: 20px; }
+	.section-label::before, .section-label::after { display: none; }
+	.site-footer { padding: 40px 16px 24px; }
+	.site-footer-inner { grid-template-columns: 1fr; gap: 28px; }
+	.sf-bottom { flex-direction: column; gap: 12px; text-align: center; }
+	.portfolio-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 120px; gap: 6px; max-width: 100%; }
+	.brand-logo-item { min-width: 200px; height: 140px; padding: 16px 28px; }
+	.brands-track { animation-duration: 15s; }
+	.hero h1 { font-size: clamp(36px, 10vw, 60px); }
+	.manifesto h2 { font-size: clamp(18px, 4vw, 32px); }
+	.quote-section blockquote { font-size: clamp(18px, 4vw, 32px); }
+	.cta-section h2 { font-size: clamp(24px, 6vw, 40px); }
+	.pillars { padding: 32px 16px; }
+}
+@media (max-width: 480px) {
+	.section { padding: 36px 14px; }
+	.site-footer { padding: 32px 14px 20px; }
+	.portfolio-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 100px; gap: 4px; }
+	.brand-logo-item { min-width: 160px; height: 110px; padding: 12px 20px; }
+	.hero h1 { font-size: clamp(28px, 10vw, 48px); }
+	.manifesto h2 { font-size: clamp(16px, 4vw, 28px); }
+	.wind-btn { padding: 8px 18px; font-size: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+	*, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+	.scroll-hint { display: none; }
+}
+
+/* Loading Screen Animations */
+@keyframes loadFadeUp { to { opacity:1; transform:translateY(0); } }
+@keyframes loadSweep { 0% { left:-100%; } 100% { left:100%; } }
