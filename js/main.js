@@ -1,4 +1,4 @@
-import { warmGPU, initRenderer, bootScene, lerpCam, updateCamera, updateScene, cameraPath, renderer, qualityTier } from './three-scene.js';
+import { warmGPU, initRenderer, bootScene, lerpCam, updateCamera, updateScene, cameraPath, renderer } from './three-scene.js';
 import { initScrollSync, updateScroll, updateProgressbar, updateScrollHint, updateFooterVisibility } from './scroll.js';
 import { initNavigation } from './navigation.js';
 import { initVideos } from './videos.js';
@@ -46,22 +46,9 @@ window.addEventListener('hashchange', () => {
 import * as THREE from 'three/webgpu';
 
 const clock = new THREE.Clock();
-let _visible = !document.hidden;
-let _rafId = null;
-
-// Pause when tab hidden, resume when visible
-document.addEventListener('visibilitychange', () => {
-	_visible = !document.hidden;
-	if (_visible) {
-		clock.getDelta(); // Reset delta to avoid jump
-	}
-});
 
 function animate() {
 	const dt = Math.min(clock.getDelta(), 0.05);
-
-	// Skip all updates when tab is hidden
-	if (!_visible) return;
 
 	const currentScrollT = updateScroll(dt);
 	const cam = lerpCam(currentScrollT);

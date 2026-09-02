@@ -713,12 +713,7 @@ export function updateCamera(cam, dt) {
 }
 
 // --- Update Scene (compute + render) ---
-let _frameCount = 0;
-
 export function updateScene(dt) {
-	_frameCount++;
-	// Skip compute + render on hidden tabs (save GPU/battery)
-	if (document.hidden) return;
 	renderer.compute(computeUpdate);
 	postProcessing.render();
 }
