@@ -10,7 +10,11 @@ import { dof } from 'three/addons/tsl/display/DepthOfFieldNode.js';
 // --- Device Detection ---
 export const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || innerWidth < 768;
 export const isLowEnd = isMobile || (navigator.deviceMemory && navigator.deviceMemory < 4) || (navigator.hardwareConcurrency && navigator.hardwareConcurrency < 4);
+const isMidRange = !isLowEnd && !isMobile && ((navigator.deviceMemory && navigator.deviceMemory < 8) || (navigator.hardwareConcurrency && navigator.hardwareConcurrency < 6));
 const powerPref = isLowEnd ? 'low-power' : 'high-performance';
+
+// --- Adaptive Quality Tiers ---
+export const qualityTier = isLowEnd ? 0 : isMidRange ? 1 : 2; // 0=low, 1=mid, 2=high
 
 // --- GPU Warmup ---
 export function warmGPU() {
@@ -27,7 +31,7 @@ export function warmGPU() {
 }
 
 // --- Constants ---
-const BLADE_COUNT = 120000;
+const BLADE_COUNT = qualityTier === 0 ? 40000 : qualityTier === 1 ? 80000 : 120000;
 const FIELD_SIZE = 30;
 const BACKGROUND_HEX = '#000000';
 const GROUND_HEX = '#000000';
@@ -75,7 +79,7 @@ camera.lookAt(0, 0, 0);
 
 // --- Renderer ---
 export const renderer = new THREE.WebGPURenderer({ antialias: !isLowEnd, powerPreference: powerPref });
-const maxDPR = window.innerWidth < 1200 ? 1.5 : Math.min(devicePixelRatio, 2);
+const maxDPR = isLowEnd ? 1.0 : isMidRange ? Math.min(devicePixelRatio, 1.5) : (window.innerWidth < 1200 ? 1.5 : Math.min(devicePixelRatio, 2));
 renderer.setPixelRatio(maxDPR);
 renderer.setSize(innerWidth, innerHeight);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -332,8 +336,10 @@ const sceneColor = scenePass.getTextureNode('output');
 const sceneViewZ = scenePass.getViewZNode();
 const dofOutput = dof(sceneColor, sceneViewZ, focusDistanceU, focalLengthU, bokehScaleU);
 
-postProcessing.outputNode = isMobile ? sceneColor : dofOutput;
-if (isMobile) dofEnabled = false;
+// Disable DoF on low-end devices and reduce bokeh scale on mid-range
+const globalDofEnabledInit = !isLowEnd;
+postProcessing.outputNode = globalDofEnabledInit ? dofOutput : sceneColor;
+if (!globalDofEnabledInit) dofEnabled = false;
 postProcessing.needsUpdate = true;
 
 function rebuildPipeline() {
@@ -351,6 +357,7 @@ const mouseNDC = new THREE.Vector2();
 const grassPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
 const hitPoint = new THREE.Vector3();
 let _mouseRaf = null;
+const mouseThrottleMs = isMobile ? 50 : 16; // Throttle more on mobile
 
 window.addEventListener('mousemove', (e) => {
 	if (_mouseRaf) return;
@@ -364,6 +371,20 @@ window.addEventListener('mousemove', (e) => {
 		}
 	});
 });
+window.addEventListener('touchmove', (e) => {
+	if (_mouseRaf) return;
+	_mouseRaf = setTimeout(() => {
+		_mouseRaf = null;
+		const touch = e.touches[0];
+		if (!touch) return;
+		mouseNDC.set((touch.clientX / innerWidth) * 2 - 1, -(touch.clientY / innerHeight) * 2 + 1);
+		raycaster.setFromCamera(mouseNDC, camera);
+		if (raycaster.ray.intersectPlane(grassPlane, hitPoint)) {
+			mouseWorld.value.copy(hitPoint);
+			mouseFocusDist = camera.position.distanceTo(hitPoint);
+		}
+	}, mouseThrottleMs);
+}, { passive: true });
 window.addEventListener('mouseleave', () => mouseWorld.value.set(99999, 0, 99999));
 
 // --- Resize ---
@@ -373,7 +394,7 @@ window.addEventListener('resize', () => {
 	resizeTimeout = setTimeout(() => {
 		camera.aspect = innerWidth / innerHeight;
 		camera.updateProjectionMatrix();
-		const dpr = Math.min(devicePixelRatio, 2);
+		const dpr = isLowEnd ? 1.0 : isMidRange ? Math.min(devicePixelRatio, 1.5) : Math.min(devicePixelRatio, 2);
 		renderer.setPixelRatio(dpr);
 		renderer.setSize(innerWidth, innerHeight);
 	}, 200);
@@ -383,7 +404,7 @@ window.addEventListener('resize', () => {
 export let windBurst = 0;
 let _baseWindSpeed = 1.3;
 let _baseWindAmp = 0.21;
-let globalDofEnabled = !isMobile;
+let globalDofEnabled = !isLowEnd;
 
 // --- Camera Path ---
 // [scroll, posX, posY, posZ, lookX, lookY, lookZ, focusDist, autoFocus, dofOn, focalLen, bokehScale, afSpeed, afMin, afMax]
@@ -491,20 +512,36 @@ export const stageParams = cameraPath.map(() => getDefaultParams());
 	});
 })();
 
-// --- Lerp Camera ---
+// --- Lerp Camera (reusable result object to avoid GC pressure) ---
+const _camResult = {
+	px: 0, py: 0, pz: 0, lx: 0, ly: 0, lz: 0,
+	fd: 0, af: 0, dofOn: 0, fl: 0, bk: 0,
+	afSpd: 0, afMin: 0, afMax: 0,
+	params: {},
+};
+const _camResultSnap = {
+	px: 0, py: 0, pz: 0, lx: 0, ly: 0, lz: 0,
+	fd: 0, af: 0, dofOn: 0, fl: 0, bk: 0,
+	afSpd: 0, afMin: 0, afMax: 0,
+	params: null,
+};
+let _lastScrollT = -1;
+let _lastStageIdx = -1;
+
 export function lerpCam(scrollT) {
 	const snapThreshold = 0.005;
 	for (let j = 0; j < cameraPath.length; j++) {
 		if (Math.abs(cameraPath[j][0] - scrollT) < snapThreshold) {
 			const kf = cameraPath[j];
-			return {
-				px: kf[1], py: kf[2], pz: kf[3],
-				lx: kf[4], ly: kf[5], lz: kf[6],
-				fd: kf[7], af: kf[8], dofOn: kf[9],
-				fl: kf[10], bk: kf[11],
-				afSpd: kf[12], afMin: kf[13], afMax: kf[14],
-				params: { ...stageParams[j] },
-			};
+			_camResultSnap.px = kf[1]; _camResultSnap.py = kf[2]; _camResultSnap.pz = kf[3];
+			_camResultSnap.lx = kf[4]; _camResultSnap.ly = kf[5]; _camResultSnap.lz = kf[6];
+			_camResultSnap.fd = kf[7]; _camResultSnap.af = kf[8]; _camResultSnap.dofOn = kf[9];
+			_camResultSnap.fl = kf[10]; _camResultSnap.bk = kf[11];
+			_camResultSnap.afSpd = kf[12]; _camResultSnap.afMin = kf[13]; _camResultSnap.afMax = kf[14];
+			_camResultSnap.params = stageParams[j];
+			_lastStageIdx = j;
+			_lastScrollT = scrollT;
+			return _camResultSnap;
 		}
 	}
 
@@ -519,33 +556,45 @@ export function lerpCam(scrollT) {
 	const ease = t * t * (3 - 2 * t);
 
 	const iB = Math.min(i + 1, cameraPath.length - 1);
-	const pA = stageParams[i], pB = stageParams[iB];
-	const lerpedParams = {};
-	stageParamKeys.forEach(k => {
-		lerpedParams[k] = pA[k] + (pB[k] - pA[k]) * ease;
-	});
+	const r = _camResult;
+	r.px = a[1] + (b[1] - a[1]) * ease;
+	r.py = a[2] + (b[2] - a[2]) * ease;
+	r.pz = a[3] + (b[3] - a[3]) * ease;
+	r.lx = a[4] + (b[4] - a[4]) * ease;
+	r.ly = a[5] + (b[5] - a[5]) * ease;
+	r.lz = a[6] + (b[6] - a[6]) * ease;
+	r.fd = a[7] + (b[7] - a[7]) * ease;
+	r.af = a[8] + (b[8] - a[8]) * ease;
+	r.dofOn = a[9] + (b[9] - a[9]) * ease;
+	r.fl = a[10] + (b[10] - a[10]) * ease;
+	r.bk = a[11] + (b[11] - a[11]) * ease;
+	r.afSpd = a[12] + (b[12] - a[12]) * ease;
+	r.afMin = a[13] + (b[13] - a[13]) * ease;
+	r.afMax = a[14] + (b[14] - a[14]) * ease;
 
-	return {
-		px: a[1] + (b[1] - a[1]) * ease,
-		py: a[2] + (b[2] - a[2]) * ease,
-		pz: a[3] + (b[3] - a[3]) * ease,
-		lx: a[4] + (b[4] - a[4]) * ease,
-		ly: a[5] + (b[5] - a[5]) * ease,
-		lz: a[6] + (b[6] - a[6]) * ease,
-		fd: a[7] + (b[7] - a[7]) * ease,
-		af: a[8] + (b[8] - a[8]) * ease,
-		dofOn: a[9] + (b[9] - a[9]) * ease,
-		fl: a[10] + (b[10] - a[10]) * ease,
-		bk: a[11] + (b[11] - a[11]) * ease,
-		afSpd: a[12] + (b[12] - a[12]) * ease,
-		afMin: a[13] + (b[13] - a[13]) * ease,
-		afMax: a[14] + (b[14] - a[14]) * ease,
-		params: lerpedParams,
-	};
+	// Only lerp params if stage changed or significant scroll change
+	if (i !== _lastStageIdx || Math.abs(scrollT - _lastScrollT) > 0.01) {
+		const pA = stageParams[i], pB = stageParams[iB];
+		const lp = r.params;
+		for (let k = 0, len = stageParamKeys.length; k < len; k++) {
+			const key = stageParamKeys[k];
+			lp[key] = pA[key] + (pB[key] - pA[key]) * ease;
+		}
+		_lastStageIdx = i;
+		_lastScrollT = scrollT;
+	}
+
+	return r;
 }
 
 // --- Update Camera ---
 const lookTarget = new THREE.Vector3();
+let _lastFogR = -1, _lastFogG = -1, _lastFogB = -1;
+let _lastBaseR = -1, _lastBaseG = -1, _lastBaseB = -1;
+let _lastTipR = -1, _lastTipG = -1, _lastTipB = -1;
+let _lastGoldR = -1, _lastGoldG = -1, _lastGoldB = -1;
+let _lastGreenR = -1, _lastGreenG = -1, _lastGreenB = -1;
+let _lastMidR = -1, _lastMidG = -1, _lastMidB = -1;
 
 export function updateCamera(cam, dt) {
 	camera.position.set(cam.px, cam.py, cam.pz);
@@ -561,8 +610,11 @@ export function updateCamera(cam, dt) {
 		fogStart.value = p.fogStart;
 		fogEnd.value = p.fogEnd;
 		fogIntensity.value = p.fogIntensity;
-		fogColor.value.setRGB(p.fogR, p.fogG, p.fogB);
-		if (scene.fog) scene.fog.color.setRGB(p.fogR, p.fogG, p.fogB);
+		if (p.fogR !== _lastFogR || p.fogG !== _lastFogG || p.fogB !== _lastFogB) {
+			fogColor.value.setRGB(p.fogR, p.fogG, p.fogB);
+			if (scene.fog) scene.fog.color.setRGB(p.fogR, p.fogG, p.fogB);
+			_lastFogR = p.fogR; _lastFogG = p.fogG; _lastFogB = p.fogB;
+		}
 		grassDensity.value = p.grassDensity;
 		bladeWidth.value = p.bladeWidth;
 		bladeTipWidth.value = p.bladeTipWidth;
@@ -579,11 +631,26 @@ export function updateCamera(cam, dt) {
 		mouseStrength.value = p.mouseStrength;
 		outerRadius.value = p.outerRadius;
 		outerStrength.value = p.outerStrength;
-		bladeBaseColor.value.setRGB(p.bladeBaseR, p.bladeBaseG, p.bladeBaseB);
-		bladeTipColor.value.setRGB(p.bladeTipR, p.bladeTipG, p.bladeTipB);
-		goldenTipColor.value.setRGB(p.goldenTipR, p.goldenTipG, p.goldenTipB);
-		greenTipColor.value.setRGB(p.greenTipR, p.greenTipG, p.greenTipB);
-		midColor.value.setRGB(p.midR, p.midG, p.midB);
+		if (p.bladeBaseR !== _lastBaseR || p.bladeBaseG !== _lastBaseG || p.bladeBaseB !== _lastBaseB) {
+			bladeBaseColor.value.setRGB(p.bladeBaseR, p.bladeBaseG, p.bladeBaseB);
+			_lastBaseR = p.bladeBaseR; _lastBaseG = p.bladeBaseG; _lastBaseB = p.bladeBaseB;
+		}
+		if (p.bladeTipR !== _lastTipR || p.bladeTipG !== _lastTipG || p.bladeTipB !== _lastTipB) {
+			bladeTipColor.value.setRGB(p.bladeTipR, p.bladeTipG, p.bladeTipB);
+			_lastTipR = p.bladeTipR; _lastTipG = p.bladeTipG; _lastTipB = p.bladeTipB;
+		}
+		if (p.goldenTipR !== _lastGoldR || p.goldenTipG !== _lastGoldG || p.goldenTipB !== _lastGoldB) {
+			goldenTipColor.value.setRGB(p.goldenTipR, p.goldenTipG, p.goldenTipB);
+			_lastGoldR = p.goldenTipR; _lastGoldG = p.goldenTipG; _lastGoldB = p.goldenTipB;
+		}
+		if (p.greenTipR !== _lastGreenR || p.greenTipG !== _lastGreenG || p.greenTipB !== _lastGreenB) {
+			greenTipColor.value.setRGB(p.greenTipR, p.greenTipG, p.greenTipB);
+			_lastGreenR = p.greenTipR; _lastGreenG = p.greenTipG; _lastGreenB = p.greenTipB;
+		}
+		if (p.midR !== _lastMidR || p.midG !== _lastMidG || p.midB !== _lastMidB) {
+			midColor.value.setRGB(p.midR, p.midG, p.midB);
+			_lastMidR = p.midR; _lastMidG = p.midG; _lastMidB = p.midB;
+		}
 		bladeColorVariation.value = p.colorVar;
 		const baseCamR = p.camSphereRadius;
 		const baseCamS = p.camSphereStrength;
@@ -612,9 +679,9 @@ export function updateCamera(cam, dt) {
 	}
 
 	// Per-stage DoF
-	{
+	if (globalDofEnabled) {
 		const dofWeight = typeof cam.dofOn === 'number' ? cam.dofOn : 1;
-		const shouldDof = globalDofEnabled && dofWeight > 0.5;
+		const shouldDof = dofWeight > 0.5;
 
 		if (shouldDof !== dofEnabled) {
 			dofEnabled = shouldDof;
@@ -647,7 +714,12 @@ export function updateCamera(cam, dt) {
 }
 
 // --- Update Scene (compute + render) ---
+let _frameCount = 0;
+
 export function updateScene(dt) {
+	_frameCount++;
+	// Skip compute + render on hidden tabs (save GPU/battery)
+	if (document.hidden) return;
 	renderer.compute(computeUpdate);
 	postProcessing.render();
 }
@@ -662,7 +734,9 @@ export async function bootScene() {
 
 	renderer.domElement.style.opacity = '0';
 	renderer.domElement.style.transition = 'opacity 0.4s ease';
-	for (let i = 0; i < 3; i++) {
+	// Fewer warmup renders on low-end (1 vs 3 on desktop)
+	const warmupFrames = isLowEnd ? 1 : 3;
+	for (let i = 0; i < warmupFrames; i++) {
 		renderer.compute(computeUpdate);
 		postProcessing.render();
 		await new Promise(r => requestAnimationFrame(r));

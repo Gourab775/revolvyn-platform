@@ -80,20 +80,38 @@ export function getCurrentScrollT() {
 	return currentScrollT;
 }
 
+let _footerFrameCount = 0;
+let _lastProgressScale = -1;
+
 export function updateProgressbar() {
 	if (progressBar) {
-		progressBar.style.transform = `scaleX(${currentScrollT})`;
+		const scale = Math.round(currentScrollT * 1000) / 1000; // Round to avoid sub-pixel updates
+		if (scale !== _lastProgressScale) {
+			progressBar.style.transform = `scaleX(${scale})`;
+			_lastProgressScale = scale;
+		}
 	}
 }
 
+let _lastScrollHintOpacity = -1;
+
 export function updateScrollHint() {
 	if (_scrollHint) {
-		_scrollHint.style.opacity = Math.max(0, 1 - currentScrollT * 15);
+		const opacity = Math.max(0, 1 - currentScrollT * 15);
+		const rounded = Math.round(opacity * 100) / 100;
+		if (rounded !== _lastScrollHintOpacity) {
+			_scrollHint.style.opacity = rounded;
+			_lastScrollHintOpacity = rounded;
+		}
 	}
 }
 
 export function updateFooterVisibility(rendererDomElement) {
 	if (_siteFooter) {
+		// Throttle getBoundingClientRect to every 3rd frame (expensive reflow)
+		_footerFrameCount++;
+		if (_footerFrameCount % 3 !== 0 && rendererDomElement._lastTy !== undefined) return;
+
 		const footerTop = _siteFooter.getBoundingClientRect().top;
 		if (footerTop < window.innerHeight) {
 			const ty = -(window.innerHeight - footerTop);
