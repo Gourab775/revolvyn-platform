@@ -9,8 +9,46 @@ import { dof } from 'three/addons/tsl/display/DepthOfFieldNode.js';
 
 // --- Device Detection ---
 export const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || innerWidth < 768;
-export const isLowEnd = isMobile || (navigator.deviceMemory && navigator.deviceMemory < 4) || (navigator.hardwareConcurrency && navigator.hardwareConcurrency < 4);
-const powerPref = isLowEnd ? 'low-power' : 'high-performance';
+
+function detectDeviceTier() {
+	const cores = navigator.hardwareConcurrency || 4;
+	const ram = navigator.deviceMemory || 4;
+
+	const canvas = document.createElement('canvas');
+	const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
+	let gpuRenderer = '';
+	try {
+		const debugInfo = gl?.getExtension('WEBGL_debug_renderer_info');
+		if (debugInfo) gpuRenderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) || '';
+	} catch (e) {}
+	try { gl?.getExtension('WEBGL_lose_context')?.loseContext(); } catch (e) {}
+
+	let score = 0;
+	if (cores >= 8) score += 2;
+	else if (cores >= 6) score += 1;
+
+	if (ram >= 8) score += 2;
+	else if (ram >= 4) score += 1;
+
+	if (/Apple GPU|Mali-G[7-9]|Adreno [6-7]/i.test(gpuRenderer)) score += 2;
+	else if (/Mali-[4-6]|Adreno [3-5]/i.test(gpuRenderer)) score -= 1;
+
+	if (isMobile && window.devicePixelRatio > 2 && screen.width > 1080) score -= 1;
+
+	const tier = score >= 4 ? 'high' : score >= 2 ? 'medium' : 'low';
+	return {
+		tier,
+		bladeCount: tier === 'high' ? 120000 : tier === 'medium' ? 80000 : 50000,
+		dpr: tier === 'high' ? Math.min(devicePixelRatio, 2) : tier === 'medium' ? Math.min(devicePixelRatio, 1.5) : 1,
+		dof: tier !== 'low',
+		antialias: tier !== 'low',
+	};
+}
+
+const deviceTier = detectDeviceTier();
+console.log('Device tier:', deviceTier.tier, '| Blades:', deviceTier.bladeCount, '| DPR:', deviceTier.dpr, '| DoF:', deviceTier.dof);
+
+const powerPref = deviceTier.tier === 'low' ? 'low-power' : 'high-performance';
 
 // --- GPU Warmup ---
 export function warmGPU() {
@@ -27,7 +65,7 @@ export function warmGPU() {
 }
 
 // --- Constants ---
-const BLADE_COUNT = 120000;
+const BLADE_COUNT = deviceTier.bladeCount;
 const FIELD_SIZE = 30;
 const BACKGROUND_HEX = '#000000';
 const GROUND_HEX = '#000000';
@@ -74,8 +112,8 @@ camera.position.set(0, 8, 18);
 camera.lookAt(0, 0, 0);
 
 // --- Renderer ---
-export const renderer = new THREE.WebGPURenderer({ antialias: !isLowEnd, powerPreference: powerPref });
-const maxDPR = window.innerWidth < 1200 ? 1.5 : Math.min(devicePixelRatio, 2);
+export const renderer = new THREE.WebGPURenderer({ antialias: deviceTier.antialias, powerPreference: powerPref });
+const maxDPR = deviceTier.dpr;
 renderer.setPixelRatio(maxDPR);
 renderer.setSize(innerWidth, innerHeight);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -332,8 +370,8 @@ const sceneColor = scenePass.getTextureNode('output');
 const sceneViewZ = scenePass.getViewZNode();
 const dofOutput = dof(sceneColor, sceneViewZ, focusDistanceU, focalLengthU, bokehScaleU);
 
-// Disable DoF on mobile devices
-const globalDofEnabledInit = !isMobile;
+// Disable DoF on low-tier devices
+const globalDofEnabledInit = deviceTier.dof;
 postProcessing.outputNode = globalDofEnabledInit ? dofOutput : sceneColor;
 if (!globalDofEnabledInit) dofEnabled = false;
 postProcessing.needsUpdate = true;
