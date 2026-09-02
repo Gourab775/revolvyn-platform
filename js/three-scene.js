@@ -10,45 +10,71 @@ import { dof } from 'three/addons/tsl/display/DepthOfFieldNode.js';
 // --- Device Detection ---
 export const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || innerWidth < 768;
 
-function detectDeviceTier() {
+let _gpuRenderer = '';
+
+function estimateInitialTier() {
 	const cores = navigator.hardwareConcurrency || 4;
 	const ram = navigator.deviceMemory || 4;
 
 	const canvas = document.createElement('canvas');
 	const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
-	let gpuRenderer = '';
 	try {
 		const debugInfo = gl?.getExtension('WEBGL_debug_renderer_info');
-		if (debugInfo) gpuRenderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) || '';
+		if (debugInfo) _gpuRenderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) || '';
 	} catch (e) {}
 	try { gl?.getExtension('WEBGL_lose_context')?.loseContext(); } catch (e) {}
 
 	let score = 0;
-	if (cores >= 8) score += 2;
+
+	if (cores >= 12) score += 3;
+	else if (cores >= 8) score += 2;
 	else if (cores >= 6) score += 1;
 
-	if (ram >= 8) score += 2;
+	if (ram >= 16) score += 3;
+	else if (ram >= 8) score += 2;
 	else if (ram >= 4) score += 1;
 
-	if (/Apple GPU|Mali-G[7-9]|Adreno [6-7]/i.test(gpuRenderer)) score += 2;
-	else if (/Mali-[4-6]|Adreno [3-5]/i.test(gpuRenderer)) score -= 1;
+	const gpu = _gpuRenderer;
+	if (/rtx\s*[3-9][0-9]{3}/i.test(gpu)) score += 4;
+	else if (/rtx\s*[12][0-9]{3}\s*t/i.test(gpu)) score += 4;
+	else if (/radeon\s*rx\s*[6-9][0-9]{3}/i.test(gpu)) score += 3;
+	else if (/radeon\s*pro/i.test(gpu)) score += 3;
+	else if (/gtx\s*[12][0-9]{3}/i.test(gpu)) score += 2;
+	else if (/radeon\s*rx\s*[5][0-9]{3}/i.test(gpu)) score += 2;
+	else if (/intel\s*iris?\s*(xe|pro)/i.test(gpu)) score += 2;
+	else if (/apple\s*gpu/i.test(gpu)) score += 3;
+	else if (/mali-g[7-9]/i.test(gpu)) score += 2;
+	else if (/adreno\s*[6-7]/i.test(gpu)) score += 2;
+	else if (/intel\s*(uhd|hd)\s*[6-7][0-9]{2}/i.test(gpu)) score += 1;
+	else if (/radeon\s*(vega|rx\s*[4-5])/i.test(gpu)) score += 1;
+	else if (/mali-[4-6]/i.test(gpu)) score -= 1;
+	else if (/adreno\s*[3-5]/i.test(gpu)) score -= 1;
+	else if (/powervr/i.test(gpu)) score -= 1;
 
-	if (isMobile && window.devicePixelRatio > 2 && screen.width > 1080) score -= 1;
+	const pixels = (screen.width || 1920) * (screen.height || 1080) * (window.devicePixelRatio || 1);
+	if (pixels > 8000000) score -= 1;
 
-	const tier = score >= 4 ? 'high' : score >= 2 ? 'medium' : 'low';
-	return {
-		tier,
-		bladeCount: tier === 'high' ? 120000 : tier === 'medium' ? 80000 : 50000,
-		dpr: tier === 'high' ? Math.min(devicePixelRatio, 2) : tier === 'medium' ? Math.min(devicePixelRatio, 1.5) : 1,
-		dof: tier !== 'low',
-		antialias: tier !== 'low',
-	};
+	if (score >= 8) return 'ULTRA';
+	if (score >= 5) return 'HIGH';
+	if (score >= 2) return 'MEDIUM';
+	return 'LOW';
 }
 
-const deviceTier = detectDeviceTier();
-console.log('Device tier:', deviceTier.tier, '| Blades:', deviceTier.bladeCount, '| DPR:', deviceTier.dpr, '| DoF:', deviceTier.dof);
+// --- Quality Tiers ---
+const QUALITY_TIERS = {
+	ULTRA: { bladeRenderCount: 120000, dprCap: 2.5, dof: true,  antialias: true,  label: 'ULTRA' },
+	HIGH:  { bladeRenderCount: 100000, dprCap: 2.0, dof: true,  antialias: true,  label: 'HIGH' },
+	MEDIUM:{ bladeRenderCount:  70000, dprCap: 1.5, dof: true,  antialias: true,  label: 'MEDIUM' },
+	LOW:   { bladeRenderCount:  40000, dprCap: 1.0, dof: false, antialias: false, label: 'LOW' },
+};
+const TIER_ORDER = ['LOW', 'MEDIUM', 'HIGH', 'ULTRA'];
 
-const powerPref = deviceTier.tier === 'low' ? 'low-power' : 'high-performance';
+// --- Initial Tier ---
+let currentTierName = estimateInitialTier();
+const initialTier = QUALITY_TIERS[currentTierName];
+console.log(`Initial tier: ${currentTierName} | GPU: ${_gpuRenderer || 'unknown'} | Cores: ${navigator.hardwareConcurrency || '?'} | RAM: ${navigator.deviceMemory || '?'} GB`);
+
+const powerPref = currentTierName === 'LOW' ? 'low-power' : 'high-performance';
 
 // --- GPU Warmup ---
 export function warmGPU() {
@@ -65,7 +91,7 @@ export function warmGPU() {
 }
 
 // --- Constants ---
-const BLADE_COUNT = deviceTier.bladeCount;
+const BLADE_COUNT = 120000;
 const FIELD_SIZE = 30;
 const BACKGROUND_HEX = '#000000';
 const GROUND_HEX = '#000000';
@@ -112,9 +138,9 @@ camera.position.set(0, 8, 18);
 camera.lookAt(0, 0, 0);
 
 // --- Renderer ---
-export const renderer = new THREE.WebGPURenderer({ antialias: deviceTier.antialias, powerPreference: powerPref });
-const maxDPR = deviceTier.dpr;
-renderer.setPixelRatio(maxDPR);
+export const renderer = new THREE.WebGPURenderer({ antialias: initialTier.antialias, powerPreference: powerPref });
+let renderDpr = Math.min(devicePixelRatio, initialTier.dprCap);
+renderer.setPixelRatio(renderDpr);
 renderer.setSize(innerWidth, innerHeight);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.0;
@@ -168,7 +194,7 @@ const midColor = uniform(new THREE.Color('#2d4e0e'));
 const focusDistanceU = uniform(31.83);
 const focalLengthU = uniform(10.0);
 const bokehScaleU = uniform(12.5);
-let dofEnabled = true;
+let dofEnabled = initialTier.dof;
 
 // Mouse-world distance for auto-focus
 let mouseFocusDist = 10.0;
@@ -200,7 +226,7 @@ export const computeInit = Fn(() => {
 })().compute(BLADE_COUNT);
 
 // --- Compute Update ---
-export const computeUpdate = Fn(() => {
+const computeUpdateFn = Fn(() => {
 	const blade = bladeData.element(instanceIndex);
 	const bend = bendState.element(instanceIndex);
 	const bx = blade.x;
@@ -250,7 +276,9 @@ export const computeUpdate = Fn(() => {
 	const lm = select(targetMag.greaterThan(currentMag), deltaTime.mul(12.0), deltaTime.mul(1)).saturate();
 	bend.z.assign(mix(bend.z, totalPushX, lm));
 	bend.w.assign(mix(bend.w, totalPushZ, lm));
-})().compute(BLADE_COUNT);
+});
+
+let computeUpdate = computeUpdateFn.compute(initialTier.bladeRenderCount);
 
 // --- Blade Geometry ---
 function createBladeGeometry() {
@@ -333,6 +361,7 @@ grassMat.transparent = true;
 // --- Instances ---
 const bladeGeo = createBladeGeometry();
 const grass = new THREE.InstancedMesh(bladeGeo, grassMat, BLADE_COUNT);
+grass.count = initialTier.bladeRenderCount;
 grass.frustumCulled = false;
 scene.add(grass);
 const dummy = new THREE.Object3D();
@@ -370,10 +399,7 @@ const sceneColor = scenePass.getTextureNode('output');
 const sceneViewZ = scenePass.getViewZNode();
 const dofOutput = dof(sceneColor, sceneViewZ, focusDistanceU, focalLengthU, bokehScaleU);
 
-// Disable DoF on low-tier devices
-const globalDofEnabledInit = deviceTier.dof;
-postProcessing.outputNode = globalDofEnabledInit ? dofOutput : sceneColor;
-if (!globalDofEnabledInit) dofEnabled = false;
+postProcessing.outputNode = dofEnabled ? dofOutput : sceneColor;
 postProcessing.needsUpdate = true;
 
 function rebuildPipeline() {
@@ -413,7 +439,9 @@ window.addEventListener('resize', () => {
 	resizeTimeout = setTimeout(() => {
 		camera.aspect = innerWidth / innerHeight;
 		camera.updateProjectionMatrix();
-		const dpr = Math.min(devicePixelRatio, 2);
+		const tier = QUALITY_TIERS[currentTierName];
+		const dpr = Math.min(devicePixelRatio, tier.dprCap);
+		renderDpr = dpr;
 		renderer.setPixelRatio(dpr);
 		renderer.setSize(innerWidth, innerHeight);
 	}, 200);
@@ -423,7 +451,7 @@ window.addEventListener('resize', () => {
 export let windBurst = 0;
 let _baseWindSpeed = 1.3;
 let _baseWindAmp = 0.21;
-let globalDofEnabled = !isMobile;
+let globalDofEnabled = dofEnabled;
 
 // --- Camera Path ---
 // [scroll, posX, posY, posZ, lookX, lookY, lookZ, focusDist, autoFocus, dofOn, focalLen, bokehScale, afSpeed, afMin, afMax]
@@ -518,7 +546,7 @@ export const stageParams = cameraPath.map(() => getDefaultParams());
 	const exported = [
 		{ bladeBaseR:0, bladeBaseG:0, bladeBaseB:0, bladeTipR:0.058823529411764705, bladeTipG:0.2196078431372549, bladeTipB:0, goldenTipR:0.30980392156862746, goldenTipG:0.44313725490196076, goldenTipB:0.01568627450980392, greenTipR:0, greenTipG:0, greenTipB:0, midR:0.026241221889696346, midG:0.07618538147321911, midB:0.004391442035325718 },
 		{ bladeBaseR:0.004391442035325718, bladeBaseG:0.012983032338510335, bladeBaseB:0.001214107934117647, bladeTipR:0.058823529411764705, bladeTipG:0.2196078431372549, bladeTipB:0, goldenTipR:0.30980392156862746, goldenTipG:0.44313725490196076, goldenTipB:0.01568627450980392, greenTipR:0, greenTipG:0, greenTipB:0, midR:0.026241221889696346, midG:0.07618538147321911, midB:0.004391442035325718 },
-		{ bladeBaseR:0, bladeBaseG:0.012983032338510335, bladeBaseB:0.001214107934117647, bladeTipR:0.5529411764705883, bladeTipG:0.3803921568627451, bladeTipB:0.00784313725490196, goldenTipR:0.6627450980392157, goldenTipG:0.28627450980392155, goldenTipB:0.0392156862745098, greenTipR:0, greenTipG:0, greenTipB:0, midR:0.07450980392156863, midG:0.00784313725490196, midB:0.00392156862745098, colorVar:1 },
+		{ bladeBaseR:0, bladeBaseG:0.012983032338510335, bladeBaseB:0.001214107934117647, bladeTipR:0.5529411764705883, bladeTipG:0.3803921568627451, bladeTipB:0.00784313725490196, goldenTipR:0.6627450980392157, goldenTipG:0.2862745098392155, goldenTipB:0.0392156862745098, greenTipR:0, greenTipG:0, greenTipB:0, midR:0.07450980392156863, midG:0.00784313725490196, midB:0.00392156862745098, colorVar:1 },
 		{ fogStart:0, fogEnd:12.5, bladeHeight:2, bladeHeightVar:1, bladeLean:0, windSpeed:1.3, windAmplitude:0.21, bladeBaseR:0.004391442035325718, bladeBaseG:0.012983032338510335, bladeBaseB:0.001214107934117647, bladeTipR:0.5775804404214573, bladeTipG:0.4793201830913402, bladeTipB:0.05126945836711539, goldenTipR:0.6583748172725346, goldenTipG:0.4793201830913402, goldenTipB:0.03954623527052923, greenTipR:0.06847816983662762, greenTipG:0.19461783043107173, greenTipB:0.0069954101845983935, midR:0.026241221889696346, midG:0.07618538147321911, midB:0.004391442035325718 },
 		{ bladeBaseR:0.004391442035325718, bladeBaseG:0.012983032338510335, bladeBaseB:0.001214107934117647, bladeTipR:0.5775804404214573, bladeTipG:0.4793201830913402, bladeTipB:0.05126945836711539, goldenTipR:0.6583748172725346, goldenTipG:0.4793201830913402, goldenTipB:0.03954623527052923, greenTipR:0.06847816983662762, greenTipG:0.19461783043107173, greenTipB:0.0069954101845983935, midR:0.026241221889696346, midG:0.07618538147321911, midB:0.004391442035325718 },
 		{ fogStart:7, bladeTipWidth:0.27, bladeHeight:0.9, bladeHeightVar:0, bladeLean:0, bladeBaseR:0.004391442035325718, bladeBaseG:0.012983032338510335, bladeBaseB:0.001214107934117647, bladeTipR:0.058823529411764705, bladeTipG:0.2196078431372549, bladeTipB:0, goldenTipR:0.30980392156862746, goldenTipG:0.44313725490196076, goldenTipB:0.01568627450980392, greenTipR:0, greenTipG:0, greenTipB:0, midR:0.026241221889696346, midG:0.07618538147321911, midB:0.004391442035325718 },
@@ -708,4 +736,184 @@ export async function bootScene() {
 		await new Promise(r => requestAnimationFrame(r));
 	}
 	renderer.domElement.style.opacity = '1';
+}
+
+// --- FPS Measurement ---
+const _frameTimes = new Float64Array(120);
+let _frameIdx = 0;
+let _frameCount = 0;
+let _lastFrameTime = 0;
+let _currentFps = 60;
+let _avgFps = 60;
+let _framesSinceBoot = 0;
+let _measurementActive = false;
+const SKIP_FRAMES_AFTER_BOOT = 15;
+const SKIP_FRAME_DELTA_MS = 200;
+
+function recordFrame(now) {
+	if (!_measurementActive) return;
+	if (_lastFrameTime === 0) { _lastFrameTime = now; return; }
+
+	const delta = now - _lastFrameTime;
+	_lastFrameTime = now;
+
+	if (_framesSinceBoot < SKIP_FRAMES_AFTER_BOOT) {
+		_framesSinceBoot++;
+		return;
+	}
+
+	if (delta <= 0 || delta > SKIP_FRAME_DELTA_MS) return;
+
+	_frameTimes[_frameIdx % 120] = delta;
+	_frameIdx++;
+	if (_frameCount < 120) _frameCount = _framesSinceBoot >= SKIP_FRAMES_AFTER_BOOT ? _frameCount + 1 : 0;
+
+	_currentFps = 1000 / delta;
+
+	if (_frameCount > 0) {
+		let sum = 0;
+		for (let i = 0; i < _frameCount; i++) sum += _frameTimes[i];
+		_avgFps = 1000 / (sum / _frameCount);
+	}
+}
+
+// --- Adaptive Quality Manager ---
+let _consecutiveLowFrames = 0;
+let _consecutiveHighFrames = 0;
+let _lastTierChangeTime = 0;
+const TIER_COOLDOWN_MS = 15000;
+const LOW_FPS_THRESHOLD = 48;
+const HIGH_FPS_THRESHOLD = 62;
+const LOW_FRAMES_TO_STEP_DOWN = 60;
+const HIGH_FRAMES_TO_STEP_UP = 180;
+
+function applyTier(tierName) {
+	const tier = QUALITY_TIERS[tierName];
+	if (!tier || tierName === currentTierName) return;
+
+	const prevTier = currentTierName;
+	currentTierName = tierName;
+
+	renderDpr = Math.min(devicePixelRatio, tier.dprCap);
+	renderer.setPixelRatio(renderDpr);
+	renderer.setSize(innerWidth, innerHeight);
+
+	computeUpdate = computeUpdateFn.compute(tier.bladeRenderCount);
+	grass.count = tier.bladeRenderCount;
+
+	if (tier.dof && !globalDofEnabled) {
+		globalDofEnabled = true;
+		if (!dofEnabled) { dofEnabled = true; rebuildPipeline(); }
+	} else if (!tier.dof && globalDofEnabled) {
+		globalDofEnabled = false;
+		if (dofEnabled) { dofEnabled = false; rebuildPipeline(); }
+	}
+
+	console.log(`Quality: ${prevTier} → ${tierName} | Blades: ${tier.bladeRenderCount} | DPR: ${renderDpr.toFixed(1)} | DoF: ${tier.dof} | AvgFPS: ${_avgFps.toFixed(1)}`);
+}
+
+function checkAdaptation() {
+	if (!_measurementActive) return;
+	if (_frameCount < 30) return;
+
+	const now = performance.now();
+	if (now - _lastTierChangeTime < TIER_COOLDOWN_MS) return;
+
+	const currentIdx = TIER_ORDER.indexOf(currentTierName);
+
+	if (_avgFps < LOW_FPS_THRESHOLD && currentIdx > 0) {
+		_consecutiveLowFrames++;
+		_consecutiveHighFrames = 0;
+		if (_consecutiveLowFrames >= LOW_FRAMES_TO_STEP_DOWN) {
+			applyTier(TIER_ORDER[currentIdx - 1]);
+			_consecutiveLowFrames = 0;
+			_lastTierChangeTime = now;
+		}
+	} else if (_avgFps > HIGH_FPS_THRESHOLD && currentIdx < TIER_ORDER.length - 1) {
+		_consecutiveHighFrames++;
+		_consecutiveLowFrames = 0;
+		if (_consecutiveHighFrames >= HIGH_FRAMES_TO_STEP_UP) {
+			applyTier(TIER_ORDER[currentIdx + 1]);
+			_consecutiveHighFrames = 0;
+			_lastTierChangeTime = now;
+		}
+	} else {
+		_consecutiveLowFrames = 0;
+		_consecutiveHighFrames = 0;
+	}
+}
+
+export function startQualityMeasurement() {
+	_measurementActive = true;
+	_lastFrameTime = 0;
+	_frameIdx = 0;
+	_frameCount = 0;
+	_framesSinceBoot = 0;
+	_consecutiveLowFrames = 0;
+	_consecutiveHighFrames = 0;
+	_lastTierChangeTime = performance.now() + 5000;
+}
+
+export function updateQuality(now) {
+	recordFrame(now);
+	checkAdaptation();
+	updateDebugOverlay();
+}
+
+// --- Debug Overlay ---
+let _debugDiv = null;
+let _debugUpdateCounter = 0;
+
+function createDebugOverlay() {
+	if (_debugDiv) return;
+	const div = document.createElement('div');
+	div.id = 'perf-debug';
+	div.style.cssText = 'position:fixed;top:8px;right:8px;background:rgba(0,0,0,0.88);color:#0f0;font:11px/1.5 monospace;padding:10px 12px;z-index:99999;border-radius:4px;pointer-events:none;min-width:240px;white-space:pre;';
+	document.body.appendChild(div);
+	_debugDiv = div;
+}
+
+function updateDebugOverlay() {
+	if (!location.search.includes('debug') && !location.search.includes('perf')) {
+		if (_debugDiv) { _debugDiv.remove(); _debugDiv = null; }
+		return;
+	}
+	createDebugOverlay();
+	_debugUpdateCounter++;
+	if (_debugUpdateCounter % 6 !== 0) return;
+
+	const tier = QUALITY_TIERS[currentTierName];
+	const nextStepDown = _avgFps < HIGH_FPS_THRESHOLD ? `${Math.max(0, LOW_FRAMES_TO_STEP_DOWN - _consecutiveLowFrames)}` : '-';
+	const nextStepUp = _avgFps > LOW_FPS_THRESHOLD ? `${Math.max(0, HIGH_FRAMES_TO_STEP_UP - _consecutiveHighFrames)}` : '-';
+
+	_debugDiv.innerHTML = [
+		`Tier: ${currentTierName}`,
+		`GPU: ${_gpuRenderer || 'unknown'}`,
+		`CPU: ${navigator.hardwareConcurrency || '?'} cores`,
+		`RAM: ${navigator.deviceMemory || '?'} GB`,
+		`Browser DPR: ${devicePixelRatio}`,
+		`Render DPR: ${renderDpr.toFixed(1)}`,
+		`Blades: ${grass.count} / ${BLADE_COUNT}`,
+		`DoF: ${dofEnabled ? 'ON' : 'OFF'}`,
+		`FPS: ${_currentFps.toFixed(1)}`,
+		`Avg FPS: ${_avgFps.toFixed(1)}`,
+		`Step down in: ${nextStepDown}f`,
+		`Step up in: ${nextStepUp}f`,
+	].join('\n');
+}
+
+export function getQualityInfo() {
+	return {
+		tier: currentTierName,
+		gpu: _gpuRenderer,
+		cores: navigator.hardwareConcurrency,
+		ram: navigator.deviceMemory,
+		browserDpr: devicePixelRatio,
+		renderDpr,
+		blades: grass.count,
+		maxBlades: BLADE_COUNT,
+		dof: dofEnabled,
+		fps: _currentFps,
+		avgFps: _avgFps,
+	};
 }

@@ -1,4 +1,4 @@
-import { warmGPU, initRenderer, bootScene, lerpCam, updateCamera, updateScene, cameraPath, renderer } from './three-scene.js';
+import { warmGPU, initRenderer, bootScene, lerpCam, updateCamera, updateScene, cameraPath, renderer, startQualityMeasurement, updateQuality } from './three-scene.js';
 import { initScrollSync, updateScroll, updateProgressbar, updateScrollHint, updateFooterVisibility } from './scroll.js';
 import { initNavigation } from './navigation.js';
 import { initVideos } from './videos.js';
@@ -20,6 +20,9 @@ initScrollSync(cameraPath);
 
 // --- Boot Scene (compute init + warmup renders) ---
 await bootScene();
+
+// --- Start FPS Measurement ---
+startQualityMeasurement();
 
 // --- Hide Loading Screen ---
 const loadingScreen = document.getElementById('loadingScreen');
@@ -57,6 +60,7 @@ function animate() {
 	updateScrollHint();
 	updateFooterVisibility(renderer.domElement);
 	updateScene(dt);
+	updateQuality(performance.now());
 }
 
 renderer.setAnimationLoop(animate);
