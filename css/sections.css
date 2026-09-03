@@ -297,6 +297,8 @@
 	align-items: center;
 	animation: marqueeScroll 30s linear infinite;
 	width: max-content;
+	will-change: transform;
+	transform: translateZ(0);
 }
 
 @keyframes marqueeScroll {
