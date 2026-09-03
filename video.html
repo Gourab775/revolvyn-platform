@@ -56,7 +56,8 @@ input, textarea { user-select: text; -webkit-user-select: text; }
 .progress-bar-container:hover .progress-bar::after { opacity: 1; }
 .controls-row { display: flex; align-items: center; justify-content: space-between; }
 .controls-left, .controls-right { display: flex; align-items: center; gap: 12px; }
-.ctrl-btn { background: none; color: #fff; font-size: 18px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: background 0.2s; }
+.ctrl-btn { background: none; color: #fff; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: background 0.2s; }
+.ctrl-btn svg { width: 20px; height: 20px; fill: currentColor; }
 .ctrl-btn:hover { background: rgba(255,255,255,0.15); }
 .time-display { color: #ddd; font-size: 13px; font-weight: 400; }
 .big-play-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 68px; height: 48px; background: rgba(0,0,0,0.7); border-radius: 14px; display: flex; align-items: center; justify-content: center; transition: transform 0.2s, background 0.2s; z-index: 4; }
@@ -66,7 +67,8 @@ input, textarea { user-select: text; -webkit-user-select: text; }
 
 .video-nav-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; z-index: 3; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
 .video-player-wrapper:hover .video-nav-overlay { opacity: 1; }
-.video-nav-btn { pointer-events: all; width: 44px; height: 44px; background: rgba(0,0,0,0.6); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 20px; transition: background 0.2s, transform 0.2s; backdrop-filter: blur(4px); }
+.video-nav-btn { pointer-events: all; width: 44px; height: 44px; background: rgba(0,0,0,0.6); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; transition: background 0.2s, transform 0.2s; backdrop-filter: blur(4px); }
+.video-nav-btn svg { width: 22px; height: 22px; }
 .video-nav-btn:hover { background: rgba(0,0,0,0.85); transform: scale(1.1); }
 .video-nav-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
 
@@ -209,7 +211,7 @@ input, textarea { user-select: text; -webkit-user-select: text; }
 <div class="main-layout">
   <div class="main-content">
     <div class="video-player-wrapper" id="videoWrapper">
-      <video id="mainVideo" preload="metadata" playsinline></video>
+      <video id="mainVideo" preload="metadata" playsinline muted></video>
       <div class="video-loading" id="videoLoading">
         <div class="loading-spinner"></div>
         <span>Loading video...</span>
@@ -221,8 +223,8 @@ input, textarea { user-select: text; -webkit-user-select: text; }
         <svg viewBox="0 0 24 24"><polygon points="9.5,7.5 16.5,12 9.5,16.5"/></svg>
       </button>
       <div class="video-nav-overlay">
-        <button class="video-nav-btn" id="overlayPrev" onclick="event.stopPropagation();navigateProject(-1)">&#10094;</button>
-        <button class="video-nav-btn" id="overlayNext" onclick="event.stopPropagation();navigateProject(1)">&#10095;</button>
+        <button class="video-nav-btn" id="overlayPrev" onclick="event.stopPropagation();navigateProject(-1)"><svg viewBox="0 0 24 24"><polyline points="15,18 9,12 15,6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button class="video-nav-btn" id="overlayNext" onclick="event.stopPropagation();navigateProject(1)"><svg viewBox="0 0 24 24"><polyline points="9,6 15,12 9,18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       </div>
       <div class="video-controls" id="videoControls">
         <div class="progress-bar-container" id="progressBar" onclick="seekVideo(event)">
@@ -230,12 +232,12 @@ input, textarea { user-select: text; -webkit-user-select: text; }
         </div>
         <div class="controls-row">
           <div class="controls-left">
-            <button class="ctrl-btn" id="playPauseBtn" onclick="togglePlay()">&#9654;</button>
-            <button class="ctrl-btn" id="muteBtn" onclick="toggleMute()">&#128266;</button>
+            <button class="ctrl-btn" id="playPauseBtn" onclick="togglePlay()"><svg viewBox="0 0 24 24"><polygon points="9.5,7.5 16.5,12 9.5,16.5"/></svg></button>
+            <button class="ctrl-btn" id="muteBtn" onclick="toggleMute()"><svg viewBox="0 0 24 24"><polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/><path d="M14,8.5 C15.3,9.5 16,11 16,12 C16,13 15.3,14.5 14,15.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M16.5,6.5 C18.5,8 19.5,10 19.5,12 C19.5,14 18.5,16 16.5,17.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></button>
             <span class="time-display" id="timeDisplay">0:00 / 0:00</span>
           </div>
           <div class="controls-right">
-            <button class="ctrl-btn" onclick="toggleFullscreen()">&#9974;</button>
+            <button class="ctrl-btn" onclick="toggleFullscreen()"><svg viewBox="0 0 24 24"><polyline points="15,3 21,3 21,9"/><polyline points="9,21 3,21 3,15"/><polyline points="21,3 14,10"/><polyline points="3,21 10,14"/></svg></button>
           </div>
         </div>
       </div>
@@ -560,6 +562,7 @@ function smoothNavigate(url) {
   document.body.style.transition = 'opacity 0.3s';
   setTimeout(() => { window.location.href = url; }, 300);
 }
+window.addEventListener('pageshow', function() { document.body.style.opacity = '1'; });
 
 function buildUrl(p, idx) {
   return 'video.html?brand=' + encodeURIComponent(p.brand) + '&title=' + encodeURIComponent(p.brand) + '&desc=' + encodeURIComponent(p.desc) + '&video=' + encodeURIComponent(p.video) + '&orient=' + p.orient + '&index=' + idx;
@@ -578,27 +581,27 @@ function togglePlay() {
   const playPause = document.getElementById('playPauseBtn');
   if (video.paused) {
     video.play().then(() => {
-      bigPlay.classList.add('hidden');
-      playPause.innerHTML = '&#9646;&#9646;';
+        bigPlay.classList.add('hidden');
+        playPause.innerHTML = '<svg viewBox="0 0 24 24"><rect x="7" y="6" width="3" height="12"/><rect x="14" y="6" width="3" height="12"/></svg>';
     }).catch(() => {
       video.muted = true;
       video.play().then(() => {
         bigPlay.classList.add('hidden');
-        playPause.innerHTML = '&#9646;&#9646;';
-        document.getElementById('muteBtn').innerHTML = '&#128263;';
+        playPause.innerHTML = '<svg viewBox="0 0 24 24"><rect x="7" y="6" width="3" height="12"/><rect x="14" y="6" width="3" height="12"/></svg>';
+        document.getElementById('muteBtn').innerHTML = '<svg viewBox="0 0 24 24"><polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/><line x1="14" y1="9" x2="18" y2="15" stroke="currentColor" stroke-width="1.5"/><line x1="18" y1="9" x2="14" y2="15" stroke="currentColor" stroke-width="1.5"/></svg>';
       }).catch(()=>{});
     });
   } else {
     video.pause();
     bigPlay.classList.remove('hidden');
-    playPause.innerHTML = '&#9654;';
+    playPause.innerHTML = '<svg viewBox="0 0 24 24"><polygon points="9.5,7.5 16.5,12 9.5,16.5"/></svg>';
   }
 }
 
 function toggleMute() {
   const video = document.getElementById('mainVideo');
   video.muted = !video.muted;
-  document.getElementById('muteBtn').innerHTML = video.muted ? '&#128263;' : '&#128266;';
+  document.getElementById('muteBtn').innerHTML = video.muted ? '<svg viewBox="0 0 24 24"><polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/><line x1="14" y1="9" x2="18" y2="15" stroke="currentColor" stroke-width="1.5"/><line x1="18" y1="9" x2="14" y2="15" stroke="currentColor" stroke-width="1.5"/></svg>' : '<svg viewBox="0 0 24 24"><polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/><path d="M14,8.5 C15.3,9.5 16,11 16,12 C16,13 15.3,14.5 14,15.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M16.5,6.5 C18.5,8 19.5,10 19.5,12 C19.5,14 18.5,16 16.5,17.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>';
 }
 
 function seekVideo(e) {
@@ -854,13 +857,13 @@ function loadProject() {
     if (getParam('autoplay') === '1') {
       video.play().then(() => {
         bigPlay.classList.add('hidden');
-        document.getElementById('playPauseBtn').innerHTML = '&#9646;&#9646;';
+        document.getElementById('playPauseBtn').innerHTML = '<svg viewBox="0 0 24 24"><rect x="7" y="6" width="3" height="12"/><rect x="14" y="6" width="3" height="12"/></svg>';
       }).catch(() => {
         video.muted = true;
         video.play().then(() => {
           bigPlay.classList.add('hidden');
-          document.getElementById('playPauseBtn').innerHTML = '&#9646;&#9646;';
-          document.getElementById('muteBtn').innerHTML = '&#128263;';
+          document.getElementById('playPauseBtn').innerHTML = '<svg viewBox="0 0 24 24"><rect x="7" y="6" width="3" height="12"/><rect x="14" y="6" width="3" height="12"/></svg>';
+          document.getElementById('muteBtn').innerHTML = '<svg viewBox="0 0 24 24"><polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/><line x1="14" y1="9" x2="18" y2="15" stroke="currentColor" stroke-width="1.5"/><line x1="18" y1="9" x2="14" y2="15" stroke="currentColor" stroke-width="1.5"/></svg>';
         }).catch(()=>{});
       });
     }
@@ -902,7 +905,7 @@ function loadProject() {
 
   video.onended = function() {
     document.getElementById('bigPlayBtn').classList.remove('hidden');
-    document.getElementById('playPauseBtn').innerHTML = '&#9654;';
+    document.getElementById('playPauseBtn').innerHTML = '<svg viewBox="0 0 24 24"><polygon points="9.5,7.5 16.5,12 9.5,16.5"/></svg>';
   };
 
   video.onclick = togglePlay;

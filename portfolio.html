@@ -275,6 +275,7 @@ transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
 
 	<script>
 		const transition = document.getElementById('pageTransition');
+		window.addEventListener('pageshow', function() { transition.classList.remove('active'); });
 		function smoothNavigate(e, url) {
 			if (e && e.preventDefault) e.preventDefault();
 			if (!url && typeof e === 'string') url = e;

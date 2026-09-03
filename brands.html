@@ -19,7 +19,7 @@
 			transition: opacity 0.2s ease;
 		}
 		.page-transition.active { opacity: 1; }
-		.nav-float { position: fixed; top: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: 0 40px; z-index: 100; pointer-events: none; }
+		.nav-float { position: fixed; top: 24px; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: 0 40px; z-index: 100; pointer-events: none; }
 		.nav-logo {
 			font-family: 'Playfair Display', serif; font-size: 18px;
 			color: rgba(245, 250, 230, 0.8); letter-spacing: 1px;
@@ -196,7 +196,6 @@
 		@media (prefers-reduced-motion: reduce) { .page-transition { will-change: opacity, transform; transform: translateZ(0); backface-visibility: hidden; display: none; } .brands-marquee-track { animation: none; } }
 	
 /* GPU Acceleration Global */
-.nav-float { will-change: transform; }
 @keyframes fadeInUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes marqueeScroll { from { transform: translateX(0) translateZ(0); } to { transform: translateX(-50%) translateZ(0); } }
@@ -284,6 +283,7 @@
 	</footer>
 	<script>
 		const transition = document.getElementById('pageTransition');
+		window.addEventListener('pageshow', function() { transition.classList.remove('active'); });
 		function smoothNavigate(e, url) {
 			if (e && e.preventDefault) e.preventDefault();
 			if (!url && typeof e === 'string') url = e;

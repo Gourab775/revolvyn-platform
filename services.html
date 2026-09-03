@@ -421,6 +421,7 @@
 	</footer>
 	<script>
 		const transition = document.getElementById('pageTransition');
+		window.addEventListener('pageshow', function() { transition.classList.remove('active'); });
 		function smoothNavigate(e, url) {
 			if (e && e.preventDefault) e.preventDefault();
 			if (!url && typeof e === 'string') url = e;
