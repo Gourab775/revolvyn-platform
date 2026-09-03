@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-	<title>Contact Us â€” REVOLVYN</title>
+	<title>Contact Us — REVOLVYN</title>
 <link rel="icon" href="favicon.png" type="image/png" sizes="any">
 <link rel="apple-touch-icon" href="favicon.png">
 	<style>
@@ -199,7 +199,7 @@
 		</div>
 
 		<div class="map-placeholder" data-reveal>
-			<p>REVOLVYN Headquarters â€” Kolkata, India</p>
+			<p>REVOLVYN Headquarters — Kolkata, India</p>
 		</div>
 	</div>
 
@@ -216,7 +216,7 @@
 		</div>
 	</footer>
 	<script>
-		/* ===== CONFIG â€” change these two values ===== */
+		/* ===== CONFIG — change these two values ===== */
 		const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwoD22hMiNmAnzIFKAbN8MXwvIfB50AIFDgDa8SahQlIkb4FCSecsCiiUAex7b4R4IK5g/exec';
 		/* ============================================ */
 
@@ -304,13 +304,13 @@
 					const errMsg = (result && result.message) ? result.message : 'Submission failed. Please email us directly at revolvynmedia@gmail.com';
 					showStatus('error', errMsg);
 				}
-				cfSubmit.textContent = 'Send Message â†’';
+				cfSubmit.textContent = 'Send Message →';
 				cfSubmit.disabled = false;
 				isSubmitting = false;
 			} catch (err) {
 				isSubmitting = false;
 				cfSubmit.disabled = false;
-				cfSubmit.textContent = 'Send Message â†’';
+				cfSubmit.textContent = 'Send Message →';
 				if (err.name === 'AbortError') {
 					showStatus('error', 'Request timed out. Please check your connection and try again.');
 				} else {
