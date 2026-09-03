@@ -434,6 +434,12 @@
 		const revealObserver = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) { entry.target.style.transitionDelay = `${(entry.target.dataset.delay || 0) * 0.15}s`; entry.target.classList.add('revealed'); revealObserver.unobserve(entry.target); } }); }, { threshold: 0.1 });
 		document.querySelectorAll('[data-reveal]').forEach(el => revealObserver.observe(el));
 	</script>
+
+	<!-- Vercel Speed Insights -->
+	<script>
+		window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
+	</script>
+	<script defer src="/_vercel/speed-insights/script.js"></script>
 </body>
 </html>
 
