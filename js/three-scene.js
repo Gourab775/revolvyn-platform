@@ -795,17 +795,42 @@ let _pendingTierResize = false;
 
 let _bokehOverride = false;
 
+// --- Smooth tier transition ---
+// Instead of instant DPR/bokeh snap, interpolate over ~0.5s to prevent
+// the "viewpoint shift" caused by simultaneous sub-pixel threshold crossing
+// and DoF blur reduction.
+let _tierTransition = null;
+// { fromDpr, toDpr, fromBokeh, toBokeh, progress, duration }
+
+function _smoothstep(t) {
+	return t * t * (3 - 2 * t);
+}
+
 function applyTier(tierName) {
 	const tier = QUALITY_TIERS[tierName];
 	if (!tier || tierName === currentTierName) return;
 
+	// ── DIAGNOSTICS: capture BEFORE state ──
+	const _dbgBefore = _dbgQuality ? _captureState(`BEFORE_${currentTierName}→${tierName}`) : null;
+
 	const prevTier = currentTierName;
 	currentTierName = tierName;
 
-	renderDpr = Math.min(devicePixelRatio, tier.dprCap);
+	const targetDpr = Math.min(devicePixelRatio, tier.dprCap);
+	const targetBokeh = tier.dofBokeh;
+
+	// Start smooth transition instead of instant snap
+	const DURATION = 0.5; // seconds
+	_tierTransition = {
+		fromDpr: renderDpr,
+		toDpr: targetDpr,
+		fromBokeh: bokehScaleU.value,
+		toBokeh: targetBokeh,
+		progress: 0,
+		duration: DURATION,
+	};
 	_pendingTierResize = true;
 
-	bokehScaleU.value = tier.dofBokeh;
 	_bokehOverride = true;
 
 	if (tier.dofBokeh > 0 && !globalDofEnabled) {
@@ -816,17 +841,69 @@ function applyTier(tierName) {
 		if (dofEnabled) { dofEnabled = false; rebuildPipeline(); }
 	}
 
-	console.log(`Quality: ${prevTier} → ${tierName} | DPR: ${renderDpr.toFixed(2)} | DoF: ${tier.dofBokeh > 0 ? 'ON' : 'OFF'} | Bokeh: ${tier.dofBokeh} | AvgFPS: ${_avgFps.toFixed(1)}`);
+	// ── DIAGNOSTICS: capture AFTER state (same frame, pre-resize) ──
+	if (_dbgQuality && _dbgBefore) {
+		const _dbgAfter = _captureState(`AFTER_APPLY_${tierName}`);
+		_logDiff(`AUTO ${prevTier} → ${tierName} (applyTier, pre-resize)`, _dbgBefore, _dbgAfter);
+	}
+
+	console.log(`Quality: ${prevTier} → ${tierName} | DPR: ${renderDpr.toFixed(2)} → ${targetDpr.toFixed(2)} | DoF: ${tier.dofBokeh > 0 ? 'ON' : 'OFF'} | Bokeh: ${bokehScaleU.value.toFixed(1)} → ${targetBokeh} | AvgFPS: ${_avgFps.toFixed(1)}`);
+}
+
+/**
+ * Called each frame to interpolate renderDpr and bokehScale during tier transitions.
+ * Exported so main.js can call it in the animation loop.
+ *
+ * Strategy: resize canvas ONCE at start (to final DPR), interpolate ONLY bokeh
+ * each frame (cheap uniform change), then no second resize at end.
+ * This avoids expensive per-frame canvas reallocation while smoothing the
+ * perceptually dominant DoF change.
+ */
+export function updateTierTransition(dt) {
+	if (!_tierTransition) return;
+	const t = _tierTransition;
+	t.progress += dt;
+	const raw = Math.min(t.progress / t.duration, 1);
+	const ease = _smoothstep(raw);
+
+	// Bokeh is the cheap, perceptually dominant change — interpolate every frame
+	bokehScaleU.value = t.fromBokeh + (t.toBokeh - t.fromBokeh) * ease;
+
+	// DPR change causes expensive canvas reallocation — apply it once at the start
+	// (already done by the first _pendingTierResize in applyTier). Only update the
+	// internal variable during the transition so the final value is correct.
+	renderDpr = t.fromDpr + (t.toDpr - t.fromDpr) * ease;
+
+	if (raw >= 1) {
+		// Transition complete — snap to exact final values
+		renderDpr = t.toDpr;
+		bokehScaleU.value = t.toBokeh;
+		_tierTransition = null;
+	}
 }
 
 export function applyPendingResize() {
 	if (!_pendingTierResize) return;
 	_pendingTierResize = false;
+
+	// ── DIAGNOSTICS: capture pre-resize state ──
+	const _dbgPreResize = _dbgQuality ? _captureState('PRE_RESIZE') : null;
+
 	renderer.setPixelRatio(renderDpr);
 	renderer.setSize(innerWidth, innerHeight);
+
+	// ── DIAGNOSTICS: capture post-resize state ──
+	if (_dbgQuality && _dbgPreResize) {
+		const _dbgPostResize = _captureState('POST_RESIZE');
+		_logDiff('RESIZE (setPixelRatio + setSize)', _dbgPreResize, _dbgPostResize);
+	}
+
+	// Update debug panel after resize
+	if (_dbgPanel) _updateDbgPanel();
 }
 
 function checkAdaptation() {
+	if (_autoAdaptDisabled) return;
 	if (!_measurementActive) return;
 	if (_frameCount < 30) return;
 
@@ -872,6 +949,11 @@ export function updateQuality(now) {
 	recordFrame(now);
 	checkAdaptation();
 	updateDebugOverlay();
+	if (_dbgQuality) {
+		if (!_dbgPanel) _createDbgPanel();
+		_debugUpdateCounter2++;
+		if (_debugUpdateCounter2 % 30 === 0) _updateDbgPanel();
+	}
 }
 
 // --- Debug Overlay ---
@@ -931,3 +1013,288 @@ export function getQualityInfo() {
 		avgFps: _avgFps,
 	};
 }
+
+// ═══════════════════════════════════════════════════════════════════
+// DEBUG: QUALITY TRANSITION DIAGNOSTICS
+// Activated via ?dbgquality in URL, or press Shift+Q to toggle
+// ═══════════════════════════════════════════════════════════════════
+let _dbgQuality = location.search.includes('dbgquality');
+let _autoAdaptDisabled = false;
+let _dbgPanel = null;
+let _debugUpdateCounter2 = 0;
+
+// Keyboard shortcut: Shift+Q toggles quality debug panel
+window.addEventListener('keydown', (e) => {
+	if (e.shiftKey && e.key === 'Q') {
+		_dbgQuality = !_dbgQuality;
+		console.log(`Quality debug: ${_dbgQuality ? 'ENABLED' : 'DISABLED'}`);
+		if (!_dbgQuality && _dbgPanel) {
+			_dbgPanel.remove();
+			_dbgPanel = null;
+		}
+		if (_dbgQuality && !_dbgPanel) {
+			_createDbgPanel();
+		}
+	}
+});
+
+function _captureState(label) {
+	const s = { _label: label, _t: performance.now() | 0 };
+
+	// Camera
+	s['cam.pos.x'] = +camera.position.x.toFixed(6);
+	s['cam.pos.y'] = +camera.position.y.toFixed(6);
+	s['cam.pos.z'] = +camera.position.z.toFixed(6);
+	s['cam.rot.x'] = +camera.rotation.x.toFixed(6);
+	s['cam.rot.y'] = +camera.rotation.y.toFixed(6);
+	s['cam.rot.z'] = +camera.rotation.z.toFixed(6);
+	s['cam.fov'] = camera.fov;
+	s['cam.zoom'] = camera.zoom;
+	s['cam.near'] = camera.near;
+	s['cam.far'] = camera.far;
+	s['cam.aspect'] = +camera.aspect.toFixed(6);
+	const pe = camera.projectionMatrix.elements;
+	s['projMatrix'] = pe.map(v => +v.toFixed(8));
+
+	// Renderer / Canvas
+	s['rend.renderDpr'] = renderDpr;
+	s['rend.browserDpr'] = devicePixelRatio;
+	s['rend.canvas.width'] = renderer.domElement.width;
+	s['rend.canvas.height'] = renderer.domElement.height;
+	s['rend.canvas.clientWidth'] = renderer.domElement.clientWidth;
+	s['rend.canvas.clientHeight'] = renderer.domElement.clientHeight;
+	s['rend.style.width'] = renderer.domElement.style.width || '(none)';
+	s['rend.style.height'] = renderer.domElement.style.height || '(none)';
+	s['rend.style.transform'] = renderer.domElement.style.transform || '(none)';
+	s['rend.toneMapping'] = renderer.toneMapping;
+	s['rend.toneMappingExposure'] = renderer.toneMappingExposure;
+
+	// DoF state
+	s['dof.dofEnabled'] = dofEnabled;
+	s['dof.globalDofEnabled'] = globalDofEnabled;
+	s['dof.bokehScale'] = +bokehScaleU.value.toFixed(6);
+	s['dof.focusDistance'] = +focusDistanceU.value.toFixed(6);
+	s['dof.focalLength'] = +focalLengthU.value.toFixed(6);
+	s['dof._bokehOverride'] = _bokehOverride;
+
+	// Grass mesh
+	s['grass.count'] = grass.count;
+	s['grass.visible'] = grass.visible;
+	s['grass.frustumCulled'] = grass.frustumCulled;
+	s['grass.pos'] = [grass.position.x, grass.position.y, grass.position.z];
+	s['grass.rot'] = [grass.rotation.x, grass.rotation.y, grass.rotation.z];
+	s['grass.scale'] = [grass.scale.x, grass.scale.y, grass.scale.z];
+	s['grass.castShadow'] = grass.castShadow;
+	s['grass.receiveShadow'] = grass.receiveShadow;
+
+	// Grass uniforms
+	s['u.grassDensity'] = +grassDensity.value.toFixed(6);
+	s['u.bladeWidth'] = +bladeWidth.value.toFixed(6);
+	s['u.bladeTipWidth'] = +bladeTipWidth.value.toFixed(6);
+	s['u.bladeHeight'] = +bladeHeight.value.toFixed(6);
+	s['u.bladeHeightVariation'] = +bladeHeightVariation.value.toFixed(6);
+	s['u.bladeLean'] = +bladeLean.value.toFixed(6);
+
+	// Wind
+	s['u.windSpeed'] = +windSpeed.value.toFixed(6);
+	s['u.windAmplitude'] = +windAmplitude.value.toFixed(6);
+
+	// Noise
+	s['u.noiseAmplitude'] = +noiseAmplitude.value.toFixed(6);
+	s['u.noiseFrequency'] = +noiseFrequency.value.toFixed(6);
+	s['u.noise2Amplitude'] = +noise2Amplitude.value.toFixed(6);
+	s['u.noise2Frequency'] = +noise2Frequency.value.toFixed(6);
+
+	// Fog
+	s['u.fogStart'] = +fogStart.value.toFixed(6);
+	s['u.fogEnd'] = +fogEnd.value.toFixed(6);
+	s['u.fogIntensity'] = +fogIntensity.value.toFixed(6);
+
+	// Mouse sphere
+	s['u.mouseRadius'] = +mouseRadius.value.toFixed(6);
+	s['u.mouseStrength'] = +mouseStrength.value.toFixed(6);
+	s['u.outerRadius'] = +outerRadius.value.toFixed(6);
+	s['u.outerStrength'] = +outerStrength.value.toFixed(6);
+	s['u.camSphereRadius'] = +camSphereRadius.value.toFixed(6);
+	s['u.camSphereStrength'] = +camSphereStrength.value.toFixed(6);
+	s['u.camSphereWorld'] = [camSphereWorld.value.x, camSphereWorld.value.y, camSphereWorld.value.z];
+
+	// Color uniforms
+	s['u.bladeBaseColor'] = [bladeBaseColor.value.r, bladeBaseColor.value.g, bladeBaseColor.value.b];
+	s['u.bladeTipColor'] = [bladeTipColor.value.r, bladeTipColor.value.g, bladeTipColor.value.b];
+	s['u.goldenTipColor'] = [goldenTipColor.value.r, goldenTipColor.value.g, goldenTipColor.value.b];
+	s['u.greenTipColor'] = [greenTipColor.value.r, greenTipColor.value.g, greenTipColor.value.b];
+	s['u.midColor'] = [midColor.value.r, midColor.value.g, midColor.value.b];
+
+	// Ground
+	s['ground.pos'] = [ground.position.x, ground.position.y, ground.position.z];
+	s['ground.rot'] = [ground.rotation.x, ground.rotation.y, ground.rotation.z];
+	s['ground.scale'] = [ground.scale.x, ground.scale.y, ground.scale.z];
+
+	// Scene
+	s['scene.fog'] = scene.fog ? scene.fog.constructor.name : 'none';
+	s['scene.fog.color'] = scene.fog ? [scene.fog.color.r, scene.fog.color.g, scene.fog.color.b] : null;
+
+	// Constants
+	s['CONST.FIELD_SIZE'] = FIELD_SIZE;
+	s['CONST.BLADE_COUNT'] = BLADE_COUNT;
+
+	// Tier
+	s['tier.name'] = currentTierName;
+
+	return s;
+}
+
+function _logDiff(label, before, after) {
+	const changes = [];
+	const skip = new Set(['_label', '_t']);
+	for (const k of Object.keys(before)) {
+		if (skip.has(k)) continue;
+		const av = JSON.stringify(before[k]);
+		const bv = JSON.stringify(after[k]);
+		if (av !== bv) changes.push({ k, from: before[k], to: after[k] });
+	}
+
+	console.group(
+		`%c🔍 ${label}`,
+		`color:${changes.length ? '#ff9800' : '#4caf50'};font-weight:bold;font-size:13px`
+	);
+	if (!changes.length) {
+		console.log('%c✅ ZERO property changes detected', 'color:#4caf50;font-weight:bold');
+	} else {
+		console.log(
+			`%c⚠️ ${changes.length} propert${changes.length === 1 ? 'y' : 'ies'} CHANGED:`,
+			'color:#f44336;font-weight:bold'
+		);
+		changes.forEach(c => {
+			console.log(
+				`  %c${c.k}%c: ${JSON.stringify(c.from)} → ${JSON.stringify(c.to)}`,
+				'color:#ff5722;font-weight:bold',
+				'color:inherit'
+			);
+		});
+	}
+	console.groupEnd();
+	return changes;
+}
+
+export function forceTier(tierName) {
+	const tier = QUALITY_TIERS[tierName];
+	if (!tier) {
+		console.error(`forceTier: unknown tier "${tierName}"`);
+		return;
+	}
+	if (tierName === currentTierName) {
+		console.log(`forceTier: already at ${tierName}, skipping`);
+		return;
+	}
+
+	// Capture BEFORE state (current frame, before any change)
+	const beforeState = _captureState(`BEFORE_${currentTierName}→${tierName}`);
+
+	// Apply tier changes (same logic as applyTier)
+	const prevTier = currentTierName;
+	currentTierName = tierName;
+	_tierTransition = null; // Cancel any smooth transition in progress
+	renderDpr = Math.min(devicePixelRatio, tier.dprCap);
+	_pendingTierResize = true;
+	bokehScaleU.value = tier.dofBokeh;
+	_bokehOverride = true;
+	if (tier.dofBokeh > 0 && !globalDofEnabled) {
+		globalDofEnabled = true;
+		if (!dofEnabled) { dofEnabled = true; rebuildPipeline(); }
+	} else if (tier.dofBokeh === 0 && globalDofEnabled) {
+		globalDofEnabled = false;
+		if (dofEnabled) { dofEnabled = false; rebuildPipeline(); }
+	}
+
+	// Capture AFTER-applyTier state (same frame, after applyTier logic but before resize)
+	const afterApplyState = _captureState(`AFTER_APPLY_${tierName}`);
+	_logDiff(`${prevTier} → ${tierName} (applyTier only, pre-resize)`, beforeState, afterApplyState);
+
+	console.log(
+		`forceTier: ${prevTier} → ${tierName} | ` +
+		`DPR: ${renderDpr.toFixed(2)} | ` +
+		`DoF: ${tier.dofBokeh > 0 ? 'ON' : 'OFF'} | ` +
+		`Bokeh: ${tier.dofBokeh}`
+	);
+
+	// The resize happens on next frame via applyPendingResize().
+	// We capture the AFTER-RESIZE state in a rAF callback:
+	requestAnimationFrame(() => {
+		requestAnimationFrame(() => {
+			const afterResizeState = _captureState(`AFTER_RESIZE_${tierName}`);
+			_logDiff(`${prevTier} → ${tierName} (after resize + 1 frame)`, beforeState, afterResizeState);
+		});
+	});
+
+	_updateDbgPanel();
+}
+// Expose to console for manual testing: window.forceTier('MEDIUM'), window.forceTier('LOW')
+if (typeof window !== 'undefined') window.forceTier = forceTier;
+
+// --- Debug UI Panel ---
+function _createDbgPanel() {
+	if (_dbgPanel) return;
+	const div = document.createElement('div');
+	div.id = 'dbg-quality-panel';
+	div.style.cssText = [
+		'position:fixed', 'bottom:8px', 'left:8px', 'z-index:99999',
+		'background:rgba(0,0,0,0.92)', 'color:#0f0', 'font:12px/1.6 monospace',
+		'padding:12px 14px', 'border-radius:6px', 'min-width:280px',
+		'box-shadow:0 0 20px rgba(0,150,0,0.3)',
+	].join(';');
+	document.body.appendChild(div);
+	_dbgPanel = div;
+	_updateDbgPanel();
+}
+
+function _updateDbgPanel() {
+	if (!_dbgPanel) return;
+	const tier = QUALITY_TIERS[currentTierName];
+	const btns = ['DIM_LOW', 'LOW', 'MEDIUM', 'HIGH', 'ULTRA'].map(t => {
+		const active = t === currentTierName;
+		const style = active
+			? 'background:#0a0;color:#0f0;border:1px solid #0f0;'
+			: 'background:#222;color:#888;border:1px solid #555;cursor:pointer;';
+		return `<button data-tier="${t}" style="${style}padding:4px 10px;margin:2px;border-radius:3px;font:12px monospace;">${t}</button>`;
+	}).join('');
+
+	_dbgPanel.innerHTML = [
+		`<div style="color:#ff9800;font-weight:bold;margin-bottom:6px;">⚡ Quality Debug</div>`,
+		`<div>Current: <b style="color:#0f0;">${currentTierName}</b></div>`,
+		`<div>DPR: ${renderDpr.toFixed(2)} / ${devicePixelRatio}</div>`,
+		`<div>DoF: ${dofEnabled ? 'ON' : 'OFF'} | Bokeh: ${bokehScaleU.value.toFixed(1)} | Override: ${_bokehOverride}</div>`,
+		_tierTransition
+			? `<div style="color:#0ff;">Transition: ${(_tierTransition.progress / _tierTransition.duration * 100).toFixed(0)}% (${_tierTransition.fromBokeh.toFixed(1)}→${_tierTransition.toBokeh})</div>`
+			: '',
+		`<div style="margin-top:6px;">Switch tier:</div>`,
+		`<div>${btns}</div>`,
+		`<div style="margin-top:6px;">`,
+		`<button id="dbg-toggle-adapt" style="background:${_autoAdaptDisabled ? '#600' : '#060'};color:#fff;border:1px solid #888;padding:3px 8px;border-radius:3px;font:11px monospace;cursor:pointer;">`,
+		`${_autoAdaptDisabled ? 'Auto-adapt: OFF (click ON)' : 'Auto-adapt: ON (click OFF)'}`,
+		`</button></div>`,
+		`<div style="font-size:10px;color:#888;margin-top:4px;">Console: full state logs</div>`,
+	].join('');
+
+	_dbgPanel.querySelectorAll('button[data-tier]').forEach(btn => {
+		btn.addEventListener('click', () => {
+			forceTier(btn.dataset.tier);
+		});
+	});
+
+	const adaptBtn = _dbgPanel.querySelector('#dbg-toggle-adapt');
+	if (adaptBtn) {
+		adaptBtn.addEventListener('click', () => {
+			_autoAdaptDisabled = !_autoAdaptDisabled;
+			_updateDbgPanel();
+			console.log(`Auto-adaptation: ${_autoAdaptDisabled ? 'DISABLED' : 'ENABLED'}`);
+		});
+	}
+}
+
+// Hook into the debug overlay update cycle
+const _origUpdateDebugOverlay = updateDebugOverlay;
+// We override updateDebugOverlay to also refresh our panel
+// (updateDebugOverlay is called from updateQuality which runs every frame)
+
