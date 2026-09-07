@@ -25,7 +25,7 @@ for (const file of ['schema.sql', 'seed.sql']) {
   const statements = splitStatements(raw).filter((s) => s.trim().length > 0);
   console.log(`→ ${file}: ${statements.length} statements`);
   for (const stmt of statements) {
-    await sql.query(stmt);
+    await sql(stmt);
   }
   console.log(`✓ ${file} applied`);
 }

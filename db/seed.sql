@@ -33,7 +33,7 @@ ON CONFLICT (page_id, section_key) DO NOTHING;
 
 INSERT INTO page_sections (page_id, section_key, section_type, data, sort_order, is_visible)
 SELECT id, 'quote', 'quote', '{
-  "quote": "\\"Some ideas are meant to be seen. Ours are meant to be felt.\\"",
+  "quote": "\"Some ideas are meant to be seen. Ours are meant to be felt.\"",
   "attribution": "-Swapnil Raymandal, Founder"
 }'::jsonb, 2, TRUE FROM pages WHERE slug = 'home'
 ON CONFLICT (page_id, section_key) DO NOTHING;

@@ -124,7 +124,6 @@ CREATE TABLE IF NOT EXISTS testimonials (
   slug                    TEXT UNIQUE,
   name                    TEXT NOT NULL DEFAULT '',
   company                 TEXT NOT NULL DEFAULT '',
-  company                 TEXT NOT NULL DEFAULT '',
   role                    TEXT NOT NULL DEFAULT '',
   content                 TEXT NOT NULL DEFAULT '',
   photo                   TEXT NOT NULL DEFAULT '',
