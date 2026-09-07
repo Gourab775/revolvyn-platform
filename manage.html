@@ -65,7 +65,11 @@
       </div>
       <div class="topbar-right">
         <span id="status-pill" class="pill" title="">Checking…</span>
-        <button id="btn-preview" class="btn ghost">Preview website</button>
+        <span class="preview-wrap">
+          <button id="btn-preview" class="btn ghost">Preview website</button>
+          <button id="btn-preview-menu" class="btn ghost preview-chevron" aria-label="Choose a page to preview" aria-haspopup="true">▾</button>
+          <span id="preview-menu" class="preview-menu hidden" role="menu"></span>
+        </span>
         <button id="btn-publish" class="btn primary">Publish changes</button>
         <span class="user-chip" id="user-chip" title=""><span class="avatar" id="user-avatar">O</span></span>
         <button id="btn-logout" class="btn ghost">Sign out</button>

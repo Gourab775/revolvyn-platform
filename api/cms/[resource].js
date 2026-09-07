@@ -112,12 +112,13 @@ export default async function handler(req, res) {
         clean.slug = `${slugify(clean[cfg.slugFrom], resource.slice(0, -1))}-${Date.now().toString(36)}`;
       }
       const maxRow = await unsafe(sql, `SELECT COALESCE(MAX(sort_order), -1) + 1 AS n FROM ${cfg.table}`);
-      const cols = Object.keys(clean);
+      const cols = [...Object.keys(clean), 'has_unpublished_changes'];
+      const insertVals = [...cols.slice(0, -1).map((c) => (c === 'details' ? JSON.stringify(clean[c]) : clean[c])), true];
       const row =
-        (await unsafe(sql, 
+        (await unsafe(sql,
           `INSERT INTO ${cfg.table} (${['sort_order', ...cols].join(', ')})
            VALUES (${['$1', ...cols.map((_, i) => `$${i + 2}`)].join(', ')}) RETURNING *`,
-          [maxRow[0].n, ...cols.map((c) => (c === 'details' ? JSON.stringify(clean[c]) : clean[c]))],
+          [maxRow[0].n, ...insertVals],
         ))[0];
       await audit(clerkUserId, 'create', resource, row.id, { title: row.title || row.name, summary: `Added ${single} “${itemName(row)}”` });
       return send(res, 201, { item: row });
@@ -143,6 +144,7 @@ export default async function handler(req, res) {
       const sets = Object.keys(clean).map((c, i) =>
         c === 'details' ? `${c} = $${i + 2}::jsonb` : `${c} = $${i + 2}`,
       );
+      sets.push('has_unpublished_changes = TRUE');
       const vals = Object.keys(clean).map((c) => (c === 'details' ? JSON.stringify(clean[c]) : clean[c]));
       const rows = await unsafe(sql, 
         `UPDATE ${cfg.table} SET ${sets.join(', ')} WHERE id = $1 RETURNING *`,

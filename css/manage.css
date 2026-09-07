@@ -78,6 +78,22 @@ h2 { font-size: 18px; margin: 0 0 10px; }
 .icon-btn svg { width: 19px; height: 19px; }
 .only-mobile { display: none; }
 .user-chip { display: inline-flex; align-items: center; }
+
+/* Preview dropdown */
+.preview-wrap { position: relative; display: inline-flex; }
+.preview-wrap .btn:first-child { border-top-right-radius: 0; border-bottom-right-radius: 0; }
+.preview-chevron { border-top-left-radius: 0 !important; border-bottom-left-radius: 0 !important; margin-left: -1px; padding-left: 10px !important; padding-right: 10px !important; }
+.preview-menu {
+  position: absolute; top: calc(100% + 6px); right: 0; min-width: 196px;
+  background: var(--panel-solid); border: 1px solid var(--line); border-radius: 12px;
+  padding: 6px; box-shadow: var(--shadow); z-index: 70;
+}
+.preview-menu button {
+  display: block; width: 100%; text-align: left;
+  background: none; border: none; color: var(--muted);
+  font-size: 13.5px; padding: 9px 12px; border-radius: 8px; cursor: pointer;
+}
+.preview-menu button:hover { background: rgba(150, 190, 120, 0.1); color: var(--ink); }
 .avatar {
   width: 30px; height: 30px; border-radius: 50%;
   background: linear-gradient(135deg, rgba(217, 236, 122, 0.85), rgba(120, 160, 70, 0.85));

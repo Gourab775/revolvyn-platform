@@ -8,11 +8,15 @@
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 -- Helper: updated_at auto-touch ------------------------------------------------
+-- NOTE: this trigger owns ONLY updated_at. has_unpublished_changes is owned
+-- by writers on purpose: API mutations set it TRUE explicitly, while Publish
+-- and migrations set it FALSE explicitly. A trigger cannot tell "SET FALSE
+-- on a clean row" apart from "flag untouched", so it must not own the flag
+-- (see migrations/006_trigger_final.sql).
 CREATE OR REPLACE FUNCTION cms_touch_updated_at()
 RETURNS TRIGGER AS $$
 BEGIN
   NEW.updated_at = NOW();
-  NEW.has_unpublished_changes = TRUE;
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;

@@ -27,9 +27,9 @@ No technical knowledge needed. If you can use email, you can use this.
 
 ## Preview & visual editing
 
-- **Preview website** opens your site in a new tab, exactly as visitors see it — but with your **draft** content.
-- In preview you will see small **Edit buttons** floating on each section. Click one — the matching editor opens back in the Website Manager tab.
-- After you Save there, the preview tab **refreshes itself** — you see the result instantly, still without going live.
+- **Preview website** opens your site in a new tab, exactly as visitors see it — but with your **draft** content. A small badge at the bottom confirms it's a preview.
+- Use the small arrow next to Preview to open **any page** directly (Home, Portfolio, Brands, Services, Contact, and the rest).
+- After you Save in the manager, simply **Refresh** the preview tab to see the result — still without going live.
 - Only **Publish changes** makes anything visible to visitors.
 
 ## Good to know

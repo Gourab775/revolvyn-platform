@@ -40,6 +40,22 @@ for (const file of files) {
 
 console.log('Done. Schema + seed are up to date.');
 
+// Policy: migrations/seeds must never leave draft flags dirty. The
+// has_unpublished_changes trigger fires on every UPDATE (needed for CMS
+// edits), so any migration UPDATE would otherwise fake "unpublished"
+// state. Reset unconditionally at the end of every migrate run.
+for (const table of [
+  'page_sections',
+  'portfolio_items',
+  'brands',
+  'services',
+  'testimonials',
+  'site_settings',
+]) {
+  await sql(`UPDATE ${table} SET has_unpublished_changes = FALSE`);
+}
+console.log('✓ draft flags reset (migrations leave no phantom edits)');
+
 function splitStatements(raw) {
   // Strip line comments, then split on ";" except inside $$...$$ blocks.
   const lines = raw.split('\n').filter((l) => !l.trimStart().startsWith('--'));

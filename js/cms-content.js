@@ -161,6 +161,10 @@
 
   var previewToken = null; // short-lived draft token (robust flow)
   var previewLegacy = false; // ?cms_preview=draft + session token (older flow)
+  // Edit-pill overlay stays OFF: preview shows content plus ONE small badge.
+  // Flip to true to re-enable floating Edit buttons + top bar (all machinery
+  // below is kept intact and tested).
+  var EDIT_UI = false;
 
   // Canonical home of the CMS backend. Mirror deployments without database
   // access fall back to reading published content from here (plain public
@@ -193,7 +197,12 @@
       if (param && param !== 'draft' && /^[0-9a-f]{64}$/i.test(param)) {
         previewToken = param;
         var r = await fetch('/api/cms/draft?preview=' + encodeURIComponent(param));
-        if (!r.ok) { failBadge('This preview has expired. Open a new preview from the Website Manager.'); return; }
+        if (!r.ok) {
+          failBadge(r.status === 401
+            ? 'This preview has expired. Open a new preview from the Website Manager.'
+            : 'Preview unavailable right now (server error ' + r.status + '). Open it again from the Website Manager.');
+          return;
+        }
         data = normalizeDraft(await r.json());
         badge();
         enterEditMode();
@@ -757,6 +766,10 @@
         '.cmsedit-pill:hover{filter:brightness(1.07)}' +
         '.cmsedit-toast{position:fixed;bottom:56px;left:50%;transform:translateX(-50%);z-index:99999;background:rgba(26,33,17,.97);border:1px solid rgba(217,236,122,.4);color:#eef2e4;font:500 13.5px Inter,system-ui,sans-serif;padding:11px 20px;border-radius:12px;box-shadow:0 10px 34px rgba(0,0,0,.55);max-width:92vw;text-align:center}';
       document.head.appendChild(css);
+      if (!EDIT_UI) {
+        // Single-badge preview: no banner, no pills. Only the message
+        // listener below stays active (harmless, enables future UI).
+      } else {
       var bar = document.createElement('div');
       bar.className = 'cmsedit-bar';
       var left = document.createElement('div');
@@ -806,6 +819,7 @@
       };
       window.addEventListener('scroll', schedule, { passive: true });
       window.addEventListener('resize', schedule);
+      } // end EDIT_UI visuals (banner + pills)
       window.addEventListener('message', function (e) {
         try {
           if (e.origin !== window.location.origin) return;

@@ -4,10 +4,57 @@
   'use strict';
   var clerk = null, token = null, draft = null, me = null;
   var tab = 'home', dirty = false, busy = false, uploadsOn = false;
-  var BUILD_TAG = 'cms-20260909-pro';
+  var BUILD_TAG = 'cms-20260910-prev';
   var DEBUG = /(?:\?|&)cms-debug=1/.test(window.location.search);
   var ui = { search: '', filter: 'all', morePage: null };
   var previewWin = null;
+  var PREVIEW_PAGES = [
+    ['index.html', 'Home'], ['portfolio.html', 'Portfolio'], ['brands.html', 'Brands'],
+    ['services.html', 'Services'], ['contact.html', 'Contact'],
+    ['careers.html', 'Careers'], ['partnerships.html', 'Partnerships'], ['blog.html', 'Blog'],
+    ['research.html', 'Research'], ['newsletter.html', 'Newsletter'], ['community.html', 'Community'],
+    ['privacy.html', 'Privacy'], ['refund.html', 'Refund']
+  ];
+  function previewForTab() {
+    var map = { portfolio: 'portfolio.html', brands: 'brands.html', services: 'services.html', contact: 'contact.html', footer: 'index.html', more: (ui.morePage || 'index') + '.html' };
+    return map[tab] || 'index.html';
+  }
+  async function openPreview(pageFile) {
+    // Open synchronously inside the click (before any await) so the browser
+    // treats it as user-initiated and never blocks the popup. We navigate
+    // the blank tab once the preview token is ready.
+    var win = null;
+    try { win = window.open('about:blank', '_blank'); } catch (e) { win = null; }
+    if (!win) { toast('Popup blocked — allow popups for this site and try again.', true); return; }
+    previewWin = win;
+    // Fresh sign-in token first: a stale cached token is the most common
+    // reason previews fail (it makes both minting and fallback fail).
+    try {
+      var fresh = await clerk.session.getToken({ skipCache: true });
+      if (fresh) token = fresh;
+    } catch (e) {}
+    try {
+      var r = await api('/api/cms/draft', { method: 'POST' });
+      try { win.location.href = pageFile + '?cms_preview=' + r.token; }
+      catch (e) { try { win.close(); } catch (e2) {} previewWin = null; }
+    } catch (e) {
+      try { try { win.close(); } catch (e3) {} } catch (e4) {}
+      previewWin = null;
+      toast('Preview failed: ' + e.message + ' Try signing out and back in.', true);
+    }
+  }
+  function buildPreviewMenu() {
+    var menu = $('preview-menu');
+    menu.innerHTML = '';
+    PREVIEW_PAGES.forEach(function (p) {
+      var b = el('button', null, p[1]);
+      b.type = 'button';
+      b.setAttribute('role', 'menuitem');
+      b.onclick = function () { closePreviewMenu(); openPreview(p[0]); };
+      menu.appendChild(b);
+    });
+  }
+  function closePreviewMenu() { $('preview-menu').classList.add('hidden'); }
   function notifyPreview() {
     try {
       if (previewWin && !previewWin.closed) {
@@ -1562,6 +1609,7 @@
     $('btn-menu').onclick = function () { $('sidebar').classList.toggle('open'); };
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') {
+        closePreviewMenu();
         if (!$('confirm').classList.contains('hidden')) return;
         if (!$('drawer').classList.contains('hidden')) requestCloseDrawer();
         else $('sidebar').classList.remove('open');
@@ -1601,29 +1649,19 @@
         await enter();
       } catch (e) { $('denied-error').textContent = e.message; $('denied-error').classList.remove('hidden'); }
     };
-    $('btn-preview').onclick = async function () {
-      var btn = $('btn-preview');
-      var map = { portfolio: 'portfolio.html', brands: 'brands.html', services: 'services.html', contact: 'contact.html', footer: 'index.html', more: (ui.morePage || 'index') + '.html' };
-      var page = map[tab] || 'index.html';
-      // Open synchronously inside the click (before any await) so the
-      // browser treats it as user-initiated and never blocks the popup.
-      // We navigate the blank tab once the preview token is ready.
-      var win = null;
-      try { win = window.open('about:blank', '_blank'); } catch (e) { win = null; }
-      if (!win) { toast('Popup blocked — allow popups for this site and try again.', true); return; }
-      previewWin = win;
-      setBusy(true, btn, 'Opening…');
-      try {
-        var r = await api('/api/cms/draft', { method: 'POST' });
-        try { win.location.href = page + '?cms_preview=' + r.token; }
-        catch (e) { try { win.close(); } catch (e2) {} previewWin = null; }
-      } catch (e) {
-        try { sessionStorage.setItem('revolvyn_preview_token', token); } catch (e2) {}
-        try { win.location.href = page + '?cms_preview=draft'; }
-        catch (e3) { try { win.close(); } catch (e4) {} previewWin = null; }
-      }
-      setBusy(false, btn);
+    $('btn-preview').onclick = function () { openPreview(previewForTab()); };
+    buildPreviewMenu();
+    $('btn-preview-menu').onclick = function (e) {
+      if (e && e.stopPropagation) e.stopPropagation();
+      $('preview-menu').classList.toggle('hidden');
     };
+    document.addEventListener('click', function (e) {
+      var menu = $('preview-menu');
+      if (!menu.classList.contains('hidden')) {
+        var wrap = document.querySelector('.preview-wrap');
+        if (!wrap || !wrap.contains(e.target)) menu.classList.add('hidden');
+      }
+    });
     window.addEventListener('message', function (e) {
       try {
         if (e.origin !== window.location.origin) return;
