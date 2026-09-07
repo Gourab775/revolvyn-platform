@@ -3,10 +3,11 @@
   'use strict';
   var clerk = null, token = null, draft = null, tab = 'home', dirty = false, busy = false;
   var uploadsOn = false;
-  // Public Clerk key (safe to embed — it ships to every visitor by design).
-  // Primary source is /api/public/config; this is only a fallback so the
-  // sign-in box can still load if the server omits it.
-  var FALLBACK_PUBLISHABLE_KEY = 'pk_test_aW4tYmFib29uLTkzOTAuY2xlcmsuYWNjb3VudHMuZGV2JA';
+  // Publishable key is PUBLIC by design (ships to every visitor). Kept here
+  // directly so the sign-in box never depends on a server round-trip.
+  // Server value from /api/public/config overrides it when available.
+  var PUBLISHABLE_KEY = 'pk_test_aW4tYmFib29uLTkzOTAuY2xlcmsuYWNjb3VudHMuZGV2JA';
+  var BUILD_TAG = 'cms-20260908-direct-keys';
   var DEBUG = /(?:\?|&)cms-debug=1/.test(window.location.search);
 
   var $ = function (id) { return document.getElementById(id); };
@@ -108,49 +109,29 @@
 
   // ── Boot ────────────────────────────────────────────────────────────────
   async function boot() {
-    // Step 1: reach the server and read public config. Outcomes:
-    //  - wall/network: server unreachable (hosting login wall, offline…)
-    //  - valid JSON: continue. Sign-in needs a publishable key — server
-    //    value preferred, embedded fallback otherwise.
-    var cfg = null, problem = '', status = 0, raw = '';
+    // Sign-in uses the embedded public key directly — no server dependency.
+    // /api/public/config is only consulted for upload support + diagnostics.
+    var serverKey = '', diag = 'not-checked', raw = '';
     try {
       var res = await fetch('/api/public/config', { cache: 'no-store' });
-      status = res.status;
       raw = await res.text();
       try {
-        cfg = JSON.parse(raw);
+        var c = JSON.parse(raw);
+        serverKey = c.clerkPublishableKey || '';
+        uploadsOn = !!c.uploadsEnabled;
+        diag = c.manageEnabled ? 'ok' : 'keys-missing-on-server';
       } catch (e) {
-        problem = 'wall'; // reachable, but answered HTML (login wall / proxy)
+        diag = 'blocked-login-wall(http-' + res.status + ')';
       }
-      if (cfg && !res.ok) {
-        problem = (res.status === 401 || res.status === 403) ? 'wall' : 'http';
-      }
+      if (diag.indexOf('blocked') !== 0 && !res.ok) diag = 'server-error(http-' + res.status + ')';
     } catch (e) {
-      problem = 'network'; // DNS / offline / blocked request
+      diag = 'network-fail';
     }
-    if (problem === 'wall' || problem === 'network') {
-      signinFail(
-        'The manager could not reach the website server. ' +
-        'Check your internet connection and refresh. If this keeps happening, ' +
-        'the site may be behind a hosting login screen — ask your developer ' +
-        'to turn off Deployment Protection.',
-        true,
-        techLine(problem === 'wall' ? 'blocked-login-wall(http-' + status + ')' : 'network-fail', raw),
-      );
-      return;
-    }
-    if (problem === 'http' || !cfg) {
-      signinFail('The website manager had a problem starting. Please try again.', true,
-        techLine('server-error(http-' + status + ')', raw));
-      return;
-    }
-    var key = cfg.clerkPublishableKey || FALLBACK_PUBLISHABLE_KEY;
-    if (!cfg.manageEnabled && !cfg.clerkPublishableKey) {
-      // Server reachable but keys missing there — sign-in can still load via
-      // the embedded key; backend calls will report their own status.
-      console.error('[Website Manager]', techLine('keys-missing-on-server', raw));
-    }
-    uploadsOn = !!cfg.uploadsEnabled;
+    var key = serverKey || PUBLISHABLE_KEY; // never empty — embedded literal
+    var tagLine = 'build ' + BUILD_TAG + ' | site=' + window.location.hostname + ' | server=' + diag;
+    console.log('[Website Manager]', tagLine);
+    var bt = document.getElementById('build-tag');
+    if (bt) bt.textContent = BUILD_TAG + ' · ' + window.location.hostname;
     var attempts = 0;
     while (!window.Clerk && attempts < 100) { await new Promise(function (r) { setTimeout(r, 100); }); attempts++; }
     if (!window.Clerk) {
@@ -158,7 +139,13 @@
       return;
     }
     clerk = window.Clerk;
-    await clerk.load({ publishableKey: key });
+    try {
+      await clerk.load({ publishableKey: key });
+    } catch (e) {
+      signinFail('Could not start sign-in (' + ((e && e.message) || 'unknown error') + '). Check your connection and try again.', true,
+        techLine(diag, raw));
+      return;
+    }
     if (!clerk.user) {
       show('screen-signin');
       clerk.mountSignIn($('clerk-signin'), { afterSignInUrl: '/manage', afterSignUpUrl: '/manage' });
@@ -175,7 +162,8 @@
       toast('Welcome back' + (me.user && me.user.email ? ', ' + me.user.email : '') + ' ✓');
     } catch (e) {
       if (e.status === 403) { show('screen-denied'); return; }
-      signinFail(e.message, true);
+      signinFail(e.message, true,
+        techLine('api-unreachable' + (e.status ? '(http-' + e.status + ')' : ''), ''));
       return;
     }
     await reload();
