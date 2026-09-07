@@ -1,0 +1,20 @@
+{
+  "name": "revolvyn-platform",
+  "private": true,
+  "version": "1.0.0",
+  "description": "REVOLVYN — static public site + Owner CMS (Vercel serverless + Neon + Clerk)",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "db:migrate": "node db/migrate.mjs",
+    "cms:create-owner": "node scripts/create-owner.mjs"
+  },
+  "dependencies": {
+    "@clerk/backend": "^1.22.0",
+    "@neondatabase/serverless": "^0.10.4",
+    "cloudinary": "^2.5.1",
+    "zod": "^3.23.8"
+  }
+}

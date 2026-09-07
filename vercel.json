@@ -1,1 +1,23 @@
-{ "name": "revolvyn-platform" }
+{ "name": "revolvyn-platform",
+  "rewrites": [
+    { "source": "/manage", "destination": "/manage.html" },
+    { "source": "/manage/:path*", "destination": "/manage.html" }
+  ],
+  "headers": [
+    {
+      "source": "/manage(.*)",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
+    },
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" }
+      ]
+    },
+    {
+      "source": "/api/public/content",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=60, stale-while-revalidate=300" }]
+    }
+  ]
+}

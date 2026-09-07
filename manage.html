@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Manage — REVOLVYN</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" href="favicon.png" type="image/png" />
+<link rel="stylesheet" href="css/manage.css" />
+<script src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@5/dist/clerk.browser.js" defer></script>
+<script src="js/cms/manage.js" defer></script>
+</head>
+<body>
+<div id="app">
+  <!-- Loading -->
+  <div id="screen-loading" class="screen">
+    <div class="center-card"><div class="brand">REVOLVYN</div><p>Loading…</p></div>
+  </div>
+
+  <!-- Sign in -->
+  <div id="screen-signin" class="screen hidden">
+    <div class="center-card">
+      <div class="brand">REVOLVYN</div>
+      <h1>Website Manager</h1>
+      <p class="muted">Sign in with your owner account to manage your website.</p>
+      <div id="clerk-signin"></div>
+      <p id="signin-error" class="error hidden"></p>
+    </div>
+  </div>
+
+  <!-- No access -->
+  <div id="screen-denied" class="screen hidden">
+    <div class="center-card">
+      <div class="brand">REVOLVYN</div>
+      <h1>No access</h1>
+      <p class="muted">This account is not allowed to manage the website. If you are the owner and this is a fresh setup, use the button below to claim the first owner account.</p>
+      <button id="btn-claim" class="btn primary">Claim owner access</button>
+      <button id="btn-denied-out" class="btn ghost">Sign out</button>
+      <p id="denied-error" class="error hidden"></p>
+    </div>
+  </div>
+
+  <!-- CMS -->
+  <div id="screen-cms" class="hidden">
+    <header class="topbar">
+      <div class="topbar-left"><span class="brand small">REVOLVYN</span><span class="cms-tag">Website Manager</span></div>
+      <div class="topbar-right">
+        <span id="status-pill" class="pill">Checking…</span>
+        <button id="btn-preview" class="btn ghost">Preview website</button>
+        <button id="btn-publish" class="btn primary">Publish changes</button>
+        <button id="btn-logout" class="btn ghost">Sign out</button>
+      </div>
+    </header>
+    <div class="shell">
+      <nav class="sidebar" id="sidebar" aria-label="Website sections">
+        <button data-tab="home" class="side-link active">Home page</button>
+        <button data-tab="portfolio" class="side-link">Portfolio</button>
+        <button data-tab="brands" class="side-link">Brands</button>
+        <button data-tab="services" class="side-link">Services</button>
+        <button data-tab="testimonials" class="side-link">Testimonials</button>
+        <button data-tab="contact" class="side-link">Contact &amp; details</button>
+        <button data-tab="history" class="side-link">Version history</button>
+        <button data-tab="activity" class="side-link">Recent activity</button>
+      </nav>
+      <main class="content" id="tab-content"></main>
+    </div>
+  </div>
+</div>
+
+<!-- Editor dialog -->
+<div id="modal" class="modal hidden" role="dialog" aria-modal="true">
+  <div class="modal-card">
+    <h2 id="modal-title">Edit</h2>
+    <div id="modal-fields"></div>
+    <div class="modal-actions">
+      <button id="modal-cancel" class="btn ghost">Cancel</button>
+      <button id="modal-save" class="btn primary">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm dialog -->
+<div id="confirm" class="modal hidden" role="alertdialog" aria-modal="true">
+  <div class="modal-card">
+    <h2 id="confirm-title">Are you sure?</h2>
+    <p id="confirm-text" class="muted"></p>
+    <div class="modal-actions">
+      <button id="confirm-cancel" class="btn ghost">Cancel</button>
+      <button id="confirm-ok" class="btn danger">Delete</button>
+    </div>
+  </div>
+</div>
+
+<div id="toasts" aria-live="polite"></div>
+</body>
+</html>
