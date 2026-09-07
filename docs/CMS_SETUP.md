@@ -64,6 +64,13 @@ Open `/manage`, sign in, edit → **Preview website** (draft overlay) → **Publ
 
 Push to `main` (Vercel auto-deploys). `vercel.json` maps `/manage*` → `manage.html`, adds `noindex` to CMS routes, and caches only the public content endpoint. Public URLs (`/`, `/portfolio.html`, …) are unchanged.
 
+> Multi-project setups: if the public domain is served by a different
+> deployment without database access, that deployment automatically reads
+> published content cross-origin from this project's `/api/public/content`
+> (see `CONTENT_SOURCE` in `js/cms-content.js`). The owner must still use
+> THIS project's `/manage` for all editing, preview and publishing —
+> drafts and the CMS backend live only here.
+
 > Hobby-plan note: Vercel allows max **12 serverless functions** per deployment.
 > The CMS has exactly 12 (`api/public/*` × 2, `api/cms/*` × 10). Do NOT add a
 > new file under `api/` without merging an existing one first — the 13th

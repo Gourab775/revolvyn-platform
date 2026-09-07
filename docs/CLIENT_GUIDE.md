@@ -4,7 +4,10 @@ No technical knowledge needed. If you can use email, you can use this.
 
 ## The 7 steps
 
-1. Open **yoursite.com/manage**
+1. Open the Website Manager (your developer will give you the address —
+   it looks like `https://revolvyn-platform-gourab-neogi.vercel.app/manage`).
+   Always use this address for managing the site, even if your public
+   website lives on a different domain.
 2. **Sign in** with your owner account
 3. **Select the page** on the left (Home page, Portfolio, Brands, Services, Testimonials, Contact & details)
 4. Click **Edit**, make your changes, then **Save**

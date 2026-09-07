@@ -1,9 +1,12 @@
 // Public content — serves ONLY the latest PUBLISHED snapshot. No auth, cached.
 // Drafts are never readable here, so unpublished edits can never leak.
+// CORS is intentionally open: this is fully public data, and mirror
+// deployments without database access read it cross-origin as a fallback.
 import { db } from '../_lib/db.js';
 import { send, handleError } from '../_lib/auth.js';
 
 export default async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
   try {
     if (req.method !== 'GET') {
       res.setHeader('Allow', 'GET');

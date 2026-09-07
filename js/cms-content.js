@@ -162,6 +162,29 @@
   var previewToken = null; // short-lived draft token (robust flow)
   var previewLegacy = false; // ?cms_preview=draft + session token (older flow)
 
+  // Canonical home of the CMS backend. Mirror deployments without database
+  // access fall back to reading published content from here (plain public
+  // JSON over CORS — no secrets, no drafts involved).
+  var CONTENT_SOURCE = 'https://revolvyn-platform-gourab-neogi.vercel.app/api/public/content';
+
+  async function fetchPublished() {
+    try {
+      var res = await fetch('/api/public/content');
+      if (res.ok) {
+        var j = await res.json();
+        if (j.published && j.content) return j.content;
+      }
+    } catch (e) {}
+    try {
+      var res2 = await fetch(CONTENT_SOURCE, { mode: 'cors' });
+      if (res2.ok) {
+        var j2 = await res2.json();
+        if (j2.published && j2.content) return j2.content;
+      }
+    } catch (e) {}
+    return null;
+  }
+
   async function load() {
     var m = window.location.search.match(/[?&]cms_preview=([^&]+)/);
     var param = m ? decodeURIComponent(m[1]) : null;
@@ -188,11 +211,8 @@
         failBadge('This preview link is invalid. Open a new preview from the Website Manager.');
         return;
       } else {
-        var res = await fetch('/api/public/content');
-        if (!res.ok) return;
-        var j = await res.json();
-        if (!j.published || !j.content) return;
-        data = j.content;
+        data = await fetchPublished();
+        if (!data) return;
       }
     } catch (e) {
       if (param) failBadge('Preview unavailable. Check your connection, then open it again from the Website Manager.');
