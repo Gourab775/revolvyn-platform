@@ -101,7 +101,12 @@
       } catch (e) {
         problem = 'wall'; // reachable, but answered HTML (login wall / proxy)
       }
-      if (cfg && !res.ok) problem = 'http';
+      if (cfg && !res.ok) {
+        // 401/403 from the host = a login/protection wall in front of the
+        // site (e.g. Vercel Deployment Protection), NOT missing CMS keys.
+        // Missing keys answer 200 with { manageEnabled: false }.
+        problem = (res.status === 401 || res.status === 403) ? 'wall' : 'http';
+      }
     } catch (e) {
       problem = 'network'; // DNS / offline / blocked request
     }
