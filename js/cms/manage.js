@@ -3,6 +3,11 @@
   'use strict';
   var clerk = null, token = null, draft = null, tab = 'home', dirty = false, busy = false;
   var uploadsOn = false;
+  // Public Clerk key (safe to embed — it ships to every visitor by design).
+  // Primary source is /api/public/config; this is only a fallback so the
+  // sign-in box can still load if the server omits it.
+  var FALLBACK_PUBLISHABLE_KEY = 'pk_test_aW4tYmFib29uLTkzOTAuY2xlcmsuYWNjb3VudHMuZGV2JA';
+  var DEBUG = /(?:\?|&)cms-debug=1/.test(window.location.search);
 
   var $ = function (id) { return document.getElementById(id); };
   var esc = function (s) {
@@ -80,54 +85,72 @@
     return (d.settings || []).some(function (s) { return s.has_unpublished_changes; });
   }
 
-  function signinFail(message, showRetry) {
+  function signinFail(message, showRetry, tech) {
     $('signin-error').textContent = message;
     $('signin-error').classList.remove('hidden');
     $('btn-retry').classList.toggle('hidden', !showRetry);
+    var t = $('signin-tech');
+    if (tech) {
+      t.textContent = tech;
+      t.classList.remove('hidden');
+    } else {
+      t.classList.add('hidden');
+    }
     show('screen-signin');
+  }
+
+  function techLine(diag, raw) {
+    var line = 'Tech details: site=' + window.location.hostname + ' | server=' + diag;
+    if (DEBUG && raw) line += ' | reply=' + String(raw).slice(0, 200);
+    console.error('[Website Manager]', line, raw || '');
+    return line;
   }
 
   // ── Boot ────────────────────────────────────────────────────────────────
   async function boot() {
-    // Step 1: reach the server and read public config. Three distinct
-    // outcomes, three distinct messages — never blame setup for a network
-    // problem (e.g. a hosting login wall in front of the site).
-    var cfg = null, problem = '';
+    // Step 1: reach the server and read public config. Outcomes:
+    //  - wall/network: server unreachable (hosting login wall, offline…)
+    //  - valid JSON: continue. Sign-in needs a publishable key — server
+    //    value preferred, embedded fallback otherwise.
+    var cfg = null, problem = '', status = 0, raw = '';
     try {
       var res = await fetch('/api/public/config', { cache: 'no-store' });
-      var text = await res.text();
+      status = res.status;
+      raw = await res.text();
       try {
-        cfg = JSON.parse(text);
+        cfg = JSON.parse(raw);
       } catch (e) {
         problem = 'wall'; // reachable, but answered HTML (login wall / proxy)
       }
       if (cfg && !res.ok) {
-        // 401/403 from the host = a login/protection wall in front of the
-        // site (e.g. Vercel Deployment Protection), NOT missing CMS keys.
-        // Missing keys answer 200 with { manageEnabled: false }.
         problem = (res.status === 401 || res.status === 403) ? 'wall' : 'http';
       }
     } catch (e) {
       problem = 'network'; // DNS / offline / blocked request
     }
     if (problem === 'wall' || problem === 'network') {
-      console.error('[Website Manager] config fetch failed:', problem);
       signinFail(
         'The manager could not reach the website server. ' +
         'Check your internet connection and refresh. If this keeps happening, ' +
         'the site may be behind a hosting login screen — ask your developer ' +
         'to turn off Deployment Protection.',
         true,
+        techLine(problem === 'wall' ? 'blocked-login-wall(http-' + status + ')' : 'network-fail', raw),
       );
       return;
     }
-    if (problem === 'http' || !cfg || !cfg.manageEnabled) {
-      console.error('[Website Manager] server reachable but sign-in is not configured.');
-      signinFail('The website manager is not set up yet. Please ask your developer to connect sign-in first.', true);
+    if (problem === 'http' || !cfg) {
+      signinFail('The website manager had a problem starting. Please try again.', true,
+        techLine('server-error(http-' + status + ')', raw));
       return;
     }
+    var key = cfg.clerkPublishableKey || FALLBACK_PUBLISHABLE_KEY;
+    if (!cfg.manageEnabled && !cfg.clerkPublishableKey) {
+      // Server reachable but keys missing there — sign-in can still load via
+      // the embedded key; backend calls will report their own status.
+      console.error('[Website Manager]', techLine('keys-missing-on-server', raw));
+    }
     uploadsOn = !!cfg.uploadsEnabled;
-    var key = cfg.clerkPublishableKey;
     var attempts = 0;
     while (!window.Clerk && attempts < 100) { await new Promise(function (r) { setTimeout(r, 100); }); attempts++; }
     if (!window.Clerk) {
