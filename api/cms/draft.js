@@ -1,13 +1,28 @@
 // GET /api/cms/draft — full DRAFT state.
-// Auth: Clerk session (CMS) OR a short-lived ?preview= token (preview tab).
-// This endpoint is strictly read-only either way.
+// POST /api/cms/draft — mint a short-lived preview token (READ-ONLY draft
+// access for visual preview tabs, 15-minute expiry, never mutable).
+// Auth: Clerk session (CMS, both methods) OR a ?preview= token (GET only).
+// This endpoint never mutates content except its own token rows.
+import crypto from 'node:crypto';
 import { db } from '../_lib/db.js';
-import { send, handleError, requireCmsUser, friendly, rateLimit, method } from '../_lib/auth.js';
+import { send, handleError, requireCmsUser, audit, friendly, rateLimit, method } from '../_lib/auth.js';
 
 export default async function handler(req, res) {
   try {
-    if (!method(req, res, ['GET'])) return;
+    if (!method(req, res, ['GET', 'POST'])) return;
     rateLimit(req, { max: 120 });
+    if (req.method === 'POST') {
+      const { clerkUserId } = await requireCmsUser(req);
+      const sql = db();
+      await sql`DELETE FROM preview_tokens WHERE expires_at < NOW()`;
+      const token = crypto.randomBytes(32).toString('hex');
+      const rows = await sql`
+        INSERT INTO preview_tokens (token, clerk_user_id, expires_at)
+        VALUES (${token}, ${clerkUserId}, NOW() + INTERVAL '15 minutes')
+        RETURNING token, expires_at`;
+      await audit(clerkUserId, 'preview', 'site', '', { summary: 'Opened a website preview' });
+      return send(res, 200, { token: rows[0].token, expiresAt: rows[0].expires_at });
+    }
     const previewToken = String(req.query.preview || '');
     if (/^[0-9a-f]{64}$/.test(previewToken)) {
       const sql = db();

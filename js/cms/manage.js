@@ -1581,7 +1581,7 @@
       var page = map[tab] || 'index.html';
       setBusy(true, btn, 'Opening…');
       try {
-        var r = await api('/api/cms/preview-token', { method: 'POST' });
+        var r = await api('/api/cms/draft', { method: 'POST' });
         try { previewWin = window.open(page + '?cms_preview=' + r.token, '_blank'); } catch (e) { previewWin = null; }
         if (!previewWin) toast('Popup blocked — allow popups for this site and try again.', true);
       } catch (e) {
