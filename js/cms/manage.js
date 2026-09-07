@@ -145,7 +145,7 @@
     }
     if (!clerk.user) {
       show('screen-signin');
-      clerk.mountSignIn($('clerk-signin'), { afterSignInUrl: '/manage', afterSignUpUrl: '/manage' });
+      clerk.mountSignIn($('clerk-signin'), { fallbackRedirectUrl: '/manage', forceRedirectUrl: '/manage' });
       return;
     }
     await enter();

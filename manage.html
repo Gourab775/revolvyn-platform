@@ -6,6 +6,9 @@
 <title>Manage — REVOLVYN</title>
 <meta name="robots" content="noindex, nofollow" />
 <link rel="icon" href="favicon.png" type="image/png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="css/manage.css" />
 <script crossorigin="anonymous" data-clerk-publishable-key="pk_test_aW4tYmFib29uLTkzOTAuY2xlcmsuYWNjb3VudHMuZGV2JA" src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@5/dist/clerk.browser.js" defer></script>
 <script src="js/cms/manage.js" defer></script>
@@ -14,14 +17,19 @@
 <div id="app">
   <!-- Loading -->
   <div id="screen-loading" class="screen">
-    <div class="center-card"><div class="brand">REVOLVYN</div><p>Loading…</p></div>
+    <div class="center-card">
+      <div class="brand">REVOLVYN</div>
+      <div class="brand-sub">Website Manager</div>
+      <div class="spinner" role="status" aria-label="Loading"></div>
+    </div>
   </div>
 
   <!-- Sign in -->
   <div id="screen-signin" class="screen hidden">
     <div class="center-card">
       <div class="brand">REVOLVYN</div>
-      <h1>Website Manager</h1>
+      <div class="brand-sub">Website Manager</div>
+      <h1>Welcome back</h1>
       <p class="muted">Sign in with your owner account to manage your website.</p>
       <div id="clerk-signin"></div>
       <p id="signin-error" class="error hidden"></p>
@@ -56,6 +64,7 @@
     </header>
     <div class="shell">
       <nav class="sidebar" id="sidebar" aria-label="Website sections">
+        <div class="side-label">Manage</div>
         <button data-tab="home" class="side-link active">Home page</button>
         <button data-tab="portfolio" class="side-link">Portfolio</button>
         <button data-tab="brands" class="side-link">Brands</button>
