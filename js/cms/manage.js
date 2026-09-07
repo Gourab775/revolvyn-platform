@@ -1579,15 +1579,22 @@
       var btn = $('btn-preview');
       var map = { portfolio: 'portfolio.html', brands: 'brands.html', services: 'services.html', contact: 'contact.html', footer: 'index.html', more: (ui.morePage || 'index') + '.html' };
       var page = map[tab] || 'index.html';
+      // Open synchronously inside the click (before any await) so the
+      // browser treats it as user-initiated and never blocks the popup.
+      // We navigate the blank tab once the preview token is ready.
+      var win = null;
+      try { win = window.open('about:blank', '_blank'); } catch (e) { win = null; }
+      if (!win) { toast('Popup blocked — allow popups for this site and try again.', true); return; }
+      previewWin = win;
       setBusy(true, btn, 'Opening…');
       try {
         var r = await api('/api/cms/draft', { method: 'POST' });
-        try { previewWin = window.open(page + '?cms_preview=' + r.token, '_blank'); } catch (e) { previewWin = null; }
-        if (!previewWin) toast('Popup blocked — allow popups for this site and try again.', true);
+        try { win.location.href = page + '?cms_preview=' + r.token; }
+        catch (e) { try { win.close(); } catch (e2) {} previewWin = null; }
       } catch (e) {
         try { sessionStorage.setItem('revolvyn_preview_token', token); } catch (e2) {}
-        previewWin = window.open(page + '?cms_preview=draft', '_blank');
-        if (!previewWin) toast('Popup blocked — allow popups for this site and try again.', true);
+        try { win.location.href = page + '?cms_preview=draft'; }
+        catch (e3) { try { win.close(); } catch (e4) {} previewWin = null; }
       }
       setBusy(false, btn);
     };
