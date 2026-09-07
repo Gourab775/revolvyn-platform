@@ -32,6 +32,7 @@ export default async function handler(req, res) {
         id: p.id, title: p.title, slug: p.slug, description: p.description,
         thumbnail: p.thumbnail, video: p.video_url, url: p.external_url,
         client: p.client_name, category: p.category, layout: p.layout || 'landscape',
+        featured: !!p.featured,
         order: p.sort_order, visible: p.is_visible,
       })),
       brands: brands.map((b) => ({

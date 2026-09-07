@@ -62,6 +62,7 @@ export default async function handler(req, res) {
         video_url: (p) => p.video || '', external_url: (p) => p.url || '',
         client_name: (p) => p.client || '', category: (p) => p.category || '',
         layout: (p) => (p.layout === 'portrait' ? 'portrait' : 'landscape'),
+        featured: (p) => p.featured === true,
         is_visible: (p) => p.visible !== false, sort_order: (p, i) => p.order ?? i,
       });
       await restoreList('brands', snap.brands, {

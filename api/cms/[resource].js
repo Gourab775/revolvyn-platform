@@ -70,6 +70,9 @@ function sanitizeFields(cfg, data) {
   if (cfg.table === 'portfolio_items' && (data.layout === 'portrait' || data.layout === 'landscape')) {
     out.layout = data.layout;
   }
+  if (cfg.table === 'portfolio_items' && typeof data.featured === 'boolean') {
+    out.featured = data.featured;
+  }
   if (cfg.table === 'services' && data.details !== undefined && Array.isArray(data.details)) {
     out.details = data.details.slice(0, 20).map((pkg) => {
       if (typeof pkg === 'string') return { package: cleanText(pkg, 200), items: [] };

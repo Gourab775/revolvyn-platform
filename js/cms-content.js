@@ -236,7 +236,7 @@
         return { page: s.page_slug, key: s.section_key, data: s.data || {}, visible: s.is_visible, order: s.sort_order };
       }),
       portfolio: (d.portfolio || []).map(function (p) {
-        return { title: p.title, description: p.description, thumbnail: p.thumbnail, video: p.video_url, url: p.external_url, client: p.client_name, category: p.category, layout: p.layout || 'landscape', visible: p.is_visible, order: p.sort_order };
+        return { title: p.title, description: p.description, thumbnail: p.thumbnail, video: p.video_url, url: p.external_url, client: p.client_name, category: p.category, layout: p.layout || 'landscape', featured: !!p.featured, visible: p.is_visible, order: p.sort_order };
       }),
       brands: (d.brands || []).map(function (b) {
         return { name: b.name, logo: b.logo, url: b.website_url, visible: b.is_visible, order: b.sort_order };
@@ -349,8 +349,14 @@
         if (cta.buttonUrl) cb.setAttribute('href', cta.buttonUrl);
       }
     }
-    // Homepage strip: first 6 visible published projects
-    var vids = (data.portfolio || []).filter(function (p) { return p.visible !== false && p.video; }).slice(0, 6);
+    // Homepage strip: featured visible projects first, then the rest — 6 total.
+    var pool = (data.portfolio || []).filter(function (p) { return p.visible !== false && p.video; });
+    pool.sort(function (a, b) {
+      var fa = a.featured ? 0 : 1, fb = b.featured ? 0 : 1;
+      if (fa !== fb) return fa - fb;
+      return (a.order || 0) - (b.order || 0);
+    });
+    var vids = pool.slice(0, 6);
     var slots = document.querySelectorAll('.portfolio-item');
     if (vids.length && slots.length) {
       for (var i = 0; i < slots.length; i++) {

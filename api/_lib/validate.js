@@ -31,6 +31,7 @@ export const portfolioCreate = z.object({
   client_name: text(200),
   category: text(100),
   layout: z.enum(['landscape', 'portrait']).optional(),
+  featured: z.boolean().optional(),
   ...baseItem,
 });
 

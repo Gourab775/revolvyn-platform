@@ -232,6 +232,10 @@
         out[k] = node._get ? node._get() : null;
         return;
       }
+      if (node.dataset.toggle) {
+        out[k] = !!node.checked;
+        return;
+      }
       if (node.dataset.seg) {
         var act = node.querySelector('button.active');
         out[k] = act ? act.dataset.value : node.dataset.current;
@@ -278,6 +282,26 @@
       return div;
     } else if (f.type === 'seg') {
       div.appendChild(segControl(f.key, val, f.options || []));
+      div.appendChild(el('div', 'hint', f.tip || ''));
+      return div;
+    } else if (f.type === 'toggle') {
+      var wrap = el('label', 'switch');
+      var chk = document.createElement('input');
+      chk.type = 'checkbox';
+      chk.checked = val === true;
+      chk.dataset.key = f.key;
+      chk.dataset.toggle = '1';
+      wrap.appendChild(chk);
+      wrap.appendChild(el('span', 'track'));
+      wrap.appendChild(el('span', 'switch-label', val === true ? 'On' : 'Off'));
+      var box = el('div');
+      box.style.margin = '4px 0 2px';
+      box.appendChild(wrap);
+      div.appendChild(box);
+      chk.onchange = function () {
+        wrap.querySelector('.switch-label').textContent = chk.checked ? 'On' : 'Off';
+      };
+      div.appendChild(el('div', 'hint', f.tip || ''));
       return div;
     } else {
       input = document.createElement('input');
@@ -695,7 +719,8 @@
           { title: 'Media', fields: [
             { key: 'video_url', label: 'Video', type: 'video' },
             { key: 'thumbnail', label: 'Thumbnail photo (optional)', type: 'image' },
-            { key: 'layout', label: 'Shape on the page', type: 'seg', options: [{ value: 'landscape', label: 'Wide' }, { value: 'portrait', label: 'Tall' }] }
+            { key: 'layout', label: 'Shape on the page', type: 'seg', options: [{ value: 'landscape', label: 'Wide' }, { value: 'portrait', label: 'Tall' }] },
+            { key: 'featured', label: 'Feature on the homepage strip', type: 'toggle', tip: 'Featured projects appear in the work strip on the homepage.' }
           ]},
           { title: 'Links', fields: [
             { key: 'external_url', label: 'Project link (optional)', type: 'text', tip: 'Opens when a visitor clicks this project. Leave empty for the built-in video page.' }
@@ -893,6 +918,7 @@
     flags.appendChild(el('span', 'order-num', '#' + (orderIdx + 1)));
     if (!it.is_visible) flags.appendChild(el('span', 'badge off', 'Hidden'));
     else flags.appendChild(el('span', 'badge', 'Visible'));
+    if (resource === 'portfolio' && it.featured) flags.appendChild(el('span', 'badge', 'On homepage'));
     if (it.has_unpublished_changes) {
       var d = el('span', 'dot-unpub'); d.title = 'Unpublished changes'; flags.appendChild(d);
     }
