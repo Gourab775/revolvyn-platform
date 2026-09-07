@@ -159,18 +159,34 @@
     if (last < str.length) p.appendChild(document.createTextNode(str.slice(last)));
   }
 
+  var previewToken = null; // short-lived draft token (robust flow)
+  var previewLegacy = false; // ?cms_preview=draft + session token (older flow)
+
   async function load() {
-    var preview = /(?:\?|&)cms_preview=draft/.test(window.location.search);
+    var m = window.location.search.match(/[?&]cms_preview=([^&]+)/);
+    var param = m ? decodeURIComponent(m[1]) : null;
     var data = null;
     try {
-      if (preview) {
-        var t = null;
-        try { t = sessionStorage.getItem('revolvyn_preview_token'); } catch (e) {}
-        if (!t) return;
-        var r = await fetch('/api/cms/draft', { headers: { Authorization: 'Bearer ' + t } });
-        if (!r.ok) return;
+      if (param && param !== 'draft' && /^[0-9a-f]{64}$/i.test(param)) {
+        previewToken = param;
+        var r = await fetch('/api/cms/draft?preview=' + encodeURIComponent(param));
+        if (!r.ok) { failBadge('This preview has expired. Open a new preview from the Website Manager.'); return; }
         data = normalizeDraft(await r.json());
         badge();
+        enterEditMode();
+      } else if (param === 'draft') {
+        previewLegacy = true;
+        var t = null;
+        try { t = sessionStorage.getItem('revolvyn_preview_token'); } catch (e) {}
+        if (!t) { failBadge('Preview unavailable. Open it again from the Website Manager.'); return; }
+        var r2 = await fetch('/api/cms/draft', { headers: { Authorization: 'Bearer ' + t } });
+        if (!r2.ok) { failBadge('Preview unavailable. Open it again from the Website Manager.'); return; }
+        data = normalizeDraft(await r2.json());
+        badge();
+        enterEditMode();
+      } else if (param) {
+        failBadge('This preview link is invalid. Open a new preview from the Website Manager.');
+        return;
       } else {
         var res = await fetch('/api/public/content');
         if (!res.ok) return;
@@ -178,8 +194,20 @@
         if (!j.published || !j.content) return;
         data = j.content;
       }
-    } catch (e) { return; }
+    } catch (e) {
+      if (param) failBadge('Preview unavailable. Check your connection, then open it again from the Website Manager.');
+      return;
+    }
     try { apply(data); } catch (e) { /* never break the public page */ }
+    try { if (param && (previewToken || previewLegacy)) positionPills(); } catch (e) {}
+  }
+
+  function failBadge(reason) {
+    if (!reason) return;
+    var b = document.createElement('div');
+    b.textContent = reason;
+    b.style.cssText = 'position:fixed;bottom:12px;left:50%;transform:translateX(-50%);max-width:min(92vw,560px);text-align:center;background:#4a1f1f;color:#f2b6b6;border:1px solid rgba(224,138,138,.5);font:600 13px Inter,system-ui,sans-serif;padding:10px 18px;border-radius:12px;z-index:99999;';
+    try { document.body.appendChild(b); } catch (e) {}
   }
 
   function normalizeDraft(d) {
@@ -651,6 +679,187 @@
         }
       });
     });
+  }
+
+  /* ── Visual edit mode (preview tabs opened from /manage only) ──────────
+   * Shows the real page with small Edit pills. Clicking one asks the
+   * Website Manager tab to open the matching editor. Normal visitors never
+   * see any of this: it only activates after an authenticated draft fetch. */
+  var EDIT_PILLS = [];
+  var EDIT_TARGETS = [
+    // home
+    { match: function () { return !!document.getElementById('scroll-container'); }, sel: '.hero', page: 'home', key: 'hero', label: 'Edit hero' },
+    { match: function () { return !!document.getElementById('scroll-container'); }, sel: '.manifesto', page: 'home', key: 'manifesto', label: 'Edit intro' },
+    { match: function () { return !!document.getElementById('scroll-container'); }, sel: '.pillars', tab: 'portfolio', label: 'Manage videos' },
+    { match: function () { return !!document.getElementById('scroll-container'); }, sel: '.stats-section', tab: 'brands', label: 'Manage logos' },
+    { match: function () { return !!document.getElementById('scroll-container'); }, sel: '.quote-section', page: 'home', key: 'quote', label: 'Edit quote' },
+    { match: function () { return !!document.getElementById('scroll-container'); }, sel: '.cta-section', page: 'home', key: 'cta', label: 'Edit banner' },
+    // portfolio page
+    { match: function () { return /portfolio\.html/.test(window.location.pathname); }, sel: '.portfolio-hero', page: 'portfolio', key: 'hero', label: 'Edit heading' },
+    { match: function () { return /portfolio\.html/.test(window.location.pathname); }, sel: '.collage-section', tab: 'portfolio', label: 'Manage projects' },
+    { match: function () { return /portfolio\.html/.test(window.location.pathname); }, sel: '.portfolio-cta', page: 'portfolio', key: 'cta', label: 'Edit button' },
+    // brands page
+    { match: function () { return /brands\.html/.test(window.location.pathname); }, sel: '.page-hero', page: 'brands', key: 'hero', label: 'Edit heading' },
+    { match: function () { return /brands\.html/.test(window.location.pathname); }, sel: '.brands-stats', page: 'brands', key: 'stats', label: 'Edit numbers' },
+    { match: function () { return /brands\.html/.test(window.location.pathname); }, sel: '.brands-grid', tab: 'brands', label: 'Manage brands' },
+    { match: function () { return /brands\.html/.test(window.location.pathname); }, sel: '.page-cta', page: 'brands', key: 'cta', label: 'Edit banner' },
+    // services page
+    { match: function () { return /services\.html/.test(window.location.pathname); }, sel: '.page-hero', page: 'services', key: 'hero', label: 'Edit heading' },
+    { match: function () { return /services\.html/.test(window.location.pathname); }, sel: '.services-full-grid', tab: 'services', label: 'Manage services' },
+    { match: function () { return /services\.html/.test(window.location.pathname); }, sel: '.process-section', page: 'services', key: 'process', label: 'Edit steps' },
+    { match: function () { return /services\.html/.test(window.location.pathname); }, sel: '.page-cta', page: 'services', key: 'cta', label: 'Edit banner' },
+    // contact page
+    { match: function () { return /contact\.html/.test(window.location.pathname); }, sel: '.page-hero', page: 'contact', key: 'hero', label: 'Edit heading' },
+    { match: function () { return /contact\.html/.test(window.location.pathname); }, sel: '.contact-info', page: 'contact', key: 'info', label: 'Edit text' },
+    { match: function () { return /contact\.html/.test(window.location.pathname); }, sel: '.contact-form-wrap', page: 'contact', key: 'form', label: 'Edit button' },
+    { match: function () { return /contact\.html/.test(window.location.pathname); }, sel: '.map-placeholder', page: 'contact', key: 'map', label: 'Edit line' },
+    // secondary pages
+    { match: function () { return /(careers|partnerships|blog|research|newsletter|community|privacy|refund)\.html/.test(window.location.pathname); }, sel: '.page-hero', page: null, key: 'hero', label: 'Edit heading' },
+    { match: function () { return /(careers|partnerships|blog|research|newsletter|community|privacy|refund)\.html/.test(window.location.pathname); }, sel: '.page-content', page: null, key: 'main', label: 'Edit text' },
+    // footer everywhere
+    { match: function () { return !!document.querySelector('.site-footer'); }, sel: '.site-footer', tab: 'footer', label: 'Edit footer' }
+  ];
+
+  function enterEditMode() {
+    try {
+      var css = document.createElement('style');
+      css.textContent = '.cmsedit-bar{position:fixed;top:0;left:0;right:0;z-index:99990;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 16px;background:rgba(10,13,7,.94);border-bottom:1px solid rgba(150,190,120,.25);font:500 13px Inter,system-ui,sans-serif;color:#eef2e4;backdrop-filter:blur(8px)}' +
+        '.cmsedit-bar .l{display:flex;align-items:center;gap:9px;min-width:0}.cmsedit-dot{width:8px;height:8px;border-radius:50%;background:#d9ec7a;flex-shrink:0}' +
+        '.cmsedit-bar button{font:600 12px Inter,system-ui,sans-serif;border-radius:8px;padding:7px 13px;cursor:pointer;border:1px solid rgba(150,190,120,.35);background:none;color:#d7e6be;white-space:nowrap}' +
+        '.cmsedit-bar button.solid{background:#d9ec7a;border-color:#d9ec7a;color:#1a220c}' +
+        '.cmsedit-pill{position:fixed;z-index:99990;font:600 12px Inter,system-ui,sans-serif;color:#1a220c;background:#d9ec7a;border:none;border-radius:999px;padding:7px 14px;cursor:pointer;box-shadow:0 6px 22px rgba(0,0,0,.5);white-space:nowrap}' +
+        '.cmsedit-pill:hover{filter:brightness(1.07)}' +
+        '.cmsedit-toast{position:fixed;bottom:56px;left:50%;transform:translateX(-50%);z-index:99999;background:rgba(26,33,17,.97);border:1px solid rgba(217,236,122,.4);color:#eef2e4;font:500 13.5px Inter,system-ui,sans-serif;padding:11px 20px;border-radius:12px;box-shadow:0 10px 34px rgba(0,0,0,.55);max-width:92vw;text-align:center}';
+      document.head.appendChild(css);
+      var bar = document.createElement('div');
+      bar.className = 'cmsedit-bar';
+      var left = document.createElement('div');
+      left.className = 'l';
+      var dot = document.createElement('span');
+      dot.className = 'cmsedit-dot';
+      var txt = document.createElement('span');
+      txt.textContent = 'Editing preview — your drafts, not live yet';
+      left.appendChild(dot); left.appendChild(txt);
+      var right = document.createElement('div');
+      right.style.display = 'flex'; right.style.gap = '8px';
+      var rf = document.createElement('button');
+      rf.textContent = 'Refresh';
+      rf.onclick = function () { refreshDraft(); };
+      var bk = document.createElement('button');
+      bk.className = 'solid';
+      bk.textContent = 'Back to manager';
+      bk.onclick = function () {
+        try {
+          if (window.opener && !window.opener.closed) { window.opener.focus(); return; }
+        } catch (e) {}
+        window.location.href = '/manage';
+      };
+      right.appendChild(rf); right.appendChild(bk);
+      bar.appendChild(left); bar.appendChild(right);
+      document.body.appendChild(bar);
+      document.body.style.paddingTop = '46px';
+      EDIT_TARGETS.forEach(function (t) {
+        var on = false;
+        try { on = t.match(); } catch (e) {}
+        if (!on) return;
+        var target = document.querySelector(t.sel);
+        if (!target) return;
+        var pill = document.createElement('button');
+        pill.className = 'cmsedit-pill';
+        pill.textContent = t.label;
+        pill.style.display = 'none';
+        pill.onclick = function () { requestEdit(t); };
+        document.body.appendChild(pill);
+        EDIT_PILLS.push({ sel: t.sel, pill: pill, def: t });
+      });
+      var tick = false;
+      var schedule = function () {
+        if (tick) return;
+        tick = true;
+        (window.requestAnimationFrame || setTimeout)(function () { tick = false; positionPills(); });
+      };
+      window.addEventListener('scroll', schedule, { passive: true });
+      window.addEventListener('resize', schedule);
+      window.addEventListener('message', function (e) {
+        try {
+          if (e.origin !== window.location.origin) return;
+          var m = e.data;
+          if (!m || m.ns !== 'revolvyn-cms') return;
+          if (m.kind === 'draft-updated') refreshDraft(true);
+        } catch (err) {}
+      });
+      positionPills();
+    } catch (e) { /* preview extras must never break the page */ }
+  }
+
+  function positionPills() {
+    var vh = window.innerHeight || 800;
+    var vw = window.innerWidth || 1200;
+    EDIT_PILLS.forEach(function (p) {
+      var target = null;
+      try { target = document.querySelector(p.sel); } catch (e) {}
+      var r = null;
+      try { r = target ? target.getBoundingClientRect() : null; } catch (e) {}
+      if (!r || r.bottom < 60 || r.top > vh) { p.pill.style.display = 'none'; return; }
+      p.pill.style.display = '';
+      var w = p.pill.offsetWidth || 120;
+      var top = Math.max(r.top + 10, 56);
+      var left = Math.min(Math.max(r.right - w - 10, 8), vw - w - 8);
+      p.pill.style.top = top + 'px';
+      p.pill.style.left = left + 'px';
+    });
+  }
+
+  function previewToast(msg) {
+    try {
+      var old = document.querySelector('.cmsedit-toast');
+      if (old) old.remove();
+      var t = document.createElement('div');
+      t.className = 'cmsedit-toast';
+      t.textContent = msg;
+      document.body.appendChild(t);
+      setTimeout(function () { if (t.parentNode) t.parentNode.removeChild(t); }, 3500);
+    } catch (e) {}
+  }
+
+  function requestEdit(def) {
+    var msg = { ns: 'revolvyn-cms', kind: 'edit', page: def.page || currentPageSlug(), key: def.key || null, tab: def.tab || null };
+    try {
+      if (window.opener && !window.opener.closed) {
+        window.opener.postMessage(msg, window.location.origin);
+        previewToast('Opening in Website Manager…');
+        return;
+      }
+    } catch (e) {}
+    previewToast('Keep the Website Manager tab open, then click again.');
+  }
+
+  function currentPageSlug() {
+    var path = window.location.pathname;
+    var m = path.match(/([a-z]+)\.html$/);
+    return m ? m[1] : 'home';
+  }
+
+  async function refreshDraft(silent) {
+    try {
+      var data = null;
+      if (previewToken) {
+        var r = await fetch('/api/cms/draft?preview=' + encodeURIComponent(previewToken));
+        if (!r.ok) { failBadge('This preview has expired. Open a new preview from the Website Manager.'); return; }
+        data = normalizeDraft(await r.json());
+      } else if (previewLegacy) {
+        var t = null;
+        try { t = sessionStorage.getItem('revolvyn_preview_token'); } catch (e) {}
+        if (!t) return;
+        var r2 = await fetch('/api/cms/draft', { headers: { Authorization: 'Bearer ' + t } });
+        if (!r2.ok) return;
+        data = normalizeDraft(await r2.json());
+      } else return;
+      apply(data);
+      positionPills();
+      if (!silent) previewToast('Preview updated ✓');
+      else previewToast('Preview updated ✓');
+    } catch (e) {}
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', load);

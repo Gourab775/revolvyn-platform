@@ -1,13 +1,25 @@
-// GET /api/cms/draft — full DRAFT state for the CMS (auth required).
-// The public site never calls this; only /manage with a Clerk token.
+// GET /api/cms/draft — full DRAFT state.
+// Auth: Clerk session (CMS) OR a short-lived ?preview= token (preview tab).
+// This endpoint is strictly read-only either way.
 import { db } from '../_lib/db.js';
-import { send, handleError, requireCmsUser, rateLimit, method } from '../_lib/auth.js';
+import { send, handleError, requireCmsUser, friendly, rateLimit, method } from '../_lib/auth.js';
 
 export default async function handler(req, res) {
   try {
     if (!method(req, res, ['GET'])) return;
     rateLimit(req, { max: 120 });
-    await requireCmsUser(req);
+    const previewToken = String(req.query.preview || '');
+    if (/^[0-9a-f]{64}$/.test(previewToken)) {
+      const sql = db();
+      const found = await sql`
+        SELECT clerk_user_id FROM preview_tokens
+        WHERE token = ${previewToken} AND expires_at > NOW() LIMIT 1`;
+      if (!found[0]) throw friendly(401, 'This preview has expired. Please open a new preview from the Website Manager.');
+    } else if (previewToken) {
+      throw friendly(401, 'This preview link is invalid. Please open a new preview from the Website Manager.');
+    } else {
+      await requireCmsUser(req);
+    }
     const sql = db();
 
     const [pages, sections, portfolio, brands, services, testimonials, settings, pubs] =

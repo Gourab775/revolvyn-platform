@@ -7,6 +7,14 @@
   var BUILD_TAG = 'cms-20260909-pro';
   var DEBUG = /(?:\?|&)cms-debug=1/.test(window.location.search);
   var ui = { search: '', filter: 'all', morePage: null };
+  var previewWin = null;
+  function notifyPreview() {
+    try {
+      if (previewWin && !previewWin.closed) {
+        previewWin.postMessage({ ns: 'revolvyn-cms', kind: 'draft-updated' }, window.location.origin);
+      } else previewWin = null;
+    } catch (e) { previewWin = null; }
+  }
 
   var $ = function (id) { return document.getElementById(id); };
   var esc = function (s) {
@@ -610,14 +618,7 @@
       saveSections([{ id: s.id, data: s.data, is_visible: on }]);
     }));
     var edit = el('button', 'btn small primary', 'Edit');
-    edit.onclick = function () {
-      openDrawer({
-        title: 'Edit — ' + def.title, sub: def.desc || '',
-        groups: def.groups, values: Object.assign({}, s.data),
-        extra: def.extra,
-        onSave: async function (out) { await saveSections([{ id: s.id, data: out }]); }
-      });
-    };
+    edit.onclick = function () { openSectionEditor(s.page_slug || page, s.section_key); };
     acts.appendChild(edit);
     card.appendChild(acts);
     parent.appendChild(card);
@@ -642,6 +643,7 @@
         if (i >= 0) draft.sections[i] = Object.assign({}, draft.sections[i], ns);
       });
       markDirty(); render(); toast('Saved ✓ — not live until you Publish');
+      notifyPreview();
     } catch (e) { toast(e.message, true); throw e; }
   }
 
@@ -955,11 +957,13 @@
           var r = await api('/api/cms/' + resource, { method: 'POST', body: out });
           draft[resource].push(r.item);
           markDirty(); render(); toast('Added ✓ — not live until you Publish');
+          notifyPreview();
         } else {
           out.id = it.id;
           var r2 = await api('/api/cms/' + resource, { method: 'PATCH', body: out });
           Object.assign(it, r2.item);
           markDirty(); render(); toast('Saved ✓ — not live until you Publish');
+          notifyPreview();
         }
       }
     });
@@ -972,6 +976,7 @@
       await api('/api/cms/' + resource + '?id=' + it.id, { method: 'DELETE' });
       draft[resource] = draft[resource].filter(function (x) { return x.id !== it.id; });
       markDirty(); render(); toast('Deleted ✓ — not live until you Publish');
+      notifyPreview();
     } catch (e) { toast(e.message, true); }
   }
   async function moveItem(resource, it, dir) {
@@ -1000,6 +1005,7 @@
         if (o) o.sort_order = k;
       });
       markDirty(); render(); toast('Order saved ✓ — not live until you Publish');
+      notifyPreview();
     } catch (e) { toast(e.message, true); }
   }
   async function toggleVis(resource, it, on) {
@@ -1007,6 +1013,7 @@
       var r = await api('/api/cms/' + resource, { method: 'PATCH', body: { id: it.id, is_visible: on } });
       Object.assign(it, r.item);
       markDirty(); render(); toast(on ? 'Will show on website after Publish ✓' : 'Hidden ✓ — takes effect on Publish');
+      notifyPreview();
     } catch (e) { toast(e.message, true); render(); }
   }
 
@@ -1069,6 +1076,139 @@
         { key: 'buttonText', label: 'Button text' },
         { key: 'buttonUrl', label: 'Button link', type: 'text' } ]}]}
   ];
+  function statsExtra(body, values) {
+    var g = el('div', 'd-group');
+    g.appendChild(el('h4', null, 'Numbers'));
+    var host = complexHost('items', function () {
+      return (values.items || []).map(function (s) {
+        return { number: s.number || '', label: s.label || '' };
+      }).filter(function (s) { return s.number || s.label; });
+    });
+    if (!Array.isArray(values.items)) values.items = [];
+    statsEditor(host, values.items);
+    g.appendChild(host);
+    body.appendChild(g);
+  }
+  function processExtra(body, values) {
+    var g = el('div', 'd-group');
+    g.appendChild(el('h4', null, 'Steps'));
+    var host = complexHost('steps', function () {
+      return (values.steps || []).map(function (s) {
+        return { title: s.title || '', text: s.text || '' };
+      }).filter(function (s) { return s.title || s.text; });
+    });
+    if (!Array.isArray(values.steps)) values.steps = [];
+    stepsEditor(host, values.steps);
+    g.appendChild(host);
+    body.appendChild(g);
+  }
+  function blocksExtra(body, values) {
+    var g = el('div', 'd-group');
+    g.appendChild(el('h4', null, 'Content blocks'));
+    var host = complexHost('blocks', function () {
+      return (values.blocks || []).map(function (b) {
+        return {
+          heading: b.heading || '',
+          texts: (b.texts || []).map(function (t) { return String(t == null ? '' : t); })
+        };
+      }).filter(function (b) { return b.heading || b.texts.join('').trim() !== ''; });
+    });
+    if (!Array.isArray(values.blocks)) values.blocks = [];
+    blocksEditor(host, values.blocks);
+    g.appendChild(host);
+    body.appendChild(g);
+  }
+
+  var PORTFOLIO_SECS = [
+    { page: 'portfolio', key: 'hero', title: 'Page heading', desc: 'Title at the top of the Portfolio page.',
+      groups: [{ title: 'Content', fields: [
+        { key: 'titleA', label: 'First words' }, { key: 'titleAccent', label: 'Accent word (italic)' },
+        { key: 'subtitle', label: 'Subtitle' } ]}]},
+    { page: 'portfolio', key: 'cta', title: 'Bottom button', desc: 'Button under the project grid.',
+      groups: [{ title: 'Content', fields: [
+        { key: 'linkText', label: 'Button text' },
+        { key: 'linkUrl', label: 'Button link', type: 'text' }
+      ] }]}
+  ];
+  var BRANDS_SECS = [
+    { page: 'brands', key: 'hero', title: 'Page heading', desc: 'Title at the top of the Brands page.',
+      groups: [{ title: 'Content', fields: [
+        { key: 'title', label: 'Heading' }, { key: 'subtitle', label: 'Subtitle', type: 'textarea' } ]}]},
+    { page: 'brands', key: 'stats', title: 'Numbers', desc: 'The three statistics under the heading.',
+      groups: [], extra: statsExtra },
+    { page: 'brands', key: 'cta', title: 'Bottom banner', desc: 'Banner under the logo grid.',
+      groups: [{ title: 'Content', fields: [
+        { key: 'heading', label: 'Heading' } ]},
+        { title: 'Links', fields: [
+          { key: 'buttonText', label: 'Button text' },
+          { key: 'buttonUrl', label: 'Button link', type: 'text' }
+        ] }]}
+  ];
+  var SERVICES_SECS = [
+    { page: 'services', key: 'hero', title: 'Page heading', desc: 'Title at the top of the Services page.',
+      groups: [{ title: 'Content', fields: [
+        { key: 'title', label: 'Heading' }, { key: 'subtitle', label: 'Subtitle', type: 'textarea' } ]}]},
+    { page: 'services', key: 'process', title: 'Process steps', desc: '“How we work” steps under the services.',
+      groups: [{ title: 'Content', fields: [{ key: 'label', label: 'Section heading' }] }],
+      extra: processExtra },
+    { page: 'services', key: 'cta', title: 'Bottom banner', desc: 'Banner under the services.',
+      groups: [{ title: 'Content', fields: [
+        { key: 'heading', label: 'Heading' } ]},
+        { title: 'Links', fields: [
+          { key: 'buttonText', label: 'Button text' },
+          { key: 'buttonUrl', label: 'Button link', type: 'text' }
+        ] }]}
+  ];
+  var CONTACT_SECS = [
+    { page: 'contact', key: 'hero', title: 'Page heading', desc: 'Title at the top of the Contact page.',
+      groups: [{ title: 'Content', fields: [
+        { key: 'title', label: 'Heading' }, { key: 'subtitle', label: 'Subtitle', type: 'textarea' } ]}]},
+    { page: 'contact', key: 'info', title: 'Introduction', desc: 'Text next to the contact details.',
+      groups: [{ title: 'Content', fields: [
+        { key: 'heading', label: 'Heading' }, { key: 'description', label: 'Description', type: 'textarea' } ]}]},
+    { page: 'contact', key: 'form', title: 'Form button', desc: 'Submit button on the enquiry form.',
+      groups: [{ title: 'Content', fields: [{ key: 'buttonText', label: 'Button text' }] }]},
+    { page: 'contact', key: 'map', title: 'Location line', desc: 'Line under the form.',
+      groups: [{ title: 'Content', fields: [{ key: 'text', label: 'Text' }] }]}
+  ];
+  function moreSecDef(slug, key) {
+    if (key === 'hero') {
+      return { page: slug, key: 'hero', title: 'Page heading', desc: 'Title at the top of the page.',
+        groups: [{ title: 'Content', fields: [
+          { key: 'title', label: 'Heading' }, { key: 'subtitle', label: 'Subtitle (only where the page has one)' } ]}]};
+    }
+    return { page: slug, key: 'main', title: 'Page text', desc: 'Headings and paragraphs in page order.',
+      groups: [], extra: blocksExtra };
+  }
+  function secDef(page, key) {
+    var pools = [HOME_DEFS, PORTFOLIO_SECS, BRANDS_SECS, SERVICES_SECS, CONTACT_SECS];
+    for (var i = 0; i < pools.length; i++) {
+      for (var j = 0; j < pools[i].length; j++) {
+        if (pools[i][j].page === page && pools[i][j].key === key) return pools[i][j];
+      }
+    }
+    if (key === 'hero' || key === 'main') return moreSecDef(page, key);
+    return null;
+  }
+  var TAB_FOR_PAGE = { home: 'home', portfolio: 'portfolio', brands: 'brands', services: 'services', contact: 'contact' };
+  function openSectionEditor(page, key) {
+    if (!draft) return;
+    var def = secDef(page, key);
+    if (!def) { toast('Open that section from the Website Manager.', true); return; }
+    var target = TAB_FOR_PAGE[page] || 'more';
+    if (target === 'more') ui.morePage = page;
+    if (tab !== target) { tab = target; render(); }
+    else render();
+    var s = findSec(page, key);
+    if (!s) { toast('Section not found. Refresh and try again.', true); return; }
+    openDrawer({
+      title: 'Edit — ' + def.title, sub: def.desc || '',
+      groups: def.groups, values: Object.assign({}, s.data),
+      extra: def.extra,
+      onSave: async function (out) { await saveSections([{ id: s.id, data: out }]); }
+    });
+  }
+
   function renderHome(c) {
     pageHead(c, 'Home', 'Every text block on the homepage. Nothing goes live until you Publish.', [refreshBtn()]);
     HOME_DEFS.forEach(function (d) { sectionRow(c, d.page, d.key, d); });
@@ -1076,69 +1216,19 @@
 
   function renderPortfolio(c) {
     pageHead(c, 'Portfolio', 'Projects, page heading and the bottom button.', [refreshBtn()]);
-    sectionRow(c, 'portfolio', 'hero', { title: 'Page heading', desc: 'Title at the top of the Portfolio page.',
-      groups: [{ title: 'Content', fields: [
-        { key: 'titleA', label: 'First words' }, { key: 'titleAccent', label: 'Accent word (italic)' },
-        { key: 'subtitle', label: 'Subtitle' } ]}]});
-    sectionRow(c, 'portfolio', 'cta', { title: 'Bottom button', desc: 'Button under the project grid.',
-      groups: [{ title: 'Content', fields: [
-        { key: 'linkText', label: 'Button text' }, { key: 'linkUrl', label: 'Button link', type: 'text' } ]}]});
+    PORTFOLIO_SECS.forEach(function (d) { sectionRow(c, d.page, d.key, d); });
     renderCollection(c, 'portfolio');
   }
 
   function renderBrands(c) {
     pageHead(c, 'Brands', 'Logos, numbers, headings and the bottom button.', [refreshBtn()]);
-    sectionRow(c, 'brands', 'hero', { title: 'Page heading', desc: 'Title at the top of the Brands page.',
-      groups: [{ title: 'Content', fields: [
-        { key: 'title', label: 'Heading' }, { key: 'subtitle', label: 'Subtitle', type: 'textarea' } ]}]});
-    sectionRow(c, 'brands', 'stats', { title: 'Numbers', desc: 'The three statistics under the heading.',
-      groups: [],
-      extra: function (body, values) {
-        var g = el('div', 'd-group');
-        g.appendChild(el('h4', null, 'Numbers'));
-        var host = complexHost('items', function () {
-          return (values.items || []).map(function (s) {
-            return { number: s.number || '', label: s.label || '' };
-          }).filter(function (s) { return s.number || s.label; });
-        });
-        if (!Array.isArray(values.items)) values.items = [];
-        statsEditor(host, values.items);
-        g.appendChild(host);
-        body.appendChild(g);
-      }});
-    sectionRow(c, 'brands', 'cta', { title: 'Bottom banner', desc: 'Banner under the logo grid.',
-      groups: [{ title: 'Content', fields: [
-        { key: 'heading', label: 'Heading' } ]},
-        { title: 'Links', fields: [
-        { key: 'buttonText', label: 'Button text' }, { key: 'buttonUrl', label: 'Button link', type: 'text' } ]}]});
+    BRANDS_SECS.forEach(function (d) { sectionRow(c, d.page, d.key, d); });
     renderCollection(c, 'brands');
   }
 
   function renderServices(c) {
     pageHead(c, 'Services', 'Service entries, process steps and page texts.', [refreshBtn()]);
-    sectionRow(c, 'services', 'hero', { title: 'Page heading', desc: 'Title at the top of the Services page.',
-      groups: [{ title: 'Content', fields: [
-        { key: 'title', label: 'Heading' }, { key: 'subtitle', label: 'Subtitle', type: 'textarea' } ]}]});
-    sectionRow(c, 'services', 'process', { title: 'Process steps', desc: '“How we work” steps under the services.',
-      groups: [{ title: 'Content', fields: [{ key: 'label', label: 'Section heading' }] }],
-      extra: function (body, values) {
-        var g = el('div', 'd-group');
-        g.appendChild(el('h4', null, 'Steps'));
-        var host = complexHost('steps', function () {
-          return (values.steps || []).map(function (s) {
-            return { title: s.title || '', text: s.text || '' };
-          }).filter(function (s) { return s.title || s.text; });
-        });
-        if (!Array.isArray(values.steps)) values.steps = [];
-        stepsEditor(host, values.steps);
-        g.appendChild(host);
-        body.appendChild(g);
-      }});
-    sectionRow(c, 'services', 'cta', { title: 'Bottom banner', desc: 'Banner under the services.',
-      groups: [{ title: 'Content', fields: [
-        { key: 'heading', label: 'Heading' } ]},
-        { title: 'Links', fields: [
-        { key: 'buttonText', label: 'Button text' }, { key: 'buttonUrl', label: 'Button link', type: 'text' } ]}]});
+    SERVICES_SECS.forEach(function (d) { sectionRow(c, d.page, d.key, d); });
     renderCollection(c, 'services');
   }
 
@@ -1162,6 +1252,7 @@
     });
     markDirty(); render();
     toast(doneMsg || 'Saved ✓ — not live until you Publish');
+    notifyPreview();
   }
   function settingsCard(parent, title, desc, rows, saveLabel) {
     // rows: [{key, label, type}]
@@ -1214,16 +1305,7 @@
     pageHead(c, 'Contact & details', 'Contact page texts, details and social links.', [refreshBtn()]);
     var h = el('h3', null, 'Contact page');
     c.appendChild(h);
-    sectionRow(c, 'contact', 'hero', { title: 'Page heading', desc: 'Title at the top of the Contact page.',
-      groups: [{ title: 'Content', fields: [
-        { key: 'title', label: 'Heading' }, { key: 'subtitle', label: 'Subtitle', type: 'textarea' } ]}]});
-    sectionRow(c, 'contact', 'info', { title: 'Introduction', desc: 'Text next to the contact details.',
-      groups: [{ title: 'Content', fields: [
-        { key: 'heading', label: 'Heading' }, { key: 'description', label: 'Description', type: 'textarea' } ]}]});
-    sectionRow(c, 'contact', 'form', { title: 'Form button', desc: 'Submit button on the enquiry form.',
-      groups: [{ title: 'Content', fields: [{ key: 'buttonText', label: 'Button text' }] }]});
-    sectionRow(c, 'contact', 'map', { title: 'Location line', desc: 'Line under the form.',
-      groups: [{ title: 'Content', fields: [{ key: 'text', label: 'Text' }] }]});
+    CONTACT_SECS.forEach(function (d) { sectionRow(c, d.page, d.key, d); });
     var h2 = el('h3', null, 'Details shown on the website');
     c.appendChild(h2);
     settingsCard(c, 'Contact details', 'Email, phone, office and hours.', [
@@ -1332,27 +1414,8 @@
     c.appendChild(back);
     var h = el('h2', null, name);
     c.appendChild(h);
-    sectionRow(c, slug, 'hero', { title: 'Page heading', desc: 'Title at the top of the page.',
-      groups: [{ title: 'Content', fields: [
-        { key: 'title', label: 'Heading' }, { key: 'subtitle', label: 'Subtitle (only where the page has one)' } ]}]});
-    sectionRow(c, slug, 'main', { title: 'Page text', desc: 'Headings and paragraphs in page order.',
-      groups: [],
-      extra: function (body, values) {
-        var g = el('div', 'd-group');
-        g.appendChild(el('h4', null, 'Content blocks'));
-        var host = complexHost('blocks', function () {
-          return (values.blocks || []).map(function (b) {
-            return {
-              heading: b.heading || '',
-              texts: (b.texts || []).map(function (t) { return String(t == null ? '' : t); })
-            };
-          }).filter(function (b) { return b.heading || b.texts.join('').trim() !== ''; });
-        });
-        if (!Array.isArray(values.blocks)) values.blocks = [];
-        blocksEditor(host, values.blocks);
-        g.appendChild(host);
-        body.appendChild(g);
-      }});
+    sectionRow(c, slug, 'hero', moreSecDef(slug, 'hero'));
+    sectionRow(c, slug, 'main', moreSecDef(slug, 'main'));
   }
 
   /* ── History / activity ─────────────────────────────────────────── */
@@ -1394,6 +1457,7 @@
           try {
             await api('/api/cms/versions', { method: 'POST', body: { version_id: v.id } });
             await reload(true); render(); toast('Restored to drafts ✓ — press Publish to go live');
+            notifyPreview();
           } catch (e) { toast(e.message, true); }
           setBusy(false, rb);
         };
@@ -1511,11 +1575,39 @@
         await enter();
       } catch (e) { $('denied-error').textContent = e.message; $('denied-error').classList.remove('hidden'); }
     };
-    $('btn-preview').onclick = function () {
-      try { sessionStorage.setItem('revolvyn_preview_token', token); } catch (e) {}
+    $('btn-preview').onclick = async function () {
+      var btn = $('btn-preview');
       var map = { portfolio: 'portfolio.html', brands: 'brands.html', services: 'services.html', contact: 'contact.html', footer: 'index.html', more: (ui.morePage || 'index') + '.html' };
-      window.open((map[tab] || 'index.html') + '?cms_preview=draft', '_blank');
+      var page = map[tab] || 'index.html';
+      setBusy(true, btn, 'Opening…');
+      try {
+        var r = await api('/api/cms/preview-token', { method: 'POST' });
+        try { previewWin = window.open(page + '?cms_preview=' + r.token, '_blank'); } catch (e) { previewWin = null; }
+        if (!previewWin) toast('Popup blocked — allow popups for this site and try again.', true);
+      } catch (e) {
+        try { sessionStorage.setItem('revolvyn_preview_token', token); } catch (e2) {}
+        previewWin = window.open(page + '?cms_preview=draft', '_blank');
+        if (!previewWin) toast('Popup blocked — allow popups for this site and try again.', true);
+      }
+      setBusy(false, btn);
     };
+    window.addEventListener('message', function (e) {
+      try {
+        if (e.origin !== window.location.origin) return;
+        var m = e.data;
+        if (!m || m.ns !== 'revolvyn-cms' || m.kind !== 'edit') return;
+        if (!draft) { toast('Please wait — still loading.', true); return; }
+        try { if (e.source) previewWin = e.source; } catch (err) {}
+        if (m.tab && !m.key) {
+          if (['portfolio', 'brands', 'services', 'footer'].indexOf(m.tab) >= 0) {
+            tab = m.tab; render();
+            toast('Opened from preview — make your changes here.');
+          }
+          return;
+        }
+        if (m.page && m.key) openSectionEditor(m.page, m.key);
+      } catch (err) {}
+    });
     $('btn-publish').onclick = async function () {
       var n = unpublishedItems(draft || {}).length;
       var ok = await confirmDialog('Publish changes?',
@@ -1526,6 +1618,7 @@
       try {
         await api('/api/cms/publish', { method: 'POST' });
         await reload(true); render(); toast('Published successfully ✓');
+        notifyPreview();
       } catch (e) { toast(e.message, true); }
       setBusy(false, $('btn-publish'));
     };

@@ -22,6 +22,13 @@ No technical knowledge needed. If you can use email, you can use this.
 - **Delete**: click **Delete** → confirm. (Deletions go live only after you Publish.)
 - **Contact details & social links**: Contact & details → Save details.
 
+## Preview & visual editing
+
+- **Preview website** opens your site in a new tab, exactly as visitors see it — but with your **draft** content.
+- In preview you will see small **Edit buttons** floating on each section. Click one — the matching editor opens back in the Website Manager tab.
+- After you Save there, the preview tab **refreshes itself** — you see the result instantly, still without going live.
+- Only **Publish changes** makes anything visible to visitors.
+
 ## Good to know
 
 - **Nothing goes live until you press Publish.** Saving alone only saves a draft — visitors still see the old version. The badge at the top tells you: “Unpublished changes” vs “All published”.
