@@ -80,14 +80,45 @@
     return (d.settings || []).some(function (s) { return s.has_unpublished_changes; });
   }
 
+  function signinFail(message, showRetry) {
+    $('signin-error').textContent = message;
+    $('signin-error').classList.remove('hidden');
+    $('btn-retry').classList.toggle('hidden', !showRetry);
+    show('screen-signin');
+  }
+
   // ── Boot ────────────────────────────────────────────────────────────────
   async function boot() {
-    var cfg = {};
-    try { cfg = await (await fetch('/api/public/config')).json(); } catch (e) { /* offline */ }
-    if (!cfg.manageEnabled) {
-      $('signin-error').textContent = 'The website manager is not set up yet. Please ask your developer to connect sign-in first.';
-      $('signin-error').classList.remove('hidden');
-      show('screen-signin');
+    // Step 1: reach the server and read public config. Three distinct
+    // outcomes, three distinct messages — never blame setup for a network
+    // problem (e.g. a hosting login wall in front of the site).
+    var cfg = null, problem = '';
+    try {
+      var res = await fetch('/api/public/config', { cache: 'no-store' });
+      var text = await res.text();
+      try {
+        cfg = JSON.parse(text);
+      } catch (e) {
+        problem = 'wall'; // reachable, but answered HTML (login wall / proxy)
+      }
+      if (cfg && !res.ok) problem = 'http';
+    } catch (e) {
+      problem = 'network'; // DNS / offline / blocked request
+    }
+    if (problem === 'wall' || problem === 'network') {
+      console.error('[Website Manager] config fetch failed:', problem);
+      signinFail(
+        'The manager could not reach the website server. ' +
+        'Check your internet connection and refresh. If this keeps happening, ' +
+        'the site may be behind a hosting login screen — ask your developer ' +
+        'to turn off Deployment Protection.',
+        true,
+      );
+      return;
+    }
+    if (problem === 'http' || !cfg || !cfg.manageEnabled) {
+      console.error('[Website Manager] server reachable but sign-in is not configured.');
+      signinFail('The website manager is not set up yet. Please ask your developer to connect sign-in first.', true);
       return;
     }
     uploadsOn = !!cfg.uploadsEnabled;
@@ -95,9 +126,7 @@
     var attempts = 0;
     while (!window.Clerk && attempts < 100) { await new Promise(function (r) { setTimeout(r, 100); }); attempts++; }
     if (!window.Clerk) {
-      $('signin-error').textContent = 'Could not load sign-in. Check your connection and refresh.';
-      $('signin-error').classList.remove('hidden');
-      show('screen-signin');
+      signinFail('Could not load the sign-in box. Check your connection and try again.', true);
       return;
     }
     clerk = window.Clerk;
@@ -118,9 +147,7 @@
       toast('Welcome back' + (me.user && me.user.email ? ', ' + me.user.email : '') + ' ✓');
     } catch (e) {
       if (e.status === 403) { show('screen-denied'); return; }
-      $('signin-error').textContent = e.message;
-      $('signin-error').classList.remove('hidden');
-      show('screen-signin');
+      signinFail(e.message, true);
       return;
     }
     await reload();
@@ -614,6 +641,12 @@
       };
     });
     $('modal-cancel').onclick = function () { $('modal').classList.add('hidden'); };
+    $('btn-retry').onclick = function () {
+      $('signin-error').classList.add('hidden');
+      $('btn-retry').classList.add('hidden');
+      show('screen-loading');
+      boot();
+    };
     $('modal-save').onclick = async function () {
       if (modalSave && !busy) {
         setBusy(true, $('modal-save'), 'Saving…');
