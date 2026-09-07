@@ -660,7 +660,8 @@ function showShareToast() {
 function toggleDesc() {
   descExpanded = !descExpanded;
   document.getElementById('descBox').classList.toggle('expanded', descExpanded);
-  document.getElementById('descToggle').textContent = descExpanded ? 'Show less' : 'Show more';
+  const _dt = document.getElementById('descToggle');
+  _dt.textContent = descExpanded ? (_dt.dataset.less || 'Show less') : (_dt.dataset.more || 'Show more');
 }
 
 function handleCommentKey(e) {
@@ -833,7 +834,8 @@ function loadProject() {
   disliked = false;
   updateLikeUI();
 
-  document.getElementById('descMeta').innerHTML = `${Math.floor(seededRandom(currentIndex + 100) * 45000) + 500} views`;
+  const _dm = document.getElementById('descMeta');
+  _dm.innerHTML = `${Math.floor(seededRandom(currentIndex + 100) * 45000) + 500} ` + (_dm.dataset.viewsWord || 'views');
 
   const descs = descBank[currentProject.brand] || [currentProject.desc];
   const descIdx = Math.floor(seededRandom(currentIndex + 70) * descs.length);
@@ -848,7 +850,7 @@ function loadProject() {
   const bigPlay = document.getElementById('bigPlayBtn');
 
   loadingEl.classList.remove('hidden');
-  loadingEl.querySelector('span').textContent = 'Loading video...';
+  loadingEl.querySelector('span').textContent = loadingEl.dataset.loadingText || 'Loading video...';
   errorEl.style.display = 'none';
   bigPlay.classList.add('hidden');
   video.removeAttribute('src');
@@ -919,6 +921,7 @@ function loadProject() {
 
 document.addEventListener('DOMContentLoaded', loadProject);
 </script>
+<script src="js/cms-content.js" defer></script>
 </body>
 </html>
 

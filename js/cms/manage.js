@@ -4,21 +4,15 @@
   'use strict';
   var clerk = null, token = null, draft = null, me = null;
   var tab = 'home', dirty = false, busy = false, uploadsOn = false;
-  var BUILD_TAG = 'cms-20260910-prev';
+  var BUILD_TAG = 'cms-20260911b';
   var DEBUG = /(?:\?|&)cms-debug=1/.test(window.location.search);
   var ui = { search: '', filter: 'all', morePage: null };
   var previewWin = null;
-  var PREVIEW_PAGES = [
-    ['index.html', 'Home'], ['portfolio.html', 'Portfolio'], ['brands.html', 'Brands'],
-    ['services.html', 'Services'], ['contact.html', 'Contact'],
-    ['careers.html', 'Careers'], ['partnerships.html', 'Partnerships'], ['blog.html', 'Blog'],
-    ['research.html', 'Research'], ['newsletter.html', 'Newsletter'], ['community.html', 'Community'],
-    ['privacy.html', 'Privacy'], ['refund.html', 'Refund']
-  ];
   function previewForTab() {
     var map = { portfolio: 'portfolio.html', brands: 'brands.html', services: 'services.html', contact: 'contact.html', footer: 'index.html', more: (ui.morePage || 'index') + '.html' };
     return map[tab] || 'index.html';
   }
+  function liveForTab() { return previewForTab(); }
   async function openPreview(pageFile) {
     // Open synchronously inside the click (before any await) so the browser
     // treats it as user-initiated and never blocks the popup. We navigate
@@ -43,18 +37,6 @@
       toast('Preview failed: ' + e.message + ' Try signing out and back in.', true);
     }
   }
-  function buildPreviewMenu() {
-    var menu = $('preview-menu');
-    menu.innerHTML = '';
-    PREVIEW_PAGES.forEach(function (p) {
-      var b = el('button', null, p[1]);
-      b.type = 'button';
-      b.setAttribute('role', 'menuitem');
-      b.onclick = function () { closePreviewMenu(); openPreview(p[0]); };
-      menu.appendChild(b);
-    });
-  }
-  function closePreviewMenu() { $('preview-menu').classList.add('hidden'); }
   function notifyPreview() {
     try {
       if (previewWin && !previewWin.closed) {
@@ -93,6 +75,8 @@
       var ok = $('confirm-ok');
       ok.textContent = okLabel || 'Delete';
       ok.className = 'btn ' + (opts.okKind || 'danger');
+      var cancel = $('confirm-cancel');
+      cancel.textContent = opts.cancelLabel || 'Cancel';
       $('confirm-cancel').classList.toggle('hidden', !!opts.hideCancel);
       $('confirm').classList.remove('hidden');
       ok.onclick = function () { $('confirm').classList.add('hidden'); resolve(true); };
@@ -143,12 +127,88 @@
     if (n > 0) {
       pill.textContent = 'Unpublished changes' + (n > 1 ? ' (' + n + ')' : '');
       pill.className = 'pill dirty';
-      pill.title = 'Your edits are saved as drafts. Press “Publish changes” to make them live.';
+      pill.title = 'See what’s waiting — click to view, then Publish to go live.';
     } else {
       pill.textContent = 'All published';
       pill.className = 'pill clean';
       pill.title = 'Everything visitors see is up to date.';
     }
+    var pub = $('btn-publish');
+    if (pub) {
+      pub.disabled = (n === 0);
+      pub.title = n === 0 ? 'Nothing to publish — everything is already live.' : 'Make all drafts live.';
+    }
+  }
+
+  var SETTING_LABELS_SHORT = {
+    'contact.email': ['Contact email', 'contact'], 'contact.phone': ['Phone number', 'contact'],
+    'contact.office': ['Office / address', 'contact'], 'contact.hours': ['Opening hours', 'contact'],
+    'social.instagram': ['Instagram link', 'contact'], 'social.facebook': ['Facebook link', 'contact'],
+    'social.youtube': ['YouTube link', 'contact'],
+    'footer.tagline': ['Footer tagline', 'footer'], 'footer.copyright': ['Copyright line', 'footer'],
+    'footer.titles': ['Footer column titles', 'footer'], 'footer.links': ['Footer links', 'footer'],
+    'contact.form.services': ['Form options', 'contact']
+  };
+  var PAGE_NAMES = { home: 'Home', portfolio: 'Portfolio', brands: 'Brands', services: 'Services', contact: 'Contact', video: 'Video player', careers: 'Careers', partnerships: 'Partnerships', blog: 'Blog', research: 'Research', newsletter: 'Newsletter', community: 'Community', privacy: 'Privacy', refund: 'Refund' };
+
+  function pendingEntries() {
+    var out = [];
+    (draft.sections || []).filter(function (s) { return s.has_unpublished_changes; }).forEach(function (s) {
+      var def = secDef(s.page_slug, s.section_key);
+      out.push({
+        label: (def ? def.title : s.section_key), sub: PAGE_NAMES[s.page_slug] || s.page_slug,
+        go: (function (pg, ky) { return function () { openSectionEditor(pg, ky); }; })(s.page_slug, s.section_key)
+      });
+    });
+    [['portfolio', 'project'], ['brands', 'brand'], ['services', 'service'], ['testimonials', 'testimonial']].forEach(function (pair) {
+      var resource = pair[0];
+      (draft[resource] || []).filter(function (x) { return x.has_unpublished_changes; }).forEach(function (it) {
+        out.push({
+          label: COLS[resource].titleOf(it), sub: COLS[resource].plural,
+          go: (function (res, item) {
+            return function () { tab = res; render(); openItemDrawer(res, item); };
+          })(resource, it)
+        });
+      });
+    });
+    (draft.settings || []).filter(function (x) { return x.has_unpublished_changes; }).forEach(function (s) {
+      var info = SETTING_LABELS_SHORT[s.key] || [s.key, 'contact'];
+      out.push({
+        label: info[0], sub: info[1] === 'footer' ? 'Footer' : 'Contact & details',
+        go: (function (t) { return function () { tab = t; render(); }; })(info[1])
+      });
+    });
+    return out;
+  }
+  function closePending() {
+    var p = document.querySelector('.pending-menu');
+    if (p) p.remove();
+  }
+  function togglePending() {
+    closePending();
+    var list = pendingEntries();
+    if (!list.length) { toast('Everything is already published ✓'); return; }
+    var panel = el('div', 'pending-menu');
+    panel.appendChild(el('div', 'pending-head', 'Waiting to publish (' + list.length + ')'));
+    list.slice(0, 60).forEach(function (en) {
+      var row = el('button', 'pending-row');
+      row.type = 'button';
+      row.appendChild(el('span', 'log-dot'));
+      var tx = el('span', 'pending-text');
+      tx.appendChild(el('strong', null, en.label));
+      tx.appendChild(el('span', 'muted', ' · ' + en.sub));
+      row.appendChild(tx);
+      row.onclick = function () { closePending(); en.go(); };
+      panel.appendChild(row);
+    });
+    var foot = el('button', 'btn primary pending-publish', 'Publish changes');
+    foot.type = 'button';
+    foot.onclick = function () { closePending(); $('btn-publish').click(); };
+    panel.appendChild(foot);
+    document.body.appendChild(panel);
+    var r = $('status-pill').getBoundingClientRect();
+    panel.style.top = Math.min(window.innerHeight - 320, r.bottom + 8) + 'px';
+    panel.style.right = Math.max(8, window.innerWidth - r.right - 40) + 'px';
   }
 
   function signinFail(message, showRetry, tech) {
@@ -795,22 +855,19 @@
     services: {
       plural: 'Services', single: 'Service', addLabel: '+ Add service',
       intro: 'Full service entries on the Services page, each with its package list.',
-      searchKeys: ['title', 'description'],
-      thumbOf: function (it) { return it.image || ''; },
+      searchKeys: ['title'],
+      thumbOf: function () { return ''; },
       titleOf: function (it) { return it.title || 'Untitled service'; },
       metaOf: function (it) {
         var n = Array.isArray(it.details) ? it.details.length : 0;
         return n ? n + (n === 1 ? ' package' : ' packages') : '';
       },
-      descOf: function (it) { return it.description || ''; },
+      descOf: function () { return ''; },
       groups: function () {
         return [
           { title: 'Content', fields: [
-            { key: 'title', label: 'Service name', required: true },
-            { key: 'description', label: 'Short description', type: 'textarea' },
-            { key: 'icon', label: 'Icon (optional)', tip: 'A single symbol, e.g. ✦' }
-          ]},
-          { title: 'Media', fields: [{ key: 'image', label: 'Image (optional)', type: 'image' }] }
+            { key: 'title', label: 'Service name', required: true }
+          ]}
         ];
       },
       extra: function (body, values) {
@@ -1092,6 +1149,7 @@
 
   /* ── Tab dispatch ─────────────────────────────────────────────── */
   function render() {
+    closePending();
     document.querySelectorAll('.side-link').forEach(function (b) {
       b.classList.toggle('active', b.dataset.tab === tab);
     });
@@ -1115,6 +1173,7 @@
     else if (tab === 'more') renderMore(c);
     else if (tab === 'history') renderHistory(c);
     else if (tab === 'activity') renderActivity(c);
+    else if (tab === 'team') renderTeam(c);
     renderPill();
   }
 
@@ -1232,8 +1291,30 @@
           { key: 'buttonUrl', label: 'Button link', type: 'text' }
         ] }]}
   ];
-  var CONTACT_SECS = [
-    { page: 'contact', key: 'hero', title: 'Page heading', desc: 'Title at the top of the Contact page.',
+  var VIDEO_SECS = [
+    { page: 'video', key: 'labels', title: 'Video player page', desc: 'Fixed labels on the video watch page. The video itself comes from the project that was clicked.',
+      groups: [
+        { title: 'Channel & buttons', fields: [
+          { key: 'channelTag', label: 'Channel tagline' },
+          { key: 'shareText', label: 'Share button' },
+          { key: 'workText', label: 'Work button text' },
+          { key: 'workUrl', label: 'Work button link', type: 'text' } ]},
+        { title: 'Sections', fields: [
+          { key: 'commentsTitle', label: 'Comments heading' },
+          { key: 'commentPlaceholder', label: 'Comment box hint' },
+          { key: 'moreTitle', label: '“More” rail heading' },
+          { key: 'viewsWord', label: 'Views word (after the count)' } ]},
+        { title: 'Show more / states', fields: [
+          { key: 'showMore', label: '“Show more” text' },
+          { key: 'showLess', label: '“Show less” text' },
+          { key: 'loadingText', label: 'Loading text' } ]},
+        { title: 'Error box', fields: [
+          { key: 'unavailableText', label: 'Error text' },
+          { key: 'unavailableLinkText', label: 'Error link text' },
+          { key: 'unavailableLinkUrl', label: 'Error link address', type: 'text' } ]}
+      ]}
+  ];
+  var CONTACT_SECS = [    { page: 'contact', key: 'hero', title: 'Page heading', desc: 'Title at the top of the Contact page.',
       groups: [{ title: 'Content', fields: [
         { key: 'title', label: 'Heading' }, { key: 'subtitle', label: 'Subtitle', type: 'textarea' } ]}]},
     { page: 'contact', key: 'info', title: 'Introduction', desc: 'Text next to the contact details.',
@@ -1290,6 +1371,7 @@
   function renderPortfolio(c) {
     pageHead(c, 'Portfolio', 'Projects, page heading and the bottom button.', [refreshBtn()]);
     PORTFOLIO_SECS.forEach(function (d) { sectionRow(c, d.page, d.key, d); });
+    VIDEO_SECS.forEach(function (d) { sectionRow(c, d.page, d.key, d); });
     renderCollection(c, 'portfolio');
   }
 
@@ -1593,6 +1675,117 @@
     } catch (e) { list.innerHTML = '<p class="error">' + esc(e.message) + '</p>'; }
   }
 
+  async function renderTeam(c) {
+    pageHead(c, 'Team', 'Who can sign in and manage the website.', [refreshBtn()]);
+    if (!me || me.role !== 'owner') {
+      c.appendChild(emptyState('Owners only.', 'Only an owner can manage who has access.', null, null));
+      return;
+    }
+    var list = el('div');
+    list.innerHTML = '<p class="muted">Loading…</p>';
+    c.appendChild(list);
+    var draw = function (members, self) {
+      list.innerHTML = '';
+      members.forEach(function (m) {
+        var card = el('div', 'sec-card');
+        var info = el('div', 'sec-info');
+        var t = el('div', 'sec-title', m.email);
+        t.appendChild(el('span', 'badge' + (m.role === 'owner' ? '' : ' off'), m.role === 'owner' ? 'Owner' : 'Editor'));
+        if (m.clerk_user_id === self) t.appendChild(el('span', 'badge', 'You'));
+        info.appendChild(t);
+        info.appendChild(el('div', 'sec-desc', 'Added ' + new Date(m.created_at).toLocaleDateString()));
+        card.appendChild(info);
+        var acts = el('div', 'sec-actions');
+        if (m.clerk_user_id !== self) {
+          var sel = document.createElement('select');
+          sel.className = 'role-select';
+          sel.setAttribute('aria-label', 'Role for ' + m.email);
+          ['owner', 'editor'].forEach(function (r) {
+            var o = document.createElement('option');
+            o.value = r; o.textContent = r === 'owner' ? 'Owner' : 'Editor';
+            if (m.role === r) o.selected = true;
+            sel.appendChild(o);
+          });
+          sel.onchange = async function () {
+            try {
+              await api('/api/cms/me', { method: 'PATCH', body: { clerk_user_id: m.clerk_user_id, role: sel.value } });
+              toast('Role updated ✓'); await renderTeamRefresh();
+            } catch (e) { toast(e.message, true); sel.value = m.role; }
+          };
+          acts.appendChild(sel);
+          var rm = el('button', 'btn small ghost', 'Remove');
+          rm.onclick = async function () {
+            var ok2 = await confirmDialog('Remove access?', m.email + ' will no longer be able to open the Website Manager.', 'Remove');
+            if (!ok2) return;
+            try {
+              await api('/api/cms/me?clerk_user_id=' + encodeURIComponent(m.clerk_user_id), { method: 'DELETE' });
+              toast('Removed ✓'); await renderTeamRefresh();
+            } catch (e) { toast(e.message, true); }
+          };
+          acts.appendChild(rm);
+        } else {
+          acts.appendChild(el('span', 'muted', 'This is you'));
+        }
+        card.appendChild(acts);
+        list.appendChild(card);
+      });
+      var add = el('div', 'sec-card');
+      var ai = el('div', 'sec-info');
+      ai.appendChild(el('div', 'sec-title', 'Add a person'));
+      ai.appendChild(el('div', 'sec-desc', 'They sign in with their own account — you authorize it here. They get access immediately.'));
+      var form = el('div');
+      form.style.marginTop = '12px';
+      [['memberEmail', 'Email address', 'name@example.com'], ['memberClerk', 'Clerk user ID', 'user_…']].forEach(function (f) {
+        var div = el('div', 'field');
+        div.appendChild(el('label', null, f[1]));
+        var inp = document.createElement('input');
+        inp.type = 'text'; inp.id = f[0]; inp.placeholder = f[2];
+        div.appendChild(inp);
+        form.appendChild(div);
+      });
+      var rdiv = el('div', 'field');
+      rdiv.appendChild(el('label', null, 'Role'));
+      var rsel = document.createElement('select');
+      rsel.id = 'memberRole';
+      [['owner', 'Owner — full access'], ['editor', 'Editor — manage content']].forEach(function (r) {
+        var o = document.createElement('option');
+        o.value = r[0]; o.textContent = r[1];
+        if (r[0] === 'editor') o.selected = true;
+        rsel.appendChild(o);
+      });
+      rdiv.appendChild(rsel);
+      form.appendChild(rdiv);
+      var tip = el('div', 'hint', 'Find the Clerk user ID in Clerk Dashboard → Users → click the person. It starts with “user_”.');
+      form.appendChild(tip);
+      ai.appendChild(form);
+      add.appendChild(ai);
+      var aacts = el('div', 'sec-actions');
+      var addBtn = el('button', 'btn small primary', 'Add person');
+      addBtn.onclick = async function () {
+        var email = $('memberEmail').value.trim();
+        var cid = $('memberClerk').value.trim();
+        if (!email || !cid) { toast('Enter both the email and the Clerk user ID.', true); return; }
+        setBusy(true, addBtn, 'Adding…');
+        try {
+          await api('/api/cms/me', { method: 'POST', body: { email: email, clerk_user_id: cid, role: $('memberRole').value } });
+          toast('Added ✓ — they can sign in now');
+          await renderTeamRefresh();
+        } catch (e) { toast(e.message, true); }
+        setBusy(false, addBtn);
+      };
+      aacts.appendChild(addBtn);
+      add.appendChild(aacts);
+      list.appendChild(add);
+    };
+    var renderTeamRefresh = async function () {
+      try {
+        var r = await api('/api/cms/me?list=1');
+        draw(r.members || [], r.self);
+      } catch (e) { list.innerHTML = '<p class="error">' + esc(e.message) + '</p>'; }
+    };
+    await renderTeamRefresh();
+  }
+
   /* ── Events ─────────────────────────────────────────────────────── */
   function bind() {
     document.querySelectorAll('.side-link').forEach(function (b) {
@@ -1609,7 +1802,7 @@
     $('btn-menu').onclick = function () { $('sidebar').classList.toggle('open'); };
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') {
-        closePreviewMenu();
+        closePending();
         if (!$('confirm').classList.contains('hidden')) return;
         if (!$('drawer').classList.contains('hidden')) requestCloseDrawer();
         else $('sidebar').classList.remove('open');
@@ -1650,17 +1843,10 @@
       } catch (e) { $('denied-error').textContent = e.message; $('denied-error').classList.remove('hidden'); }
     };
     $('btn-preview').onclick = function () { openPreview(previewForTab()); };
-    buildPreviewMenu();
-    $('btn-preview-menu').onclick = function (e) {
-      if (e && e.stopPropagation) e.stopPropagation();
-      $('preview-menu').classList.toggle('hidden');
-    };
+    $('status-pill').onclick = function () { togglePending(); };
     document.addEventListener('click', function (e) {
-      var menu = $('preview-menu');
-      if (!menu.classList.contains('hidden')) {
-        var wrap = document.querySelector('.preview-wrap');
-        if (!wrap || !wrap.contains(e.target)) menu.classList.add('hidden');
-      }
+      var panel = document.querySelector('.pending-menu');
+      if (panel && !$('status-pill').contains(e.target) && !panel.contains(e.target)) closePending();
     });
     window.addEventListener('message', function (e) {
       try {
@@ -1688,8 +1874,9 @@
       setBusy(true, $('btn-publish'), 'Publishing…');
       try {
         await api('/api/cms/publish', { method: 'POST' });
-        await reload(true); render(); toast('Published successfully ✓');
-        notifyPreview();
+        await reload(true); render(); notifyPreview();
+        var go = await confirmDialog('Published successfully ✓', 'Your changes are now live on the website.', 'View live site', { okKind: 'primary', cancelLabel: 'Stay here' });
+        if (go) { try { window.open(liveForTab(), '_blank'); } catch (e2) {} }
       } catch (e) { toast(e.message, true); }
       setBusy(false, $('btn-publish'));
     };
@@ -1697,7 +1884,7 @@
       if (dirty) { e.preventDefault(); e.returnValue = ''; }
     });
     var h = (window.location.hash || '').replace('#/manage/', '');
-    if (h && ['home', 'portfolio', 'brands', 'services', 'testimonials', 'contact', 'footer', 'more', 'history', 'activity'].indexOf(h) >= 0) tab = h;
+    if (h && ['home', 'portfolio', 'brands', 'services', 'testimonials', 'contact', 'footer', 'more', 'history', 'activity', 'team'].indexOf(h) >= 0) tab = h;
   }
 
   document.addEventListener('DOMContentLoaded', function () { bind(); boot(); });

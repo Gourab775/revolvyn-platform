@@ -27,10 +27,27 @@ No technical knowledge needed. If you can use email, you can use this.
 
 ## Preview & visual editing
 
-- **Preview website** opens your site in a new tab, exactly as visitors see it — but with your **draft** content. A small badge at the bottom confirms it's a preview.
-- Use the small arrow next to Preview to open **any page** directly (Home, Portfolio, Brands, Services, Contact, and the rest).
+- **Preview website** opens the current page in a new tab, exactly as visitors see it — but with your **draft** content. A small badge at the bottom confirms it's a preview.
 - After you Save in the manager, simply **Refresh** the preview tab to see the result — still without going live.
 - Only **Publish changes** makes anything visible to visitors.
+
+## Pending changes & publishing
+
+- The top badge always tells the truth: **All published** or **Unpublished changes (N)**.
+- **Click the badge** to see exactly what is waiting — every edited text, project, brand, service and setting, each jumping straight to its editor.
+- The **Publish changes** button is disabled when there is nothing to publish.
+- After publishing you will be offered **View live site** — it opens the real page showing your fresh changes.
+
+## Portfolio tips
+
+- **Drag the handle** (or ↑ ↓) to reorder. Order decides the Portfolio page, the homepage strip and the video suggestions.
+- **Show on website** hides without deleting. **Feature on the homepage strip** puts a project in the homepage work strip.
+
+## Team (owners only)
+
+- The **Team** tab lists everyone allowed into the Website Manager.
+- **Add a person**: enter their email + their Clerk user ID (Clerk Dashboard → Users → click them, starts with `user_`), pick Owner or Editor.
+- You cannot remove yourself, and there must always be at least one owner.
 
 ## Good to know
 
