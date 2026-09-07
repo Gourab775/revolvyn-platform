@@ -3,11 +3,10 @@
   'use strict';
   var clerk = null, token = null, draft = null, tab = 'home', dirty = false, busy = false;
   var uploadsOn = false;
-  // Publishable key is PUBLIC by design (ships to every visitor). Kept here
-  // directly so the sign-in box never depends on a server round-trip.
-  // Server value from /api/public/config overrides it when available.
-  var PUBLISHABLE_KEY = 'pk_test_aW4tYmFib29uLTkzOTAuY2xlcmsuYWNjb3VudHMuZGV2JA';
-  var BUILD_TAG = 'cms-20260908-direct-keys';
+  // Clerk's browser build reads its public key from the script tag's
+  // data-clerk-publishable-key attribute (official pattern) — load() takes
+  // no key argument. The key is public by design (ships to every visitor).
+  var BUILD_TAG = 'cms-20260908-keyattr';
   var DEBUG = /(?:\?|&)cms-debug=1/.test(window.location.search);
 
   var $ = function (id) { return document.getElementById(id); };
@@ -109,15 +108,14 @@
 
   // ── Boot ────────────────────────────────────────────────────────────────
   async function boot() {
-    // Sign-in uses the embedded public key directly — no server dependency.
-    // /api/public/config is only consulted for upload support + diagnostics.
-    var serverKey = '', diag = 'not-checked', raw = '';
+    // /api/public/config is consulted for upload support + diagnostics only.
+    // Auth key lives on the Clerk script tag (official browser pattern).
+    var diag = 'not-checked', raw = '';
     try {
       var res = await fetch('/api/public/config', { cache: 'no-store' });
       raw = await res.text();
       try {
         var c = JSON.parse(raw);
-        serverKey = c.clerkPublishableKey || '';
         uploadsOn = !!c.uploadsEnabled;
         diag = c.manageEnabled ? 'ok' : 'keys-missing-on-server';
       } catch (e) {
@@ -127,7 +125,6 @@
     } catch (e) {
       diag = 'network-fail';
     }
-    var key = serverKey || PUBLISHABLE_KEY; // never empty — embedded literal
     var tagLine = 'build ' + BUILD_TAG + ' | site=' + window.location.hostname + ' | server=' + diag;
     console.log('[Website Manager]', tagLine);
     var bt = document.getElementById('build-tag');
@@ -140,7 +137,7 @@
     }
     clerk = window.Clerk;
     try {
-      await clerk.load({ publishableKey: key });
+      await clerk.load(); // key comes from the script tag's data attribute
     } catch (e) {
       signinFail('Could not start sign-in (' + ((e && e.message) || 'unknown error') + '). Check your connection and try again.', true,
         techLine(diag, raw));
