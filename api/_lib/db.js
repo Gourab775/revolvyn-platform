@@ -13,3 +13,15 @@ export function db() {
   if (!client) client = neon(process.env.DATABASE_URL);
   return client;
 }
+
+// Parameterized dynamic queries for the installed driver, which exposes
+// only the tagged-template call (no .query/.unsafe). `text` uses $1..$n
+// placeholders in order; table/column names must come from an allowlist,
+// never from user input (values are separately validated + sanitized).
+export function unsafe(sql, text, params = []) {
+  const parts = text.split(/\$\d+/);
+  if (parts.length - 1 !== params.length) {
+    throw new Error('Parameter count mismatch');
+  }
+  return sql(parts, ...params);
+}

@@ -4,7 +4,7 @@
 //   DATABASE_URL="postgresql://..." npm run db:migrate           (bash)
 // Runs db/schema.sql then db/seed.sql using Neon's HTTP driver (no pg needed).
 import { neon } from '@neondatabase/serverless';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -18,7 +18,15 @@ if (!connectionString) {
 
 const sql = neon(connectionString);
 
-for (const file of ['schema.sql', 'seed.sql']) {
+const files = ['schema.sql', 'seed.sql'];
+const migDir = join(dir, 'migrations');
+if (existsSync(migDir)) {
+  for (const m of readdirSync(migDir).filter((f) => f.endsWith('.sql')).sort()) {
+    files.push('migrations/' + m);
+  }
+}
+
+for (const file of files) {
   const raw = readFileSync(join(dir, file), 'utf8');
   // Split on semicolons at line end boundaries, ignoring those inside
   // dollar-quoted function bodies (schema trigger) — run per statement.

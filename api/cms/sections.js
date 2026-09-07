@@ -1,7 +1,7 @@
 // PATCH /api/cms/sections — bulk save page-section drafts (text, visibility,
 // order). Sanitized server-side; publishing is a separate explicit step.
-import { db } from '../_lib/db.js';
-import { send, handleError, requireCmsUser, audit, rateLimit, method, cleanText, cleanUrl, friendly } from '../_lib/auth.js';
+import { db, unsafe } from '../_lib/db.js';
+import { send, handleError, requireCmsUser, audit, rateLimit, method, cleanText, cleanUrl, deepClean, friendly } from '../_lib/auth.js';
 import { sectionsBulk, parseOr400 } from '../_lib/validate.js';
 
 const URL_KEYS = new Set(['image', 'logo', 'thumbnail', 'video', 'video_url', 'buttonUrl', 'website']);
@@ -16,8 +16,13 @@ function sanitizeData(data) {
       out[key] = v;
       continue;
     }
-    const s = String(v);
-    out[key] = URL_KEYS.has(key) ? cleanUrl(s) : cleanText(s, 5000);
+    if (typeof v === 'string') {
+      const s = String(v);
+      out[key] = URL_KEYS.has(key) ? cleanUrl(s) : cleanText(s, 5000);
+      continue;
+    }
+    // Arrays / objects (content blocks, stats, steps): deep-clean, keep shape.
+    out[key] = deepClean(v, 2000);
   }
   return out;
 }
@@ -43,13 +48,13 @@ export default async function handler(req, res) {
         sets.push(`sort_order = $${vals.length}`);
       }
       sets.push('updated_at = NOW()', 'has_unpublished_changes = TRUE');
-      const rows = await sql.unsafe(
+      const rows = await unsafe(sql, 
         `UPDATE page_sections SET ${sets.join(', ')} WHERE id = $1 RETURNING *`,
         vals,
       );
       if (rows[0]) saved.push(rows[0]);
     }
-    await audit(clerkUserId, 'update', 'page_sections', '', { count: saved.length });
+    await audit(clerkUserId, 'update', 'page_sections', '', { count: saved.length, summary: `Updated page content (${saved.length} section${saved.length === 1 ? '' : 's'})` });
     send(res, 200, { sections: saved });
   } catch (err) {
     handleError(res, err);

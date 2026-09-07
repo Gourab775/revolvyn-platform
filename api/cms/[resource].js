@@ -1,7 +1,7 @@
 // /api/cms/[resource] — CRUD + reorder for portfolio, brands, services,
 // testimonials. One handler, strict allowlist; every request is Clerk
 // authenticated AND checked against cms_users (owner/editor).
-import { db } from '../_lib/db.js';
+import { db, unsafe } from '../_lib/db.js';
 import {
   send, handleError, requireCmsUser, audit, rateLimit,
   cleanText, cleanUrl, friendly,
@@ -67,6 +67,9 @@ function sanitizeFields(cfg, data) {
     const n = Number(data.sort_order);
     if (Number.isFinite(n)) out.sort_order = Math.max(0, Math.min(10000, Math.round(n)));
   }
+  if (cfg.table === 'portfolio_items' && (data.layout === 'portrait' || data.layout === 'landscape')) {
+    out.layout = data.layout;
+  }
   if (cfg.table === 'services' && data.details !== undefined && Array.isArray(data.details)) {
     out.details = data.details.slice(0, 20).map((pkg) => {
       if (typeof pkg === 'string') return { package: cleanText(pkg, 200), items: [] };
@@ -88,10 +91,12 @@ export default async function handler(req, res) {
     const resource = String(req.query.resource || '');
     const cfg = RESOURCES[resource];
     if (!cfg) return send(res, 404, { error: 'Something went wrong. Please try again.' });
+    const single = { portfolio: 'project', brands: 'brand', services: 'service', testimonials: 'testimonial' }[resource] || 'item';
+    const itemName = (row) => String((row && (row.title || row.name)) || '').slice(0, 80);
     const sql = db();
 
     if (req.method === 'GET') {
-      const rows = await sql.unsafe(
+      const rows = await unsafe(sql, 
         `SELECT * FROM ${cfg.table} ORDER BY sort_order, created_at`,
       );
       return send(res, 200, { items: rows });
@@ -103,27 +108,27 @@ export default async function handler(req, res) {
       if (cfg.slugFrom && !clean.slug) {
         clean.slug = `${slugify(clean[cfg.slugFrom], resource.slice(0, -1))}-${Date.now().toString(36)}`;
       }
-      const maxRow = await sql.unsafe(`SELECT COALESCE(MAX(sort_order), -1) + 1 AS n FROM ${cfg.table}`);
+      const maxRow = await unsafe(sql, `SELECT COALESCE(MAX(sort_order), -1) + 1 AS n FROM ${cfg.table}`);
       const cols = Object.keys(clean);
       const row =
-        (await sql.unsafe(
+        (await unsafe(sql, 
           `INSERT INTO ${cfg.table} (${['sort_order', ...cols].join(', ')})
            VALUES (${['$1', ...cols.map((_, i) => `$${i + 2}`)].join(', ')}) RETURNING *`,
           [maxRow[0].n, ...cols.map((c) => (c === 'details' ? JSON.stringify(clean[c]) : clean[c]))],
         ))[0];
-      await audit(clerkUserId, 'create', resource, row.id, { title: row.title || row.name });
+      await audit(clerkUserId, 'create', resource, row.id, { title: row.title || row.name, summary: `Added ${single} “${itemName(row)}”` });
       return send(res, 201, { item: row });
     }
 
     if (req.method === 'PATCH' && req.query.action === 'reorder') {
       const { order } = parseOr400(reorderPatch, req.body);
       for (let i = 0; i < order.length; i++) {
-        await sql.unsafe(`UPDATE ${cfg.table} SET sort_order = $1 WHERE id = $2`, [i, order[i]]);
+        await unsafe(sql, `UPDATE ${cfg.table} SET sort_order = $1 WHERE id = $2`, [i, order[i]]);
       }
-      await sql.unsafe(`UPDATE ${cfg.table} SET has_unpublished_changes = TRUE WHERE id = ANY($1::uuid[])`, [
+      await unsafe(sql, `UPDATE ${cfg.table} SET has_unpublished_changes = TRUE WHERE id = ANY($1::uuid[])`, [
         order,
       ]);
-      await audit(clerkUserId, 'reorder', resource, '', { count: order.length });
+      await audit(clerkUserId, 'reorder', resource, '', { count: order.length, summary: `Reordered ${order.length} ${resource}` });
       return send(res, 200, { ok: true });
     }
 
@@ -136,21 +141,22 @@ export default async function handler(req, res) {
         c === 'details' ? `${c} = $${i + 2}::jsonb` : `${c} = $${i + 2}`,
       );
       const vals = Object.keys(clean).map((c) => (c === 'details' ? JSON.stringify(clean[c]) : clean[c]));
-      const rows = await sql.unsafe(
+      const rows = await unsafe(sql, 
         `UPDATE ${cfg.table} SET ${sets.join(', ')} WHERE id = $1 RETURNING *`,
         [id, ...vals],
       );
       if (!rows[0]) throw friendly(404, 'That item no longer exists. Please refresh and try again.');
-      await audit(clerkUserId, 'update', resource, id, {});
+      await audit(clerkUserId, 'update', resource, id, { summary: `Updated ${single} “${itemName(rows[0])}”` });
       return send(res, 200, { item: rows[0] });
     }
 
     if (req.method === 'DELETE') {
       const id = String(req.query.id || req.body?.id || '');
       if (!/^[0-9a-f-]{36}$/i.test(id)) throw friendly(400, 'Something went wrong. Please try again.');
-      const rows = await sql.unsafe(`DELETE FROM ${cfg.table} WHERE id = $1 RETURNING id`, [id]);
+      const gone = (await unsafe(sql, `SELECT * FROM ${cfg.table} WHERE id = $1`, [id]))[0];
+      const rows = await unsafe(sql, `DELETE FROM ${cfg.table} WHERE id = $1 RETURNING id`, [id]);
       if (!rows[0]) throw friendly(404, 'That item no longer exists. Please refresh and try again.');
-      await audit(clerkUserId, 'delete', resource, id, {});
+      await audit(clerkUserId, 'delete', resource, id, { summary: `Deleted ${single} “${itemName(gone)}”` });
       return send(res, 200, { ok: true });
     }
 

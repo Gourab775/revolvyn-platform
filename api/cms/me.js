@@ -7,7 +7,7 @@ export default async function handler(req, res) {
     if (!method(req, res, ['GET'])) return;
     rateLimit(req, { max: 120 });
     const { clerkUserId, user } = await requireCmsUser(req);
-    await audit(clerkUserId, 'access', 'session', '', { email: user.email });
+    await audit(clerkUserId, 'access', 'session', '', { email: user.email, summary: 'Signed in to the Website Manager' });
     send(res, 200, {
       user: { email: user.email, role: user.role, clerkUserId },
       uploadsEnabled: Boolean(

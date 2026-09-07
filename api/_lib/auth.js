@@ -113,6 +113,25 @@ export function cleanUrl(value, max = 2000) {
   return v;
 }
 
+// Deep sanitizer for JSONB payloads (section blocks, stats, steps, link
+// lists…). Strings are cleaned, numbers/booleans pass through, nesting is
+// depth-limited. Never throws on unexpected shapes.
+export function deepClean(value, max = 2000, depth = 0) {
+  if (typeof value === 'string') return cleanText(value, max);
+  if (typeof value === 'number' || typeof value === 'boolean') return value;
+  if (depth > 4 || value === null || value === undefined) return null;
+  if (Array.isArray(value)) return value.slice(0, 60).map((v) => deepClean(v, max, depth + 1));
+  if (typeof value === 'object') {
+    const out = {};
+    for (const [k, v] of Object.entries(value).slice(0, 60)) {
+      const key = cleanText(k, 80);
+      if (key) out[key] = deepClean(v, max, depth + 1);
+    }
+    return out;
+  }
+  return null;
+}
+
 export function method(req, res, allowed) {
   if (!allowed.includes(req.method)) {
     res.setHeader('Allow', allowed.join(', '));

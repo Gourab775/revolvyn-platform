@@ -28,7 +28,7 @@ export default async function handler(req, res) {
     const email = typeof req.body?.email === 'string' ? req.body.email.slice(0, 320) : '';
     await sql`INSERT INTO cms_users (clerk_user_id, email, role)
               VALUES (${session.sub}, ${email || session.email || 'owner'}, 'owner')`;
-    await audit(session.sub, 'bootstrap_owner', 'cms_users', session.sub, {});
+    await audit(session.sub, 'bootstrap_owner', 'cms_users', session.sub, { summary: 'Claimed the first owner account' });
     send(res, 200, { ok: true });
   } catch (err) {
     handleError(res, err);

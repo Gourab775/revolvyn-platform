@@ -31,7 +31,8 @@ export default async function handler(req, res) {
       portfolio: portfolio.map((p) => ({
         id: p.id, title: p.title, slug: p.slug, description: p.description,
         thumbnail: p.thumbnail, video: p.video_url, url: p.external_url,
-        client: p.client_name, category: p.category, order: p.sort_order, visible: p.is_visible,
+        client: p.client_name, category: p.category, layout: p.layout || 'landscape',
+        order: p.sort_order, visible: p.is_visible,
       })),
       brands: brands.map((b) => ({
         id: b.id, name: b.name, slug: b.slug, logo: b.logo, url: b.website_url,
@@ -48,18 +49,20 @@ export default async function handler(req, res) {
       settings: Object.fromEntries(settings.map((s) => [s.key, s.value])),
     };
 
+    const note =
+      `Published — ${portfolio.length} projects, ${brands.length} brands, ${services.length} services, ${testimonials.length} testimonials`;
     const pub =
       await sql`INSERT INTO cms_publications (scope, payload, created_by)
                 VALUES ('site', ${JSON.stringify(payload)}::jsonb, ${clerkUserId}) RETURNING id, created_at`;
     await sql`INSERT INTO content_versions (entity_type, snapshot, note, created_by)
-              VALUES ('site', ${JSON.stringify(payload)}::jsonb, 'Published', ${clerkUserId})`;
+              VALUES ('site', ${JSON.stringify(payload)}::jsonb, ${note}, ${clerkUserId})`;
     await sql`UPDATE page_sections SET has_unpublished_changes = FALSE`;
     await sql`UPDATE portfolio_items SET has_unpublished_changes = FALSE`;
     await sql`UPDATE brands SET has_unpublished_changes = FALSE`;
     await sql`UPDATE services SET has_unpublished_changes = FALSE`;
     await sql`UPDATE testimonials SET has_unpublished_changes = FALSE`;
     await sql`UPDATE site_settings SET has_unpublished_changes = FALSE`;
-    await audit(clerkUserId, 'publish', 'site', pub[0].id, {});
+    await audit(clerkUserId, 'publish', 'site', pub[0].id, { summary: 'Published website changes' });
 
     send(res, 200, { ok: true, publishedAt: pub[0].created_at });
   } catch (err) {

@@ -1,13 +1,14 @@
 // /api/cms/settings — GET draft settings / PATCH settings drafts.
 // Only pre-approved keys are writable; unknown keys are rejected.
 import { db } from '../_lib/db.js';
-import { send, handleError, requireCmsUser, audit, rateLimit, cleanText, friendly } from '../_lib/auth.js';
+import { send, handleError, requireCmsUser, audit, rateLimit, cleanText, deepClean, friendly } from '../_lib/auth.js';
 import { settingsPatch, parseOr400 } from '../_lib/validate.js';
 
 const ALLOWED_KEYS = new Set([
   'contact.email', 'contact.phone', 'contact.office', 'contact.hours',
   'social.instagram', 'social.facebook', 'social.youtube',
-  'footer.tagline', 'footer.copyright',
+  'footer.tagline', 'footer.copyright', 'footer.titles', 'footer.links',
+  'contact.form.services',
 ]);
 
 export default async function handler(req, res) {
@@ -26,7 +27,7 @@ export default async function handler(req, res) {
       const saved = [];
       for (const [key, value] of Object.entries(settings)) {
         if (!ALLOWED_KEYS.has(key)) throw friendly(400, 'Some fields look invalid. Please check them and try again.');
-        const clean = typeof value === 'string' ? cleanText(value, 2000) : value;
+        const clean = typeof value === 'string' ? cleanText(value, 2000) : deepClean(value, 2000);
         const rows = await sql`
           INSERT INTO site_settings (key, value, has_unpublished_changes, updated_by)
           VALUES (${key}, ${JSON.stringify(clean)}::jsonb, TRUE, ${clerkUserId})
@@ -36,7 +37,7 @@ export default async function handler(req, res) {
           RETURNING *`;
         saved.push(rows[0]);
       }
-      await audit(clerkUserId, 'update', 'site_settings', '', { keys: Object.keys(settings) });
+      await audit(clerkUserId, 'update', 'site_settings', '', { keys: Object.keys(settings), summary: 'Updated contact details & settings' });
       return send(res, 200, { settings: saved });
     }
 
