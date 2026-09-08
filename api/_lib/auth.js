@@ -21,7 +21,7 @@ export function handleError(res, err) {
   const message =
     err.publicMessage ||
     (status === 401
-      ? 'Please sign in again to continue.'
+      ? 'Session expired. Please sign in again.'
       : status === 403
         ? 'This account does not have access to the CMS.'
         : status === 429

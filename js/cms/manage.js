@@ -133,6 +133,15 @@
     return out;
   }
   function markDirty() { dirty = true; renderPill(); }
+  // Edits typed into Settings/Footer forms (not yet saved as drafts).
+  var unsavedForm = false;
+  function clearUnsaved() { unsavedForm = false; }
+  async function guardUnsaved() {
+    if (!unsavedForm) return true;
+    var ok = await confirmDialog('Leave without saving?', 'Edits on this page are not saved yet and will be lost.', 'Leave', { okKind: 'primary' });
+    if (ok) unsavedForm = false;
+    return ok;
+  }
   function deletedTrail() {
     var found = null;
     (draft.settings || []).forEach(function (s) {
@@ -1443,6 +1452,7 @@
         inp.value = settingVal(f.key);
       }
       inp.dataset.key = f.key;
+      inp.oninput = function () { unsavedForm = true; };
       div.appendChild(inp);
       if (f.tip) div.appendChild(el('div', 'hint', f.tip));
       box.appendChild(div);
@@ -1459,7 +1469,7 @@
           : node.value;
       });
       setBusy(true, save, 'Saving…');
-      try { await saveSettings(out); } catch (e) { toast(e.message, true); }
+      try { await saveSettings(out); clearUnsaved(); } catch (e) { toast(e.message, true); }
       setBusy(false, save);
     };
     acts.appendChild(save);
@@ -1512,7 +1522,7 @@
       t.type = 'text'; t.value = (titles[g[0]] != null ? titles[g[0]] : g[1]);
       t.placeholder = 'Column heading';
       t.style.cssText = 'flex:1;padding:9px 12px;border-radius:8px;border:1px solid var(--line);background:rgba(9,12,6,.7);color:var(--ink);font-size:14px;font-weight:700;font-family:inherit;';
-      t.oninput = function () { titles[g[0]] = t.value; };
+      t.oninput = function () { titles[g[0]] = t.value; unsavedForm = true; };
       hrow.appendChild(t);
       titleInputs[g[0]] = t;
       box.appendChild(hrow);
@@ -1526,20 +1536,19 @@
         [l, u].forEach(function (inp) {
           inp.style.cssText = 'flex:1;padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:rgba(9,12,6,.7);color:var(--ink);font-size:14px;font-family:inherit;';
         });
-        l.oninput = function () { link.label = l.value; };
-        u.oninput = function () { link.url = u.value; };
+        l.oninput = function () { link.label = l.value; unsavedForm = true; };
+        u.oninput = function () { link.url = u.value; unsavedForm = true; };
         var x = el('button', 'mini-btn', '×');
         x.type = 'button'; x.title = 'Remove link';
-        x.onclick = function () { cols[g[0]].splice(li, 1); renderCol(box, g); markDirtyFooter(); };
+        x.onclick = function () { cols[g[0]].splice(li, 1); renderCol(box, g); unsavedForm = true; };
         row.appendChild(l); row.appendChild(u); row.appendChild(x);
         box.appendChild(row);
       });
       var add = el('button', 'btn small ghost add-row-btn', '+ Add link');
       add.type = 'button';
-      add.onclick = function () { cols[g[0]].push({ label: '', url: '' }); renderCol(box, g); markDirtyFooter(); };
+      add.onclick = function () { cols[g[0]].push({ label: '', url: '' }); renderCol(box, g); unsavedForm = true; };
       box.appendChild(add);
     };
-    var markDirtyFooter = function () { dirty = true; renderPill(); };
     [['explore', 'Explore'], ['resources', 'Resources'], ['connect', 'Connect']].forEach(function (g) {
       var box = el('div', 'd-group');
       renderCol(box, g);
@@ -1555,6 +1564,7 @@
       setBusy(true, save, 'Saving…');
       try {
         await saveSettings({ 'footer.links': cols, 'footer.titles': titlesOut }, 'Footer saved ✓ — not live until you Publish');
+        clearUnsaved();
       } catch (e) { toast(e.message, true); }
       setBusy(false, save);
     };
@@ -1710,8 +1720,35 @@
     var list = el('div');
     list.innerHTML = '<p class="muted">Loading…</p>';
     c.appendChild(list);
-    var draw = function (members, self) {
+    var draw = function (members, self, requests) {
       list.innerHTML = '';
+      requests = requests || [];
+      if (requests.length) {
+        var rh = el('h3', null, 'Waiting for approval (' + requests.length + ')');
+        list.appendChild(rh);
+        requests.forEach(function (q) {
+          var card = el('div', 'sec-card');
+          var info = el('div', 'sec-info');
+          info.appendChild(el('div', 'sec-title', q.email));
+          info.appendChild(el('div', 'sec-desc', 'Requested ' + new Date(q.created_at).toLocaleString()));
+          card.appendChild(info);
+          var acts = el('div', 'sec-actions');
+          var ae = el('button', 'btn small primary', 'Make editor');
+          ae.onclick = function () { decide(q, 'approve', 'editor', ae); };
+          var ao = el('button', 'btn small ghost', 'Make owner');
+          ao.onclick = function () { decide(q, 'approve', 'owner', ao); };
+          var dc = el('button', 'btn small ghost', 'Decline');
+          dc.onclick = async function () {
+            var ok2 = await confirmDialog('Decline this request?', q.email + ' will not get access.', 'Decline');
+            if (ok2) decide(q, 'decline', null, dc);
+          };
+          acts.appendChild(ae); acts.appendChild(ao); acts.appendChild(dc);
+          card.appendChild(acts);
+          list.appendChild(card);
+        });
+      }
+      var mh = el('h3', null, 'People with access (' + members.length + ')');
+      list.appendChild(mh);
       members.forEach(function (m) {
         var card = el('div', 'sec-card');
         var info = el('div', 'sec-info');
@@ -1752,61 +1789,24 @@
         } else {
           acts.appendChild(el('span', 'muted', 'This is you'));
         }
-        card.appendChild(acts);
-        list.appendChild(card);
+      card.appendChild(acts);
+      list.appendChild(card);
       });
-      var add = el('div', 'sec-card');
-      var ai = el('div', 'sec-info');
-      ai.appendChild(el('div', 'sec-title', 'Add a person'));
-      ai.appendChild(el('div', 'sec-desc', 'They sign in with their own account — you authorize it here. They get access immediately.'));
-      var form = el('div');
-      form.style.marginTop = '12px';
-      [['memberEmail', 'Email address', 'name@example.com'], ['memberClerk', 'Clerk user ID', 'user_…']].forEach(function (f) {
-        var div = el('div', 'field');
-        div.appendChild(el('label', null, f[1]));
-        var inp = document.createElement('input');
-        inp.type = 'text'; inp.id = f[0]; inp.placeholder = f[2];
-        div.appendChild(inp);
-        form.appendChild(div);
-      });
-      var rdiv = el('div', 'field');
-      rdiv.appendChild(el('label', null, 'Role'));
-      var rsel = document.createElement('select');
-      rsel.id = 'memberRole';
-      [['owner', 'Owner — full access'], ['editor', 'Editor — manage content']].forEach(function (r) {
-        var o = document.createElement('option');
-        o.value = r[0]; o.textContent = r[1];
-        if (r[0] === 'editor') o.selected = true;
-        rsel.appendChild(o);
-      });
-      rdiv.appendChild(rsel);
-      form.appendChild(rdiv);
-      var tip = el('div', 'hint', 'Find the Clerk user ID in Clerk Dashboard → Users → click the person. It starts with “user_”.');
-      form.appendChild(tip);
-      ai.appendChild(form);
-      add.appendChild(ai);
-      var aacts = el('div', 'sec-actions');
-      var addBtn = el('button', 'btn small primary', 'Add person');
-      addBtn.onclick = async function () {
-        var email = $('memberEmail').value.trim();
-        var cid = $('memberClerk').value.trim();
-        if (!email || !cid) { toast('Enter both the email and the Clerk user ID.', true); return; }
-        setBusy(true, addBtn, 'Adding…');
-        try {
-          await api('/api/cms/me', { method: 'POST', body: { email: email, clerk_user_id: cid, role: $('memberRole').value } });
-          toast('Added ✓ — they can sign in now');
-          await renderTeamRefresh();
-        } catch (e) { toast(e.message, true); }
-        setBusy(false, addBtn);
-      };
-      aacts.appendChild(addBtn);
-      add.appendChild(aacts);
-      list.appendChild(add);
+    };
+    var decide = async function (q, decision, role, btn) {
+      setBusy(true, btn, 'Saving…');
+      try {
+        await api('/api/cms/bootstrap', { method: 'POST', body: { action: 'decide', request_id: q.id, decision: decision, role: role } });
+        toast(decision === 'approve' ? 'Approved ✓ — they can sign in now' : 'Declined');
+        await renderTeamRefresh();
+      } catch (e) { toast(e.message, true); }
+      setBusy(false, btn);
     };
     var renderTeamRefresh = async function () {
       try {
         var r = await api('/api/cms/me?list=1');
-        draw(r.members || [], r.self);
+        var q = await api('/api/cms/bootstrap', { method: 'GET' });
+        draw(r.members || [], r.self, (q && q.requests) || []);
       } catch (e) { list.innerHTML = '<p class="error">' + esc(e.message) + '</p>'; }
     };
     await renderTeamRefresh();
@@ -1815,8 +1815,9 @@
   /* ── Events ─────────────────────────────────────────────────────── */
   function bind() {
     document.querySelectorAll('.side-link').forEach(function (b) {
-      b.onclick = function () {
+      b.onclick = async function () {
         if (busy) return;
+        if (!(await guardUnsaved())) return;
         tab = b.dataset.tab;
         ui.search = ''; ui.filter = 'all';
         if (tab !== 'more') ui.morePage = null;
@@ -1868,6 +1869,28 @@
         await enter();
       } catch (e) { $('denied-error').textContent = e.message; $('denied-error').classList.remove('hidden'); }
     };
+    $('btn-request').onclick = async function () {
+      var note = $('request-note');
+      note.classList.add('hidden');
+      $('denied-error').classList.add('hidden');
+      setBusy(true, $('btn-request'), 'Sending…');
+      try {
+        var email = (clerk.user && (clerk.user.primaryEmailAddress || {}).emailAddress) || '';
+        await api('/api/cms/bootstrap', { method: 'POST', body: { action: 'request', email: email } });
+        note.textContent = 'Request sent ✓ — you’ll get access as soon as the owner approves it. You can sign out for now.';
+        note.classList.remove('hidden');
+        $('btn-request').disabled = true;
+      } catch (e) {
+        if (e.status === 409) {
+          note.textContent = e.message;
+          note.classList.remove('hidden');
+        } else {
+          $('denied-error').textContent = e.message;
+          $('denied-error').classList.remove('hidden');
+        }
+      }
+      setBusy(false, $('btn-request'));
+    };
     $('btn-preview').onclick = function () { openPreview(previewForTab()); };
     $('status-pill').onclick = function () { togglePending(); };
     document.addEventListener('click', function (e) {
@@ -1907,7 +1930,7 @@
       setBusy(false, $('btn-publish'));
     };
     window.addEventListener('beforeunload', function (e) {
-      if (dirty) { e.preventDefault(); e.returnValue = ''; }
+      if (dirty || unsavedForm) { e.preventDefault(); e.returnValue = ''; }
     });
     var h = (window.location.hash || '').replace('#/manage/', '');
     if (h && ['home', 'portfolio', 'brands', 'services', 'contact', 'footer', 'more', 'history', 'activity', 'team'].indexOf(h) >= 0) tab = h;

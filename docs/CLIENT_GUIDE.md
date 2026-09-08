@@ -46,8 +46,8 @@ No technical knowledge needed. If you can use email, you can use this.
 ## Team (owners only)
 
 - The **Team** tab lists everyone allowed into the Website Manager.
-- **Add a person**: enter their email + their Clerk user ID (Clerk Dashboard → Users → click them, starts with `user_`), pick Owner or Editor.
-- You cannot remove yourself, and there must always be at least one owner.
+- To give someone access: ask them to open `/manage` and click **Request access**. Their request appears at the top of your Team tab — press **Make editor** or **Make owner** to accept, or **Decline**.
+- Change anyone's role anytime (Owner/Editor). You cannot remove yourself, and there must always be at least one owner.
 
 ## Good to know
 
