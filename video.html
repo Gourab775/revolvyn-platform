@@ -83,7 +83,8 @@ input, textarea { user-select: text; -webkit-user-select: text; }
 .video-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 600; line-height: 1.4; color: #fff; }
 .channel-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-top: 14px; }
 .channel-info { display: flex; align-items: center; gap: 12px; }
-.channel-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #e6f578, #b4dc64); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; color: #000; flex-shrink: 0; }
+.channel-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #e6f578, #b4dc64); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; color: #000; flex-shrink: 0; overflow: hidden; }
+.channel-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block; }
 .channel-name { font-weight: 600; font-size: 15px; }
 .channel-subs { font-size: 12px; color: #aaa; }
 .action-buttons { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
@@ -211,7 +212,7 @@ input, textarea { user-select: text; -webkit-user-select: text; }
 <div class="main-layout">
   <div class="main-content">
     <div class="video-player-wrapper" id="videoWrapper">
-      <video id="mainVideo" preload="metadata" playsinline muted></video>
+      <video id="mainVideo" preload="metadata" playsinline></video>
       <div class="video-loading" id="videoLoading">
         <div class="loading-spinner"></div>
         <span>Loading video...</span>
@@ -247,7 +248,7 @@ input, textarea { user-select: text; -webkit-user-select: text; }
       <h1 class="video-title" id="videoTitle">Loading...</h1>
       <div class="channel-row">
         <a href="index.html" class="channel-info" style="cursor:pointer">
-          <div class="channel-avatar">R</div>
+          <div class="channel-avatar"><img src="favicon.png" alt="REVOLVYN"></div>
           <div>
             <div class="channel-name">REVOLVYN</div>
             <div class="channel-subs">Creative Studio</div>
@@ -575,20 +576,26 @@ function navigateProject(direction) {
   }
 }
 
+function setMuteIcon(muted) {
+  document.getElementById('muteBtn').innerHTML = muted ? '<svg viewBox="0 0 24 24"><polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/><line x1="14" y1="9" x2="18" y2="15" stroke="currentColor" stroke-width="1.5"/><line x1="18" y1="9" x2="14" y2="15" stroke="currentColor" stroke-width="1.5"/></svg>' : '<svg viewBox="0 0 24 24"><polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/><path d="M14,8.5 C15.3,9.5 16,11 16,12 C16,13 15.3,14.5 14,15.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M16.5,6.5 C18.5,8 19.5,10 19.5,12 C19.5,14 18.5,16 16.5,17.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>';
+}
+
 function togglePlay() {
   const video = document.getElementById('mainVideo');
   const bigPlay = document.getElementById('bigPlayBtn');
   const playPause = document.getElementById('playPauseBtn');
   if (video.paused) {
+    video.muted = false;
+    setMuteIcon(false);
     video.play().then(() => {
         bigPlay.classList.add('hidden');
         playPause.innerHTML = '<svg viewBox="0 0 24 24"><rect x="7" y="6" width="3" height="12"/><rect x="14" y="6" width="3" height="12"/></svg>';
     }).catch(() => {
       video.muted = true;
+      setMuteIcon(true);
       video.play().then(() => {
         bigPlay.classList.add('hidden');
         playPause.innerHTML = '<svg viewBox="0 0 24 24"><rect x="7" y="6" width="3" height="12"/><rect x="14" y="6" width="3" height="12"/></svg>';
-        document.getElementById('muteBtn').innerHTML = '<svg viewBox="0 0 24 24"><polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/><line x1="14" y1="9" x2="18" y2="15" stroke="currentColor" stroke-width="1.5"/><line x1="18" y1="9" x2="14" y2="15" stroke="currentColor" stroke-width="1.5"/></svg>';
       }).catch(()=>{});
     });
   } else {
@@ -601,7 +608,7 @@ function togglePlay() {
 function toggleMute() {
   const video = document.getElementById('mainVideo');
   video.muted = !video.muted;
-  document.getElementById('muteBtn').innerHTML = video.muted ? '<svg viewBox="0 0 24 24"><polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/><line x1="14" y1="9" x2="18" y2="15" stroke="currentColor" stroke-width="1.5"/><line x1="18" y1="9" x2="14" y2="15" stroke="currentColor" stroke-width="1.5"/></svg>' : '<svg viewBox="0 0 24 24"><polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/><path d="M14,8.5 C15.3,9.5 16,11 16,12 C16,13 15.3,14.5 14,15.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M16.5,6.5 C18.5,8 19.5,10 19.5,12 C19.5,14 18.5,16 16.5,17.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>';
+  setMuteIcon(video.muted);
 }
 
 function seekVideo(e) {
@@ -863,15 +870,17 @@ function loadProject() {
     bigPlay.classList.remove('hidden');
     video.oncanplay = null;
     if (getParam('autoplay') === '1') {
+      video.muted = false;
       video.play().then(() => {
         bigPlay.classList.add('hidden');
+        setMuteIcon(false);
         document.getElementById('playPauseBtn').innerHTML = '<svg viewBox="0 0 24 24"><rect x="7" y="6" width="3" height="12"/><rect x="14" y="6" width="3" height="12"/></svg>';
       }).catch(() => {
         video.muted = true;
+        setMuteIcon(true);
         video.play().then(() => {
           bigPlay.classList.add('hidden');
           document.getElementById('playPauseBtn').innerHTML = '<svg viewBox="0 0 24 24"><rect x="7" y="6" width="3" height="12"/><rect x="14" y="6" width="3" height="12"/></svg>';
-          document.getElementById('muteBtn').innerHTML = '<svg viewBox="0 0 24 24"><polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/><line x1="14" y1="9" x2="18" y2="15" stroke="currentColor" stroke-width="1.5"/><line x1="18" y1="9" x2="14" y2="15" stroke="currentColor" stroke-width="1.5"/></svg>';
         }).catch(()=>{});
       });
     }
