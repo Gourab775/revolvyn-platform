@@ -162,6 +162,16 @@ export default async function handler(req, res) {
       const rows = await unsafe(sql, `DELETE FROM ${cfg.table} WHERE id = $1 RETURNING id`, [id]);
       if (!rows[0]) throw friendly(404, 'That item no longer exists. Please refresh and try again.');
       await audit(clerkUserId, 'delete', resource, id, { summary: `Deleted ${single} “${itemName(gone)}”` });
+      // The row is gone, so no flag can mark it — keep a persistent trace so
+      // the dashboard pill, pending list and publish count stay truthful
+      // until the deletion goes live. Cleared on publish/restore.
+      const cur = await sql`SELECT value FROM site_settings WHERE key = '_sync.deleted' LIMIT 1`;
+      const trail = Array.isArray(cur[0]?.value) ? cur[0].value : [];
+      trail.push({ resource, title: itemName(gone), at: new Date().toISOString() });
+      await sql`INSERT INTO site_settings (key, value, has_unpublished_changes, updated_by)
+                VALUES ('_sync.deleted', ${JSON.stringify(trail.slice(-50))}::jsonb, TRUE, ${clerkUserId})
+                ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, has_unpublished_changes = TRUE,
+                  updated_at = NOW(), updated_by = EXCLUDED.updated_by`;
       return send(res, 200, { ok: true });
     }
 

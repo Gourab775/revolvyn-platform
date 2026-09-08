@@ -9,7 +9,7 @@ No technical knowledge needed. If you can use email, you can use this.
    Always use this address for managing the site, even if your public
    website lives on a different domain.
 2. **Sign in** with your owner account
-3. **Select the page** on the left (Home page, Portfolio, Brands, Services, Testimonials, Contact & details)
+3. **Select the page** on the left (Home, Portfolio, Brands, Services, Contact & details, Footer, More pages)
 4. Click **Edit**, make your changes, then **Save**
 5. Click **Preview website** to see how it will look
 6. Click **Publish changes** → confirm → done. Your changes are now live.
@@ -22,7 +22,7 @@ No technical knowledge needed. If you can use email, you can use this.
 - **Add a project/brand/service**: open the section → **+ Add** → fill in → Save.
 - **Hide something without deleting**: click **Hide**. **Show** brings it back.
 - **Reorder**: use **↑ Move up / ↓ Move down**.
-- **Delete**: click **Delete** → confirm. (Deletions go live only after you Publish.)
+- **Delete**: click **Delete** → confirm. Deleted items appear in the pending list too, and disappear publicly only after you Publish.
 - **Contact details & social links**: Contact & details → Save details.
 
 ## Preview & visual editing
@@ -56,4 +56,4 @@ No technical knowledge needed. If you can use email, you can use this.
 - If you see “Something went wrong…”, your changes were **not** saved — just try again.
 - If you start editing and try to leave, the browser will ask before discarding anything.
 - The manager works on phones and tablets, but a laptop makes editing easiest.
-- Never share your sign-in with anyone. If someone else needs access, ask your developer to add them.
+- Never share your sign-in with anyone. To give someone access, add them yourself under the **Team** tab (owners only).

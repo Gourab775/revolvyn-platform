@@ -61,16 +61,16 @@ export async function requireCmsUser(req, { roles = ['owner', 'editor'] } = {}) 
     throw friendly(500, 'Something went wrong. Your changes were not saved. Please try again.');
   }
   const token = bearerToken(req);
-  if (!token) throw friendly(401, 'Please sign in again to continue.');
+  if (!token) throw friendly(401, 'Session expired. Please sign in again.');
 
   let session;
   try {
     session = await verifyToken(token, { secretKey: process.env.CLERK_SECRET_KEY });
   } catch {
-    throw friendly(401, 'Please sign in again to continue.');
+    throw friendly(401, 'Session expired. Please sign in again.');
   }
   const clerkUserId = session.sub;
-  if (!clerkUserId) throw friendly(401, 'Please sign in again to continue.');
+  if (!clerkUserId) throw friendly(401, 'Session expired. Please sign in again.');
 
   const sql = db();
   const rows = await sql`SELECT * FROM cms_users WHERE clerk_user_id = ${clerkUserId} LIMIT 1`;

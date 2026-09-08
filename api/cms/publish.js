@@ -63,6 +63,7 @@ export default async function handler(req, res) {
     await sql`UPDATE services SET has_unpublished_changes = FALSE`;
     await sql`UPDATE testimonials SET has_unpublished_changes = FALSE`;
     await sql`UPDATE site_settings SET has_unpublished_changes = FALSE`;
+    await sql`DELETE FROM site_settings WHERE key = '_sync.deleted'`;
     await audit(clerkUserId, 'publish', 'site', pub[0].id, { summary: 'Published website changes' });
 
     send(res, 200, { ok: true, publishedAt: pub[0].created_at });

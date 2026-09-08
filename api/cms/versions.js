@@ -90,6 +90,7 @@ export default async function handler(req, res) {
       }
       await sql`INSERT INTO content_versions (entity_type, snapshot, note, created_by)
                 VALUES ('site', ${JSON.stringify(snap)}::jsonb, 'Restored to drafts', ${clerkUserId})`;
+      await sql`DELETE FROM site_settings WHERE key = '_sync.deleted'`;
       const when = found[0]?.created_at ? new Date(found[0].created_at).toLocaleString() : 'earlier version';
       await audit(clerkUserId, 'restore', 'site', version_id, { summary: `Restored ${when} to drafts` });
       return send(res, 200, { ok: true });

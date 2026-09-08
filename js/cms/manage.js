@@ -4,7 +4,7 @@
   'use strict';
   var clerk = null, token = null, draft = null, me = null;
   var tab = 'home', dirty = false, busy = false, uploadsOn = false;
-  var BUILD_TAG = 'cms-20260911b';
+  var BUILD_TAG = 'cms-20260912fix';
   var DEBUG = /(?:\?|&)cms-debug=1/.test(window.location.search);
   var ui = { search: '', filter: 'all', morePage: null };
   var previewWin = null;
@@ -85,7 +85,7 @@
   }
 
   /* ── API ──────────────────────────────────────────────────────── */
-  async function api(path, opts) {
+  async function api(path, opts, _retried) {
     opts = opts || {};
     var headers = { 'Content-Type': 'application/json' };
     if (token) headers.Authorization = 'Bearer ' + token;
@@ -95,6 +95,18 @@
     });
     var data = null;
     try { data = await res.json(); } catch (e) { /* ignore */ }
+    if (res.status === 401 && !_retried && typeof clerk !== 'undefined' && clerk && clerk.session) {
+      // Session token may have expired mid-work: refresh once and retry
+      // silently so routine actions never flash an auth error.
+      try {
+        var fresh = await clerk.session.getToken({ skipCache: true });
+        if (fresh) { token = fresh; return api(path, opts, true); }
+      } catch (e) {}
+      // Session is truly dead — sign out to a clean sign-in screen.
+      try { await clerk.signOut(); } catch (e2) {}
+      try { window.location.reload(); } catch (e3) {}
+      throw new Error('Session ended. Please sign in again.');
+    }
     if (!res.ok) {
       var err = new Error((data && data.error) || 'Something went wrong. Please try again.');
       err.status = res.status;
@@ -121,9 +133,19 @@
     return out;
   }
   function markDirty() { dirty = true; renderPill(); }
+  function deletedTrail() {
+    var found = null;
+    (draft.settings || []).forEach(function (s) {
+      if (s.key === '_sync.deleted' && Array.isArray(s.value)) found = s.value;
+    });
+    return found || [];
+  }
+  function pendingCount() {
+    return unpublishedItems(draft || {}).length + deletedTrail().length;
+  }
   function renderPill() {
     var pill = $('status-pill');
-    var n = dirty ? unpublishedItems(draft || {}).length : (draft ? unpublishedItems(draft).length : 0);
+    var n = pendingCount();
     if (n > 0) {
       pill.textContent = 'Unpublished changes' + (n > 1 ? ' (' + n + ')' : '');
       pill.className = 'pill dirty';
@@ -160,7 +182,7 @@
         go: (function (pg, ky) { return function () { openSectionEditor(pg, ky); }; })(s.page_slug, s.section_key)
       });
     });
-    [['portfolio', 'project'], ['brands', 'brand'], ['services', 'service'], ['testimonials', 'testimonial']].forEach(function (pair) {
+    [['portfolio', 'project'], ['brands', 'brand'], ['services', 'service']].forEach(function (pair) {
       var resource = pair[0];
       (draft[resource] || []).filter(function (x) { return x.has_unpublished_changes; }).forEach(function (it) {
         out.push({
@@ -171,12 +193,15 @@
         });
       });
     });
-    (draft.settings || []).filter(function (x) { return x.has_unpublished_changes; }).forEach(function (s) {
+    (draft.settings || []).filter(function (x) { return x.has_unpublished_changes && x.key !== '_sync.deleted'; }).forEach(function (s) {
       var info = SETTING_LABELS_SHORT[s.key] || [s.key, 'contact'];
       out.push({
         label: info[0], sub: info[1] === 'footer' ? 'Footer' : 'Contact & details',
         go: (function (t) { return function () { tab = t; render(); }; })(info[1])
       });
+    });
+    deletedTrail().forEach(function (d) {
+      out.push({ label: 'Deleted “' + (d.title || 'item') + '”', sub: 'Will disappear on publish', gone: true });
     });
     return out;
   }
@@ -191,14 +216,14 @@
     var panel = el('div', 'pending-menu');
     panel.appendChild(el('div', 'pending-head', 'Waiting to publish (' + list.length + ')'));
     list.slice(0, 60).forEach(function (en) {
-      var row = el('button', 'pending-row');
-      row.type = 'button';
+      var row = el(en.gone ? 'div' : 'button', 'pending-row');
+      if (!en.gone) row.type = 'button';
       row.appendChild(el('span', 'log-dot'));
       var tx = el('span', 'pending-text');
       tx.appendChild(el('strong', null, en.label));
       tx.appendChild(el('span', 'muted', ' · ' + en.sub));
       row.appendChild(tx);
-      row.onclick = function () { closePending(); en.go(); };
+      if (!en.gone) row.onclick = function () { closePending(); en.go(); };
       panel.appendChild(row);
     });
     var foot = el('button', 'btn primary pending-publish', 'Publish changes');
@@ -376,9 +401,13 @@
 
   function buildField(f, values) {
     var div = el('div', 'field');
-    var lab = el('label', null, f.label || f.key);
-    lab.htmlFor = 'df-' + f.key;
-    div.appendChild(lab);
+    if (f.type === 'toggle') {
+      div.appendChild(el('div', 'field-title', f.label || f.key));
+    } else {
+      var lab = el('label', null, f.label || f.key);
+      lab.htmlFor = 'df-' + f.key;
+      div.appendChild(lab);
+    }
     var val = values[f.key] == null ? '' : values[f.key];
     var input = null;
     if (f.type === 'textarea') {
@@ -889,26 +918,8 @@
         body.appendChild(g);
       }
     },
-    testimonials: {
-      plural: 'Testimonials', single: 'Testimonial', addLabel: '+ Add testimonial',
-      intro: 'Client words, saved and ready. They will appear publicly once the testimonials section launches on the website.',
-      searchKeys: ['name', 'company', 'content'],
-      thumbOf: function (it) { return it.photo || ''; },
-      titleOf: function (it) { return it.name || 'Unnamed'; },
-      metaOf: function (it) { return [it.role, it.company].filter(Boolean).join(' · '); },
-      descOf: function (it) { return it.content || ''; },
-      groups: function () {
-        return [
-          { title: 'Content', fields: [
-            { key: 'content', label: 'What they said', type: 'textarea', required: true },
-            { key: 'name', label: 'Person name', required: true },
-            { key: 'company', label: 'Company / brand' },
-            { key: 'role', label: 'Role' }
-          ]},
-          { title: 'Media', fields: [{ key: 'photo', label: 'Photo (optional)', type: 'image' }] }
-        ];
-      }
-    }
+    // NOTE: the testimonials table/API remain for data safety, but there is
+    // no testimonials section on the website yet — so no manager UI.
   };
 
   function sortedItems(resource) {
@@ -1153,7 +1164,7 @@
     document.querySelectorAll('.side-link').forEach(function (b) {
       b.classList.toggle('active', b.dataset.tab === tab);
     });
-    var counts = { portfolio: 0, brands: 0, services: 0, testimonials: 0 };
+    var counts = { portfolio: 0, brands: 0, services: 0 };
     Object.keys(counts).forEach(function (k) { counts[k] = (draft[k] || []).length; });
     document.querySelectorAll('[data-count]').forEach(function (n) {
       n.textContent = counts[n.dataset.count] || '';
@@ -1167,13 +1178,13 @@
     else if (tab === 'portfolio') renderPortfolio(c);
     else if (tab === 'brands') renderBrands(c);
     else if (tab === 'services') renderServices(c);
-    else if (tab === 'testimonials') renderCollection(c, 'testimonials');
+    else if (tab === 'team') renderTeam(c);
     else if (tab === 'contact') renderContact(c);
     else if (tab === 'footer') renderFooter(c);
     else if (tab === 'more') renderMore(c);
     else if (tab === 'history') renderHistory(c);
     else if (tab === 'activity') renderActivity(c);
-    else if (tab === 'team') renderTeam(c);
+    else { tab = 'home'; renderHome(c); }
     renderPill();
   }
 
@@ -1488,35 +1499,50 @@
     var card = el('div', 'sec-card');
     var info = el('div', 'sec-info');
     info.appendChild(el('div', 'sec-title', 'Link columns'));
-    info.appendChild(el('div', 'sec-desc', 'Every link in the footer. Labels and addresses are editable; the columns themselves stay as they are.'));
+    info.appendChild(el('div', 'sec-desc', 'Every link in the footer. Edit labels and addresses, or add and remove rows — only links shown here appear on the website.'));
     var host = el('div');
     host.style.marginTop = '12px';
     var cols = settingObj('footer.links') || { explore: [], resources: [], connect: [] };
     var titles = settingObj('footer.titles') || {};
     var titleInputs = {};
-    [['explore', 'Explore'], ['resources', 'Resources'], ['connect', 'Connect']].forEach(function (g) {
-      var box = el('div', 'd-group');
+    var renderCol = function (box, g) {
+      box.innerHTML = '';
       var hrow = el('div', 'pkg-head');
       var t = document.createElement('input');
-      t.type = 'text'; t.value = titles[g[0]] || g[1];
+      t.type = 'text'; t.value = (titles[g[0]] != null ? titles[g[0]] : g[1]);
+      t.placeholder = 'Column heading';
       t.style.cssText = 'flex:1;padding:9px 12px;border-radius:8px;border:1px solid var(--line);background:rgba(9,12,6,.7);color:var(--ink);font-size:14px;font-weight:700;font-family:inherit;';
+      t.oninput = function () { titles[g[0]] = t.value; };
       hrow.appendChild(t);
       titleInputs[g[0]] = t;
       box.appendChild(hrow);
-      (cols[g[0]] || []).forEach(function (link) {
+      if (!Array.isArray(cols[g[0]])) cols[g[0]] = [];
+      cols[g[0]].forEach(function (link, li) {
         var row = el('div', 'link-row');
         var l = document.createElement('input');
         l.type = 'text'; l.value = link.label || ''; l.placeholder = 'Label';
         var u = document.createElement('input');
-        u.type = 'text'; u.value = link.url || ''; u.placeholder = 'Address';
+        u.type = 'text'; u.value = link.url || ''; u.placeholder = 'Address (e.g. contact.html)';
         [l, u].forEach(function (inp) {
           inp.style.cssText = 'flex:1;padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:rgba(9,12,6,.7);color:var(--ink);font-size:14px;font-family:inherit;';
         });
         l.oninput = function () { link.label = l.value; };
         u.oninput = function () { link.url = u.value; };
-        row.appendChild(l); row.appendChild(u);
+        var x = el('button', 'mini-btn', '×');
+        x.type = 'button'; x.title = 'Remove link';
+        x.onclick = function () { cols[g[0]].splice(li, 1); renderCol(box, g); markDirtyFooter(); };
+        row.appendChild(l); row.appendChild(u); row.appendChild(x);
         box.appendChild(row);
       });
+      var add = el('button', 'btn small ghost add-row-btn', '+ Add link');
+      add.type = 'button';
+      add.onclick = function () { cols[g[0]].push({ label: '', url: '' }); renderCol(box, g); markDirtyFooter(); };
+      box.appendChild(add);
+    };
+    var markDirtyFooter = function () { dirty = true; renderPill(); };
+    [['explore', 'Explore'], ['resources', 'Resources'], ['connect', 'Connect']].forEach(function (g) {
+      var box = el('div', 'd-group');
+      renderCol(box, g);
       host.appendChild(box);
     });
     info.appendChild(host);
@@ -1866,7 +1892,7 @@
       } catch (err) {}
     });
     $('btn-publish').onclick = async function () {
-      var n = unpublishedItems(draft || {}).length;
+      var n = pendingCount();
       var ok = await confirmDialog('Publish changes?',
         n ? n + ' edited item' + (n === 1 ? '' : 's') + ' will become visible on the live website.' : 'These changes will become visible on the live website.',
         'Publish', { okKind: 'primary' });
@@ -1884,7 +1910,7 @@
       if (dirty) { e.preventDefault(); e.returnValue = ''; }
     });
     var h = (window.location.hash || '').replace('#/manage/', '');
-    if (h && ['home', 'portfolio', 'brands', 'services', 'testimonials', 'contact', 'footer', 'more', 'history', 'activity', 'team'].indexOf(h) >= 0) tab = h;
+    if (h && ['home', 'portfolio', 'brands', 'services', 'contact', 'footer', 'more', 'history', 'activity', 'team'].indexOf(h) >= 0) tab = h;
   }
 
   document.addEventListener('DOMContentLoaded', function () { bind(); boot(); });

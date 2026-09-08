@@ -776,8 +776,11 @@
     var cvs = document.createElement('canvas');
     cvs.width = 336; cvs.height = 188;
     var vid = document.createElement('video');
-    vid.muted = true; vid.loop = true; vid.preload = 'none';
-    if (p.video) vid.dataset.src = p.video;
+    vid.muted = true; vid.loop = true; vid.preload = 'metadata';
+    // Thumbnails stay visible on every platform: load the opening frame
+    // right away instead of waiting for the hover glimpse engine.
+    if (p.video) vid.setAttribute('src', p.video);
+    vid.style.opacity = '1';
     thumb.appendChild(cvs); thumb.appendChild(vid);
     var info = document.createElement('div');
     info.className = 'sidebar-item-info';
@@ -824,16 +827,25 @@
       var titleEl = col.querySelector('.sf-col-title');
       var key = titleEl ? colKey[titleEl.textContent.trim()] : null;
       if (key && titles[key]) titleEl.textContent = titles[key];
-      if (!key || !links[key]) return;
-      col.querySelectorAll('a').forEach(function (a) {
-        var href = a.getAttribute('href') || '';
-        for (var i = 0; i < links[key].length; i++) {
-          if (links[key][i].url === href) {
-            if (links[key][i].label) a.textContent = links[key][i].label;
-            break;
-          }
+      if (!key) return;
+      // Full sync with the published list: update in place, append new
+      // links, remove deleted ones. Same styling — only words change.
+      var wanted = Array.isArray(links[key]) ? links[key] : [];
+      var anchors = Array.prototype.slice.call(col.querySelectorAll('a'));
+      var n = Math.max(anchors.length, wanted.length);
+      for (var i = 0; i < n; i++) {
+        if (i < wanted.length && i < anchors.length) {
+          if (wanted[i].label) anchors[i].textContent = wanted[i].label;
+          if (wanted[i].url) anchors[i].setAttribute('href', wanted[i].url);
+        } else if (i < wanted.length) {
+          var na = document.createElement('a');
+          na.textContent = wanted[i].label || wanted[i].url || '';
+          na.setAttribute('href', wanted[i].url || '#');
+          col.appendChild(na);
+        } else if (anchors[i]) {
+          anchors[i].parentNode.removeChild(anchors[i]);
         }
-      });
+      }
     });
   }
 
