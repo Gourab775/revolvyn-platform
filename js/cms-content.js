@@ -399,6 +399,7 @@
       '&title=' + encodeURIComponent(p.title || '') +
       '&desc=' + encodeURIComponent(p.description || '') +
       '&video=' + encodeURIComponent(p.video || '') +
+      '&thumb=' + encodeURIComponent(p.thumbnail || '') +
       '&orient=' + encodeURIComponent(p.layout === 'portrait' ? 'portrait' : 'landscape') +
       '&index=' + i;
   }
@@ -782,16 +783,29 @@
       }
       var cur = ex >= 0 ? items[ex] : null;
       if (cur) {
-        var useDesc = cur.description || params.desc || '';
-        if (useDesc) {
+        // Parity with manage panel: CMS description wins even when empty,
+        // so both sides show the same text instead of falling back to descBank.
+        if (cur.description != null) {
           var dt = document.getElementById('descText');
-          if (dt && dt.textContent !== useDesc) dt.textContent = useDesc;
+          if (dt && dt.textContent !== cur.description) dt.textContent = cur.description;
+        } else if (params.desc != null) {
+          var dt2 = document.getElementById('descText');
+          if (dt2 && dt2.textContent !== params.desc) dt2.textContent = params.desc;
         }
         var useTitle = cur.title || params.title || params.brand || '';
         if (useTitle) {
           var vt = document.getElementById('videoTitle');
           if (vt && vt.textContent !== useTitle) vt.textContent = useTitle;
         }
+        // Thumbnail parity: main player poster follows CMS thumbnail.
+        try {
+          var mainV = document.getElementById('mainVideo');
+          if (mainV) {
+            var useThumb = (cur.thumbnail != null ? cur.thumbnail : (params.thumb || ''));
+            if (useThumb) mainV.setAttribute('poster', useThumb);
+            else mainV.removeAttribute('poster');
+          }
+        } catch (e2) {}
       }
     } catch (e) {}
   }
@@ -808,8 +822,17 @@
     // Thumbnails stay visible on every platform: load the opening frame
     // right away instead of waiting for the hover glimpse engine.
     if (p.video) vid.setAttribute('src', p.video);
-    vid.style.opacity = '1';
+    if (p.thumbnail) vid.setAttribute('poster', p.thumbnail);
+    vid.style.opacity = p.thumbnail ? '0' : '1';
     thumb.appendChild(cvs); thumb.appendChild(vid);
+    if (p.thumbnail) {
+      var img = document.createElement('img');
+      img.src = p.thumbnail;
+      img.alt = '';
+      img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;position:absolute;top:0;left:0;z-index:2;';
+      thumb.appendChild(img);
+      vid.style.zIndex = '1';
+    }
     var info = document.createElement('div');
     info.className = 'sidebar-item-info';
     var title = document.createElement('div');
@@ -826,9 +849,13 @@
         vid.setAttribute('src', vid.dataset.src);
         try { vid.load(); } catch (err) {}
       }
+      if (p.thumbnail) { vid.style.opacity = '1'; vid.style.zIndex = '3'; }
       try { vid.play().catch(function () {}); } catch (err) {}
     });
-    item.addEventListener('mouseleave', function () { try { vid.pause(); } catch (err) {} });
+    item.addEventListener('mouseleave', function () {
+      try { vid.pause(); } catch (err) {}
+      if (p.thumbnail) { vid.style.opacity = '0'; vid.style.zIndex = '1'; }
+    });
     return item;
   }
 

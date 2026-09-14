@@ -1355,7 +1355,7 @@
       groups: [], extra: blocksExtra };
   }
   function secDef(page, key) {
-    var pools = [HOME_DEFS, PORTFOLIO_SECS, BRANDS_SECS, SERVICES_SECS, CONTACT_SECS];
+    var pools = [HOME_DEFS, PORTFOLIO_SECS, VIDEO_SECS, BRANDS_SECS, SERVICES_SECS, CONTACT_SECS];
     for (var i = 0; i < pools.length; i++) {
       for (var j = 0; j < pools[i].length; j++) {
         if (pools[i][j].page === page && pools[i][j].key === key) return pools[i][j];
@@ -1364,7 +1364,7 @@
     if (key === 'hero' || key === 'main') return moreSecDef(page, key);
     return null;
   }
-  var TAB_FOR_PAGE = { home: 'home', portfolio: 'portfolio', brands: 'brands', services: 'services', contact: 'contact' };
+  var TAB_FOR_PAGE = { home: 'home', portfolio: 'portfolio', video: 'portfolio', brands: 'brands', services: 'services', contact: 'contact' };
   function openSectionEditor(page, key) {
     if (!draft) return;
     var def = secDef(page, key);
