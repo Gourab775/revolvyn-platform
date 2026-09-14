@@ -832,8 +832,21 @@ function renderSidebarItems(containerId, isMobile) {
 
 function loadProject() {
   const idx = parseInt(getParam('index')) || 0;
-  currentIndex = Math.min(idx, projects.length - 1);
-  currentProject = projects[currentIndex];
+  currentIndex = Math.min(Math.max(idx, 0), projects.length - 1);
+  // Prefer URL params: portfolio links carry the true video/desc after a reorder.
+  const urlVideo = getParam('video');
+  const urlDesc = getParam('desc');
+  const urlBrand = getParam('brand') || getParam('title');
+  const urlOrient = getParam('orient');
+  currentProject = Object.assign({}, projects[currentIndex]);
+  if (urlVideo) currentProject.video = urlVideo;
+  if (urlBrand) currentProject.brand = urlBrand;
+  if (urlDesc) currentProject.desc = urlDesc;
+  if (urlOrient === 'portrait' || urlOrient === 'landscape') currentProject.orient = urlOrient;
+  if (urlVideo) {
+    const found = projects.findIndex(p => p.video === urlVideo);
+    if (found >= 0) currentIndex = found;
+  }
 
   document.getElementById('videoTitle').textContent = currentProject.brand;
   baseLikeCount = Math.floor(seededRandom(currentIndex + 1) * 800) + 20;
@@ -846,7 +859,7 @@ function loadProject() {
 
   const descs = descBank[currentProject.brand] || [currentProject.desc];
   const descIdx = Math.floor(seededRandom(currentIndex + 70) * descs.length);
-  document.getElementById('descText').textContent = descs[descIdx];
+  document.getElementById('descText').textContent = getParam('desc') || descs[descIdx];
 
   const tags = [currentProject.brand.toLowerCase(), currentProject.orient, 'branding', 'design'];
   document.getElementById('descTags').innerHTML = tags.map(t => `<span class="desc-tag">#${t}</span>`).join('');

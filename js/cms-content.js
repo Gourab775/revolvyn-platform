@@ -430,6 +430,7 @@
     }
     if (!data.portfolio) return;
     var items = data.portfolio.filter(function (p) { return p.visible !== false; });
+    items.sort(function (a, b) { return (a.order || 0) - (b.order || 0); });
     var grid = document.getElementById('collageGrid');
     if (!grid) return;
     grid.innerHTML = '';
@@ -743,6 +744,7 @@
     }
     if (!data.portfolio) return;
     var items = data.portfolio.filter(function (p) { return p.visible !== false; });
+    items.sort(function (a, b) { return (a.order || 0) - (b.order || 0); });
     var curVideo = '';
     try { curVideo = new URLSearchParams(window.location.search).get('video') || ''; } catch (e) {}
     var params = {};
@@ -764,8 +766,34 @@
       var box = document.getElementById(id);
       if (!box) return;
       box.innerHTML = '';
-      list.forEach(function (p, i) { box.appendChild(sidebarItem(p, i)); });
+      list.forEach(function (p) { box.appendChild(sidebarItem(p, items.indexOf(p))); });
     });
+    // Keep prev/next + main player in CMS order (static fallback uses old hardcoded order).
+    try {
+      var prevBtn = document.getElementById('overlayPrev');
+      var nextBtn = document.getElementById('overlayNext');
+      if (prevBtn && nextBtn && ex >= 0) {
+        var prev = ex > 0 ? items[ex - 1] : null;
+        var next = ex < items.length - 1 ? items[ex + 1] : null;
+        prevBtn.disabled = !prev;
+        nextBtn.disabled = !next;
+        prevBtn.onclick = function (e) { if (e) e.stopPropagation(); if (prev) window.location.href = 'video.html?' + projectParams(prev, ex - 1) + '&autoplay=1'; };
+        nextBtn.onclick = function (e) { if (e) e.stopPropagation(); if (next) window.location.href = 'video.html?' + projectParams(next, ex + 1) + '&autoplay=1'; };
+      }
+      var cur = ex >= 0 ? items[ex] : null;
+      if (cur) {
+        var useDesc = cur.description || params.desc || '';
+        if (useDesc) {
+          var dt = document.getElementById('descText');
+          if (dt && dt.textContent !== useDesc) dt.textContent = useDesc;
+        }
+        var useTitle = cur.title || params.title || params.brand || '';
+        if (useTitle) {
+          var vt = document.getElementById('videoTitle');
+          if (vt && vt.textContent !== useTitle) vt.textContent = useTitle;
+        }
+      }
+    } catch (e) {}
   }
   function sidebarItem(p, idx) {
     var item = document.createElement('div');
