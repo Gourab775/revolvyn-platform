@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /manage
+Disallow: /manage/
+Disallow: /api/
+Disallow: /*?*brand=
+Disallow: /*?*autoplay=
+Sitemap: https://revolvynmedia.com/sitemap.xml
