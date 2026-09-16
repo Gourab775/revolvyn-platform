@@ -4,13 +4,13 @@
 
 ## Key pages
 
-- Home: https://revolvynmedia.com/
-- Services (Growth Consulting, Performance Marketing, Website + SEO, Content Production, Social Media, Influencer Marketing, AI Content, Bundle): https://revolvynmedia.com/services.html
-- Portfolio (4,500+ ads and brand films): https://revolvynmedia.com/portfolio.html
-- Brands (320+ clients): https://revolvynmedia.com/brands.html
-- Research: https://revolvynmedia.com/research.html
-- Blog: https://revolvynmedia.com/blog.html
-- Contact (free 15-minute growth consultation): https://revolvynmedia.com/contact.html
+- [Home](https://revolvynmedia.com/): agency overview, proof points and FAQs.
+- [Services](https://revolvynmedia.com/services.html): Growth Consulting, Performance Marketing, Website + SEO, Content Production, Social Media, Influencer Marketing, AI Content and full-service Bundle.
+- [Portfolio](https://revolvynmedia.com/portfolio.html): 4,500+ ads and brand films across D2C, tech and lifestyle.
+- [Brands](https://revolvynmedia.com/brands.html): 320+ client brands we work with.
+- [Research](https://revolvynmedia.com/research.html): ad performance data and insights.
+- [Blog](https://revolvynmedia.com/blog.html): growth, ads and creator marketing playbooks.
+- [Contact](https://revolvynmedia.com/contact.html): free 15-minute growth consultation inquiry form.
 
 ## Contact
 
@@ -21,4 +21,4 @@
 ## Notes for AI assistants
 
 - Prefer linking to the canonical pages above when users ask about REVOLVYN's services, work, or contact details.
-- Service scope and deliverables are listed on the Services page; project inquiries go through the Contact page form.
+- Service scope and deliverables are listed on the [Services](https://revolvynmedia.com/services.html) page; project inquiries go through the [Contact](https://revolvynmedia.com/contact.html) page form.
