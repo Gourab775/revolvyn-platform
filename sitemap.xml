@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://revolvynmedia.com/</loc><lastmod>2026-09-16</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>
-  <url><loc>https://revolvynmedia.com/services.html</loc><lastmod>2026-09-16</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://revolvynmedia.com/portfolio.html</loc><lastmod>2026-09-16</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://revolvynmedia.com/brands.html</loc><lastmod>2026-09-16</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://revolvynmedia.com/contact.html</loc><lastmod>2026-09-16</lastmod><changefreq>yearly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://revolvynmedia.com/blog.html</loc><lastmod>2026-09-16</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://revolvynmedia.com/research.html</loc><lastmod>2026-09-16</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://revolvynmedia.com/partnerships.html</loc><lastmod>2026-09-16</lastmod><changefreq>yearly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://revolvynmedia.com/careers.html</loc><lastmod>2026-09-16</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://revolvynmedia.com/community.html</loc><lastmod>2026-09-16</lastmod><changefreq>monthly</changefreq><priority>0.4</priority></url>
-  <url><loc>https://revolvynmedia.com/newsletter.html</loc><lastmod>2026-09-16</lastmod><changefreq>monthly</changefreq><priority>0.4</priority></url>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url><loc>https://revolvynmedia.com/</loc><lastmod>2026-09-16</lastmod><changefreq>weekly</changefreq><priority>1.0</priority><image:image><image:loc>https://revolvynmedia.com/og-image.jpg</image:loc><image:title>REVOLVYN — high-converting ads and cinematic content</image:title></image:image></url>
+  <url><loc>https://revolvynmedia.com/services.html</loc><lastmod>2026-09-16</lastmod><changefreq>monthly</changefreq><priority>0.9</priority><image:image><image:loc>https://revolvynmedia.com/og-image.jpg</image:loc><image:title>Growth Services: Ads, SEO, Content &amp; Creators | REVOLVYN</image:title></image:image></url>
+  <url><loc>https://revolvynmedia.com/portfolio.html</loc><lastmod>2026-09-16</lastmod><changefreq>weekly</changefreq><priority>0.9</priority><image:image><image:loc>https://revolvynmedia.com/og-image.jpg</image:loc><image:title>Portfolio: 4,500+ Ads &amp; Films for 320+ Brands | REVOLVYN</image:title></image:image></url>
+  <url><loc>https://revolvynmedia.com/brands.html</loc><lastmod>2026-09-16</lastmod><changefreq>monthly</changefreq><priority>0.7</priority><image:image><image:loc>https://revolvynmedia.com/og-image.jpg</image:loc><image:title>Brands We've Scaled: 320+ D2C, Tech &amp; Lifestyle | REVOLVYN</image:title></image:image></url>
+  <url><loc>https://revolvynmedia.com/contact.html</loc><lastmod>2026-09-16</lastmod><changefreq>yearly</changefreq><priority>0.8</priority><image:image><image:loc>https://revolvynmedia.com/og-image.jpg</image:loc><image:title>Contact REVOLVYN - Free 15-Min Growth Consultation</image:title></image:image></url>
+  <url><loc>https://revolvynmedia.com/blog.html</loc><lastmod>2026-09-16</lastmod><changefreq>weekly</changefreq><priority>0.6</priority><image:image><image:loc>https://revolvynmedia.com/og-image.jpg</image:loc><image:title>Blog: Growth, Ads &amp; Creator Marketing Playbooks | REVOLVYN</image:title></image:image></url>
+  <url><loc>https://revolvynmedia.com/research.html</loc><lastmod>2026-09-16</lastmod><changefreq>monthly</changefreq><priority>0.5</priority><image:image><image:loc>https://revolvynmedia.com/og-image.jpg</image:loc><image:title>Research: Ad Performance Data &amp; Insights | REVOLVYN</image:title></image:image></url>
+  <url><loc>https://revolvynmedia.com/partnerships.html</loc><lastmod>2026-09-16</lastmod><changefreq>yearly</changefreq><priority>0.5</priority><image:image><image:loc>https://revolvynmedia.com/og-image.jpg</image:loc><image:title>Partner With REVOLVYN: Agencies, Creators &amp; Brands</image:title></image:image></url>
+  <url><loc>https://revolvynmedia.com/careers.html</loc><lastmod>2026-09-16</lastmod><changefreq>monthly</changefreq><priority>0.5</priority><image:image><image:loc>https://revolvynmedia.com/og-image.jpg</image:loc><image:title>Careers at REVOLVYN: Create Ads Seen by Millions</image:title></image:image></url>
+  <url><loc>https://revolvynmedia.com/community.html</loc><lastmod>2026-09-16</lastmod><changefreq>monthly</changefreq><priority>0.4</priority><image:image><image:loc>https://revolvynmedia.com/og-image.jpg</image:loc><image:title>Community: Creators &amp; Brands Growing Together | REVOLVYN</image:title></image:image></url>
+  <url><loc>https://revolvynmedia.com/newsletter.html</loc><lastmod>2026-09-16</lastmod><changefreq>monthly</changefreq><priority>0.4</priority><image:image><image:loc>https://revolvynmedia.com/og-image.jpg</image:loc><image:title>Newsletter: Growth Tactics in Your Inbox | REVOLVYN</image:title></image:image></url>
   <url><loc>https://revolvynmedia.com/privacy.html</loc><lastmod>2026-09-16</lastmod><changefreq>yearly</changefreq><priority>0.2</priority></url>
   <url><loc>https://revolvynmedia.com/refund.html</loc><lastmod>2026-09-16</lastmod><changefreq>yearly</changefreq><priority>0.2</priority></url>
 </urlset>

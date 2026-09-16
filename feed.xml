@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>REVOLVYN — Growth, Ads &amp; Creator Marketing</title>
+    <link>https://revolvynmedia.com/</link>
+    <description>Playbooks on Meta ads, influencer marketing, content and AI creative from 4,500+ campaigns. 110+ creators, 320+ brands.</description>
+    <language>en</language>
+    <managingEditor>revolvynmedia@gmail.com (REVOLVYN)</managingEditor>
+    <webMaster>revolvynmedia@gmail.com (REVOLVYN)</webMaster>
+    <lastBuildDate>Tue, 16 Sep 2026 00:00:00 +0530</lastBuildDate>
+    <atom:link href="https://revolvynmedia.com/feed.xml" rel="self" type="application/rss+xml"/>
+    <image>
+      <url>https://revolvynmedia.com/favicon.png</url>
+      <title>REVOLVYN</title>
+      <link>https://revolvynmedia.com/</link>
+    </image>
+    <item>
+      <title>Full-stack growth for brands &amp; creators</title>
+      <link>https://revolvynmedia.com/services.html</link>
+      <guid isPermaLink="true">https://revolvynmedia.com/services.html</guid>
+      <description>Growth consulting, Meta ads, SEO websites, content production, social media, influencer marketing, AI UGC and full-service bundles.</description>
+      <pubDate>Tue, 16 Sep 2026 00:00:00 +0530</pubDate>
+    </item>
+    <item>
+      <title>Portfolio: 4,500+ ads &amp; films for 320+ brands</title>
+      <link>https://revolvynmedia.com/portfolio.html</link>
+      <guid isPermaLink="true">https://revolvynmedia.com/portfolio.html</guid>
+      <description>Cinematic ads and brand films across D2C, tech and lifestyle — work that converts.</description>
+      <pubDate>Tue, 16 Sep 2026 00:00:00 +0530</pubDate>
+    </item>
+    <item>
+      <title>Research: ad performance data &amp; insights</title>
+      <link>https://revolvynmedia.com/research.html</link>
+      <guid isPermaLink="true">https://revolvynmedia.com/research.html</guid>
+      <description>Data-backed research on hooks, UGC and AI creative from thousands of campaigns.</description>
+      <pubDate>Tue, 16 Sep 2026 00:00:00 +0530</pubDate>
+    </item>
+    <item>
+      <title>Blog: growth, ads &amp; creator marketing playbooks</title>
+      <link>https://revolvynmedia.com/blog.html</link>
+      <guid isPermaLink="true">https://revolvynmedia.com/blog.html</guid>
+      <description>Practical playbooks on Meta ads, influencer marketing and content.</description>
+      <pubDate>Tue, 16 Sep 2026 00:00:00 +0530</pubDate>
+    </item>
+  </channel>
+</rss>

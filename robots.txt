@@ -5,4 +5,72 @@ Disallow: /manage/
 Disallow: /api/
 Disallow: /*?*brand=
 Disallow: /*?*autoplay=
+
+# Bing / Edge (Bingbot powers Bing, Edge Discover, Yahoo, Ecosia, DuckDuckGo fallback)
+User-agent: Bingbot
+Allow: /
+Disallow: /manage
+Disallow: /manage/
+Disallow: /api/
+Disallow: /*?*brand=
+Disallow: /*?*autoplay=
+Crawl-delay: 1
+
+User-agent: msnbot
+Allow: /
+Disallow: /manage
+Disallow: /manage/
+Disallow: /api/
+Crawl-delay: 1
+
+# DuckDuckGo
+User-agent: DuckDuckBot
+Allow: /
+Disallow: /manage
+Disallow: /manage/
+Disallow: /api/
+Crawl-delay: 1
+
+# Yahoo / Oath
+User-agent: Slurp
+Allow: /
+Disallow: /manage
+Disallow: /manage/
+Disallow: /api/
+Crawl-delay: 2
+
+# Yandex
+User-agent: Yandex
+Allow: /
+Disallow: /manage
+Disallow: /manage/
+Disallow: /api/
+Crawl-delay: 2
+
+# Apple (Safari / Spotlight / Applebot-Extended for AI answers)
+User-agent: Applebot
+Allow: /
+Disallow: /manage
+Disallow: /manage/
+Disallow: /api/
+
+# Brave Search
+User-agent: Bravebot
+Allow: /
+Disallow: /manage
+Disallow: /manage/
+Disallow: /api/
+
+# Social / link previews - must be able to fetch OG images
+User-agent: facebookexternalhit
+Allow: /
+User-agent: Twitterbot
+Allow: /
+User-agent: LinkedInBot
+Allow: /
+User-agent: Pinterestbot
+Allow: /
+User-agent: Discordbot
+Allow: /
+
 Sitemap: https://revolvynmedia.com/sitemap.xml
