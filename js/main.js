@@ -3,13 +3,25 @@ import { initScrollSync, updateScroll, updateProgressbar, updateScrollHint, upda
 import { initNavigation } from './navigation.js';
 import { initVideos } from './videos.js';
 
-// --- GPU Warmup ---
-warmGPU();
+// --- Loader fallback: never trap users behind 3D boot ---
+let loaderHidden = false;
+function hideLoader() {
+	if (loaderHidden) return;
+	loaderHidden = true;
+	const loadingScreen = document.getElementById('loadingScreen');
+	if (loadingScreen) {
+		loadingScreen.style.opacity = '0';
+		loadingScreen.style.visibility = 'hidden';
+		setTimeout(() => loadingScreen.remove(), 600);
+	}
+}
+// Content-first: reveal on window load even if WebGPU is still booting.
+window.addEventListener('load', hideLoader);
+// Hard fallback: reveal after timeout no matter what.
+const LOADER_TIMEOUT_MS = 5000;
+setTimeout(hideLoader, LOADER_TIMEOUT_MS);
 
-// --- Initialize Renderer ---
-await initRenderer();
-
-// --- Initialize Navigation ---
+// --- Independent UI (works with or without 3D) ---
 initNavigation();
 
 // --- Initialize Videos ---
@@ -18,19 +30,28 @@ initVideos();
 // --- Initialize Scroll Sync ---
 initScrollSync(cameraPath);
 
-// --- Boot Scene (compute init + warmup renders) ---
-await bootScene();
+// --- 3D boot (failure must never break the page) ---
+let sceneReady = false;
+try {
+	// --- GPU Warmup ---
+	warmGPU();
 
-// --- Start FPS Measurement ---
-startQualityMeasurement();
+	// --- Initialize Renderer ---
+	await initRenderer();
+
+	// --- Boot Scene (compute init + warmup renders) ---
+	await bootScene();
+
+	// --- Start FPS Measurement ---
+	startQualityMeasurement();
+
+	sceneReady = true;
+} catch (err) {
+	console.warn('3D scene disabled, content remains usable:', err);
+}
 
 // --- Hide Loading Screen ---
-const loadingScreen = document.getElementById('loadingScreen');
-if (loadingScreen) {
-	loadingScreen.style.opacity = '0';
-	loadingScreen.style.visibility = 'hidden';
-	setTimeout(() => loadingScreen.remove(), 600);
-}
+hideLoader();
 
 // --- Hash Navigation ---
 if (window.location.hash === '#about') {
@@ -66,4 +87,4 @@ function animate() {
 	updateQuality(performance.now());
 }
 
-renderer.setAnimationLoop(animate);
+if (sceneReady) renderer.setAnimationLoop(animate);
