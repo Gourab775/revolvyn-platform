@@ -3,8 +3,67 @@ Allow: /
 Disallow: /manage
 Disallow: /manage/
 Disallow: /api/
+Disallow: /inspo/
+Disallow: /inspo
 Disallow: /*?*brand=
 Disallow: /*?*autoplay=
+
+# AI crawlers / GEO (llms.txt + public pages allow; admin/api/inspo blocked)
+User-agent: GPTBot
+Allow: /
+Disallow: /manage
+Disallow: /manage/
+Disallow: /api/
+Disallow: /inspo/
+Disallow: /inspo
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /manage
+Disallow: /manage/
+Disallow: /api/
+Disallow: /inspo/
+Disallow: /inspo
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /manage
+Disallow: /manage/
+Disallow: /api/
+Disallow: /inspo/
+Disallow: /inspo
+
+User-agent: anthropic-ai
+Allow: /
+Disallow: /manage
+Disallow: /manage/
+Disallow: /api/
+Disallow: /inspo/
+Disallow: /inspo
+
+User-agent: CCBot
+Allow: /
+Disallow: /manage
+Disallow: /manage/
+Disallow: /api/
+Disallow: /inspo/
+Disallow: /inspo
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /manage
+Disallow: /manage/
+Disallow: /api/
+Disallow: /inspo/
+Disallow: /inspo
+
+User-agent: Applebot-Extended
+Allow: /
+Disallow: /manage
+Disallow: /manage/
+Disallow: /api/
+Disallow: /inspo/
+Disallow: /inspo
 
 # Bing / Edge (Bingbot powers Bing, Edge Discover, Yahoo, Ecosia, DuckDuckGo fallback)
 User-agent: Bingbot
@@ -12,6 +71,8 @@ Allow: /
 Disallow: /manage
 Disallow: /manage/
 Disallow: /api/
+Disallow: /inspo/
+Disallow: /inspo
 Disallow: /*?*brand=
 Disallow: /*?*autoplay=
 Crawl-delay: 1
@@ -21,6 +82,8 @@ Allow: /
 Disallow: /manage
 Disallow: /manage/
 Disallow: /api/
+Disallow: /inspo/
+Disallow: /inspo
 Crawl-delay: 1
 
 # DuckDuckGo
@@ -29,6 +92,8 @@ Allow: /
 Disallow: /manage
 Disallow: /manage/
 Disallow: /api/
+Disallow: /inspo/
+Disallow: /inspo
 Crawl-delay: 1
 
 # Yahoo / Oath
@@ -37,6 +102,8 @@ Allow: /
 Disallow: /manage
 Disallow: /manage/
 Disallow: /api/
+Disallow: /inspo/
+Disallow: /inspo
 Crawl-delay: 2
 
 # Yandex
@@ -45,6 +112,8 @@ Allow: /
 Disallow: /manage
 Disallow: /manage/
 Disallow: /api/
+Disallow: /inspo/
+Disallow: /inspo
 Crawl-delay: 2
 
 # Apple (Safari / Spotlight / Applebot-Extended for AI answers)
@@ -53,6 +122,8 @@ Allow: /
 Disallow: /manage
 Disallow: /manage/
 Disallow: /api/
+Disallow: /inspo/
+Disallow: /inspo
 
 # Brave Search
 User-agent: Bravebot
@@ -60,6 +131,8 @@ Allow: /
 Disallow: /manage
 Disallow: /manage/
 Disallow: /api/
+Disallow: /inspo/
+Disallow: /inspo
 
 # Social / link previews - must be able to fetch OG images
 User-agent: facebookexternalhit
