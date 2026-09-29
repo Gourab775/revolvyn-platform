@@ -1,10 +1,7 @@
 { "name": "revolvyn-platform",
   "redirects": [
     { "source": "/services", "destination": "/services.html", "permanent": true },
-    { "source": "/privacy-policy", "destination": "/privacy.html", "permanent": true },
-    { "source": "/book-online", "statusCode": 410 },
-    { "source": "/service-page/editing-bundle-premium-10-videos", "statusCode": 410 },
-    { "source": "/service-page/advanced-shooting-editing", "statusCode": 410 }
+    { "source": "/privacy-policy", "destination": "/privacy.html", "permanent": true }
   ],
   "rewrites": [
     { "source": "/manage", "destination": "/manage.html" },
