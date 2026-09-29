@@ -1,4 +1,8 @@
 { "name": "revolvyn-platform",
+  "redirects": [
+    { "source": "/services", "destination": "/services.html", "permanent": true },
+    { "source": "/privacy-policy", "destination": "/privacy.html", "permanent": true }
+  ],
   "rewrites": [
     { "source": "/manage", "destination": "/manage.html" },
     { "source": "/manage/:path*", "destination": "/manage.html" }
