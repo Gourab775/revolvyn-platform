@@ -109,6 +109,21 @@
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes marqueeScroll { from { transform: translateX(0) translateZ(0); } to { transform: translateX(-50%) translateZ(0); } }
 
+		/* RV theme-wise inline links — green, site-wide */
+		.page-content a, .page-hero p a, .page-hero a,
+		.brands-proof a, .brands-proof p a,
+		.seo-overview a, .seo-lead a,
+		.faq-block details p a, .seo-faq details p a,
+		.noscript-list p a {
+			color: rgba(230, 245, 120, 0.9); text-decoration: underline;
+			text-underline-offset: 3px; text-decoration-color: rgba(230, 245, 120, 0.35);
+			transition: color 0.3s;
+		}
+		.page-content a:hover, .page-hero p a:hover, .page-hero a:hover,
+		.brands-proof a:hover, .seo-overview a:hover,
+		.faq-block details p a:hover, .seo-faq details p a:hover {
+			color: rgba(240, 255, 140, 1); text-decoration-color: rgba(240, 255, 140, 0.7);
+		}
 /* SEO/a11y additions — audit fix 2026-09-16 */
 .skip-link{position:absolute;left:-9999px;top:8px;background:#e6f578;color:#000;padding:10px 18px;z-index:10000;font-size:13px;font-weight:600;border-radius:0 0 8px 0;text-decoration:none}
 .skip-link:focus{left:8px}
