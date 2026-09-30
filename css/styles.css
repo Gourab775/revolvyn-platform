@@ -477,13 +477,29 @@ font-weight: 600;
 		}
 
 		.cta-sub {
-			font-size: 15px;
-			color: var(--color-body, rgba(215, 230, 190, 0.6));
-			max-width: 420px;
-			line-height: 1.7;
+			font-family: 'Inter', system-ui, sans-serif;
+			font-size: 14px;
+			color: rgba(215, 230, 190, 0.72);
+			max-width: 640px;
+			line-height: 1.8;
 			font-weight: 300;
+			letter-spacing: 0.2px;
+			text-align: center;
 			opacity: 0;
 			transform: translateY(20px);
+		}
+
+		.cta-sub a {
+			color: rgba(230, 245, 120, 0.9);
+			text-decoration: underline;
+			text-underline-offset: 3px;
+			text-decoration-color: rgba(230, 245, 120, 0.35);
+			transition: color 0.3s;
+		}
+
+		.cta-sub a:hover {
+			color: rgba(240, 255, 140, 1);
+			text-decoration-color: rgba(240, 255, 140, 0.7);
 		}
 
 		.cta-btn {
