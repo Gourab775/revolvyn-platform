@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 460" width="880" height="460" role="img" aria-labelledby="t d">
+<title id="t">Numbers → decisions</title><desc id="d">Beyond the dashboard: Numbers → decisions</desc>
+<defs><radialGradient id="bg" cx="50%" cy="85%" r="90%"><stop offset="0%" stop-color="#16230c"/><stop offset="60%" stop-color="#050805"/><stop offset="100%" stop-color="#000"/></radialGradient><pattern id="dots" width="26" height="26" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.4" fill="#223311" opacity="0.55"/></pattern></defs>
+<rect width="880" height="460" fill="url(#bg)"/>
+<rect width="880" height="460" fill="url(#dots)"/>
+<rect x="1" y="1" width="878" height="458" fill="none" stroke="#8cb478" stroke-opacity="0.25" stroke-width="2"/>
+<text x="44" y="50" font-family="Inter, Arial, sans-serif" font-size="13" letter-spacing="4" fill="#b9d68a">BEYOND THE DASHBOARD</text>
+<text x="44" y="98" font-family="Georgia, 'Playfair Display', serif" font-size="34" fill="#f5fae6">Numbers → decisions</text>
+<rect x="44" y="158" width="792" height="50" rx="9" fill="#141f0b" stroke="#8cb478" stroke-opacity="0.4"/>
+<rect x="64" y="173" width="20" height="20" rx="5" fill="none" stroke="#e6f578" stroke-width="1.8" opacity="0.9"/>
+<polyline points="68,183 72.5,188 80,178" fill="none" stroke="#e6f578" stroke-width="2"/>
+<text x="98" y="189" font-family="Inter, Arial, sans-serif" font-size="18" fill="#eef3df">Which hooks deserve another version?</text>
+<rect x="44" y="218" width="792" height="50" rx="9" fill="#141f0b" stroke="#8cb478" stroke-opacity="0.4"/>
+<rect x="64" y="233" width="20" height="20" rx="5" fill="none" stroke="#e6f578" stroke-width="1.8" opacity="0.9"/>
+<polyline points="68,243 72.5,248 80,238" fill="none" stroke="#e6f578" stroke-width="2"/>
+<text x="98" y="249" font-family="Inter, Arial, sans-serif" font-size="18" fill="#eef3df">Where does the landing page lose intent?</text>
+<rect x="44" y="278" width="792" height="50" rx="9" fill="#141f0b" stroke="#8cb478" stroke-opacity="0.4"/>
+<rect x="64" y="293" width="20" height="20" rx="5" fill="none" stroke="#e6f578" stroke-width="1.8" opacity="0.9"/>
+<polyline points="68,303 72.5,308 80,298" fill="none" stroke="#e6f578" stroke-width="2"/>
+<text x="98" y="309" font-family="Inter, Arial, sans-serif" font-size="18" fill="#eef3df">Which idea should be stopped?</text>
+<text x="836" y="418" font-family="Inter, Arial, sans-serif" font-size="13" fill="#6f8459" text-anchor="end">REVOLVYN</text>
+</svg>

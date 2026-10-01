@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 460" width="880" height="460" role="img" aria-labelledby="t d">
+<title id="t">Hypothesis → creative → test → read → iterate</title><desc id="d">Testing rhythm: Hypothesis → creative → test → read → iterate</desc>
+<defs><radialGradient id="bg" cx="50%" cy="85%" r="90%"><stop offset="0%" stop-color="#16230c"/><stop offset="60%" stop-color="#050805"/><stop offset="100%" stop-color="#000"/></radialGradient><pattern id="dots" width="26" height="26" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.4" fill="#223311" opacity="0.55"/></pattern></defs>
+<rect width="880" height="460" fill="url(#bg)"/>
+<rect width="880" height="460" fill="url(#dots)"/>
+<rect x="1" y="1" width="878" height="458" fill="none" stroke="#8cb478" stroke-opacity="0.25" stroke-width="2"/>
+<text x="44" y="50" font-family="Inter, Arial, sans-serif" font-size="13" letter-spacing="4" fill="#b9d68a">TESTING RHYTHM</text>
+<text x="44" y="98" font-family="Georgia, 'Playfair Display', serif" font-size="34" fill="#f5fae6">Hypothesis → creative →</text>
+<text x="44" y="140" font-family="Georgia, 'Playfair Display', serif" font-size="34" fill="#f5fae6">test → read → iterate</text>
+<rect x="44" y="286" width="144" height="120" rx="10" fill="#141f0b" stroke="#8cb478" stroke-opacity="0.45"/>
+<circle cx="70" cy="314" r="13" fill="none" stroke="#e6f578" stroke-opacity="0.8" stroke-width="1.6"/>
+<text x="70" y="320" font-family="Inter, Arial, sans-serif" font-size="15" fill="#e6f578" text-anchor="middle">1</text>
+<text x="116" y="348" font-family="Inter, Arial, sans-serif" font-size="18" fill="#eef3df" text-anchor="middle">Hypothesis</text>
+<line x1="192" y1="346" x2="202" y2="346" stroke="#e6f578" stroke-width="2" opacity="0.75"/>
+<polygon points="202,340 202,352 208,346" fill="#e6f578" opacity="0.85"/>
+<rect x="206" y="286" width="144" height="120" rx="10" fill="#141f0b" stroke="#8cb478" stroke-opacity="0.45"/>
+<circle cx="232" cy="314" r="13" fill="none" stroke="#e6f578" stroke-opacity="0.8" stroke-width="1.6"/>
+<text x="232" y="320" font-family="Inter, Arial, sans-serif" font-size="15" fill="#e6f578" text-anchor="middle">2</text>
+<text x="278" y="348" font-family="Inter, Arial, sans-serif" font-size="18" fill="#eef3df" text-anchor="middle">Creative</text>
+<line x1="354" y1="346" x2="364" y2="346" stroke="#e6f578" stroke-width="2" opacity="0.75"/>
+<polygon points="364,340 364,352 370,346" fill="#e6f578" opacity="0.85"/>
+<rect x="368" y="286" width="144" height="120" rx="10" fill="#141f0b" stroke="#8cb478" stroke-opacity="0.45"/>
+<circle cx="394" cy="314" r="13" fill="none" stroke="#e6f578" stroke-opacity="0.8" stroke-width="1.6"/>
+<text x="394" y="320" font-family="Inter, Arial, sans-serif" font-size="15" fill="#e6f578" text-anchor="middle">3</text>
+<text x="440" y="348" font-family="Inter, Arial, sans-serif" font-size="18" fill="#eef3df" text-anchor="middle">Test</text>
+<line x1="516" y1="346" x2="526" y2="346" stroke="#e6f578" stroke-width="2" opacity="0.75"/>
+<polygon points="526,340 526,352 532,346" fill="#e6f578" opacity="0.85"/>
+<rect x="530" y="286" width="144" height="120" rx="10" fill="#141f0b" stroke="#8cb478" stroke-opacity="0.45"/>
+<circle cx="556" cy="314" r="13" fill="none" stroke="#e6f578" stroke-opacity="0.8" stroke-width="1.6"/>
+<text x="556" y="320" font-family="Inter, Arial, sans-serif" font-size="15" fill="#e6f578" text-anchor="middle">4</text>
+<text x="602" y="348" font-family="Inter, Arial, sans-serif" font-size="18" fill="#eef3df" text-anchor="middle">Read</text>
+<line x1="678" y1="346" x2="688" y2="346" stroke="#e6f578" stroke-width="2" opacity="0.75"/>
+<polygon points="688,340 688,352 694,346" fill="#e6f578" opacity="0.85"/>
+<rect x="692" y="286" width="144" height="120" rx="10" fill="#141f0b" stroke="#8cb478" stroke-opacity="0.45"/>
+<circle cx="718" cy="314" r="13" fill="none" stroke="#e6f578" stroke-opacity="0.8" stroke-width="1.6"/>
+<text x="718" y="320" font-family="Inter, Arial, sans-serif" font-size="15" fill="#e6f578" text-anchor="middle">5</text>
+<text x="764" y="348" font-family="Inter, Arial, sans-serif" font-size="18" fill="#eef3df" text-anchor="middle">Iterate</text>
+<text x="836" y="418" font-family="Inter, Arial, sans-serif" font-size="13" fill="#6f8459" text-anchor="end">REVOLVYN</text>
+</svg>

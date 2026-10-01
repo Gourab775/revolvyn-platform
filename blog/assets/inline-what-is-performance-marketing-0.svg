@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 460" width="880" height="460" role="img" aria-labelledby="t d">
+<title id="t">Same budget, two jobs</title><desc id="d">Full-funnel thinking: Same budget, two jobs</desc>
+<defs><radialGradient id="bg" cx="50%" cy="85%" r="90%"><stop offset="0%" stop-color="#16230c"/><stop offset="60%" stop-color="#050805"/><stop offset="100%" stop-color="#000"/></radialGradient><pattern id="dots" width="26" height="26" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.4" fill="#223311" opacity="0.55"/></pattern></defs>
+<rect width="880" height="460" fill="url(#bg)"/>
+<rect width="880" height="460" fill="url(#dots)"/>
+<rect x="1" y="1" width="878" height="458" fill="none" stroke="#8cb478" stroke-opacity="0.25" stroke-width="2"/>
+<text x="44" y="50" font-family="Inter, Arial, sans-serif" font-size="13" letter-spacing="4" fill="#b9d68a">FULL-FUNNEL THINKING</text>
+<text x="44" y="98" font-family="Georgia, 'Playfair Display', serif" font-size="34" fill="#f5fae6">Same budget, two jobs</text>
+<rect x="44" y="154" width="384" height="246" rx="12" fill="#141f0b" stroke="#8cb478" stroke-opacity="0.45"/>
+<rect x="44" y="154" width="384" height="246" rx="12" fill="none" stroke="#e6f578" stroke-opacity="0.25"/>
+<text x="72" y="206" font-family="Inter, Arial, sans-serif" font-size="19" fill="#eef3df">Prospecting: introduce</text>
+<text x="72" y="234" font-family="Inter, Arial, sans-serif" font-size="19" fill="#eef3df">the problem and</text>
+<text x="72" y="262" font-family="Inter, Arial, sans-serif" font-size="19" fill="#eef3df">product</text>
+<rect x="452" y="154" width="384" height="246" rx="12" fill="#141f0b" stroke="#8cb478" stroke-opacity="0.45"/>
+<rect x="452" y="154" width="384" height="246" rx="12" fill="none" stroke="#e6f578" stroke-opacity="0.25"/>
+<text x="480" y="206" font-family="Inter, Arial, sans-serif" font-size="19" fill="#eef3df">Remarketing: answer</text>
+<text x="480" y="234" font-family="Inter, Arial, sans-serif" font-size="19" fill="#eef3df">objections, close</text>
+<text x="836" y="418" font-family="Inter, Arial, sans-serif" font-size="13" fill="#6f8459" text-anchor="end">REVOLVYN</text>
+</svg>

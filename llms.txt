@@ -14,7 +14,28 @@
 - [Portfolio](https://revolvynmedia.com/portfolio.html): 4,500+ ads and brand films across D2C, tech and lifestyle.
 - [Brands](https://revolvynmedia.com/brands.html): 320+ client brands we work with.
 - [Research](https://revolvynmedia.com/research.html): ad performance data and insights.
-- [Blog](https://revolvynmedia.com/blog.html): growth, ads and creator marketing playbooks.
+- [Blog](https://revolvynmedia.com/blog.html): growth, ads and creator marketing playbooks (18 articles).
+
+## Blog articles
+
+- [What Is Performance Marketing?](https://revolvynmedia.com/blog/what-is-performance-marketing/): the feedback loop across creative, audience, landing and measurement.
+- [Meta Ads Creative Testing](https://revolvynmedia.com/blog/meta-ads-creative-testing/): what to test before increasing spend.
+- [How Retargeting Works](https://revolvynmedia.com/blog/how-retargeting-works/): staged messaging for warm audiences.
+- [PPC vs Meta Ads](https://revolvynmedia.com/blog/ppc-vs-meta-ads/): search intent vs discovery, and the mix.
+- [Influencer Marketing for Brands](https://revolvynmedia.com/blog/influencer-marketing-guide-for-brands/): building a campaign that fits.
+- [Creator Marketing vs Influencer Marketing](https://revolvynmedia.com/blog/creator-marketing-vs-influencer-marketing/): access vs content ability.
+- [YouTube Marketing for Brands](https://revolvynmedia.com/blog/youtube-marketing-for-brands/): integrations that feed the funnel.
+- [UGC Ads Guide](https://revolvynmedia.com/blog/ugc-ads-guide/): creator-style content for performance.
+- [Video Production for D2C Brands](https://revolvynmedia.com/blog/video-production-for-d2c-brands/): plan shoots from distribution.
+- [Social Media Management](https://revolvynmedia.com/blog/social-media-management-for-growing-brands/): themes, community and reporting.
+- [SEO for D2C Brands](https://revolvynmedia.com/blog/seo-for-d2c-brands/): intent, topics and foundations.
+- [Technical SEO Checklist](https://revolvynmedia.com/blog/technical-seo-checklist-for-business-websites/): crawl, index and experience.
+- [Content Marketing vs Content Production](https://revolvynmedia.com/blog/content-marketing-vs-content-production/): why vs how.
+- [Landing Pages for Paid Campaigns](https://revolvynmedia.com/blog/landing-pages-for-paid-campaigns/): message match and testing.
+- [AI UGC and AI Product Creatives](https://revolvynmedia.com/blog/ai-ugc-and-ai-product-creatives/): speed plus human judgement.
+- [Full-Funnel Digital Marketing](https://revolvynmedia.com/blog/full-funnel-digital-marketing-for-growing-brands/): attention, trust, conversion.
+- [Digital Marketing in Kolkata](https://revolvynmedia.com/blog/digital-marketing-in-kolkata/): a practical channel mix.
+- [How to Choose a Digital Marketing Agency in India](https://revolvynmedia.com/blog/how-to-choose-digital-marketing-agency-india/): a practical checklist.
 - [Contact](https://revolvynmedia.com/contact.html): free 15-minute growth consultation inquiry form.
 - [Community](https://revolvynmedia.com/community.html): 110+ YouTubers and 320+ brands collaborating and growing together.
 - [Newsletter](https://revolvynmedia.com/newsletter.html): one practical growth tactic weekly, no spam.

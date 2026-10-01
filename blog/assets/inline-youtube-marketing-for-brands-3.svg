@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 460" width="880" height="460" role="img" aria-labelledby="t d">
+<title id="t">Test ideas across creators</title><desc id="d">One video, one hypothesis: Test ideas across creators</desc>
+<defs><radialGradient id="bg" cx="50%" cy="85%" r="90%"><stop offset="0%" stop-color="#16230c"/><stop offset="60%" stop-color="#050805"/><stop offset="100%" stop-color="#000"/></radialGradient><pattern id="dots" width="26" height="26" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.4" fill="#223311" opacity="0.55"/></pattern></defs>
+<rect width="880" height="460" fill="url(#bg)"/>
+<rect width="880" height="460" fill="url(#dots)"/>
+<rect x="1" y="1" width="878" height="458" fill="none" stroke="#8cb478" stroke-opacity="0.25" stroke-width="2"/>
+<text x="44" y="50" font-family="Inter, Arial, sans-serif" font-size="13" letter-spacing="4" fill="#b9d68a">ONE VIDEO, ONE HYPOTHESIS</text>
+<text x="44" y="98" font-family="Georgia, 'Playfair Display', serif" font-size="34" fill="#f5fae6">Test ideas across creators</text>
+<rect x="44" y="286" width="252" height="120" rx="10" fill="#141f0b" stroke="#8cb478" stroke-opacity="0.45"/>
+<circle cx="70" cy="314" r="13" fill="none" stroke="#e6f578" stroke-opacity="0.8" stroke-width="1.6"/>
+<text x="70" y="320" font-family="Inter, Arial, sans-serif" font-size="15" fill="#e6f578" text-anchor="middle">1</text>
+<text x="170" y="348" font-family="Inter, Arial, sans-serif" font-size="18" fill="#eef3df" text-anchor="middle">Education angle</text>
+<line x1="300" y1="346" x2="310" y2="346" stroke="#e6f578" stroke-width="2" opacity="0.75"/>
+<polygon points="310,340 310,352 316,346" fill="#e6f578" opacity="0.85"/>
+<rect x="314" y="286" width="252" height="120" rx="10" fill="#141f0b" stroke="#8cb478" stroke-opacity="0.45"/>
+<circle cx="340" cy="314" r="13" fill="none" stroke="#e6f578" stroke-opacity="0.8" stroke-width="1.6"/>
+<text x="340" y="320" font-family="Inter, Arial, sans-serif" font-size="15" fill="#e6f578" text-anchor="middle">2</text>
+<text x="440" y="348" font-family="Inter, Arial, sans-serif" font-size="18" fill="#eef3df" text-anchor="middle">Demonstration</text>
+<text x="440" y="372" font-family="Inter, Arial, sans-serif" font-size="18" fill="#eef3df" text-anchor="middle">angle</text>
+<line x1="570" y1="346" x2="580" y2="346" stroke="#e6f578" stroke-width="2" opacity="0.75"/>
+<polygon points="580,340 580,352 586,346" fill="#e6f578" opacity="0.85"/>
+<rect x="584" y="286" width="252" height="120" rx="10" fill="#141f0b" stroke="#8cb478" stroke-opacity="0.45"/>
+<circle cx="610" cy="314" r="13" fill="none" stroke="#e6f578" stroke-opacity="0.8" stroke-width="1.6"/>
+<text x="610" y="320" font-family="Inter, Arial, sans-serif" font-size="15" fill="#e6f578" text-anchor="middle">3</text>
+<text x="710" y="348" font-family="Inter, Arial, sans-serif" font-size="18" fill="#eef3df" text-anchor="middle">Storytelling</text>
+<text x="710" y="372" font-family="Inter, Arial, sans-serif" font-size="18" fill="#eef3df" text-anchor="middle">angle</text>
+<text x="836" y="418" font-family="Inter, Arial, sans-serif" font-size="13" fill="#6f8459" text-anchor="end">REVOLVYN</text>
+</svg>

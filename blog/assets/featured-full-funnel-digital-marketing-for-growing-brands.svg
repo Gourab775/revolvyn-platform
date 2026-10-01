@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-labelledby="t d">
+<title id="t">Attention → trust → conversion</title><desc id="d">Full funnel: Attention → trust → conversion</desc>
+<defs><radialGradient id="bg" cx="50%" cy="85%" r="90%"><stop offset="0%" stop-color="#16230c"/><stop offset="60%" stop-color="#050805"/><stop offset="100%" stop-color="#000"/></radialGradient><pattern id="dots" width="26" height="26" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.4" fill="#223311" opacity="0.55"/></pattern></defs>
+<rect width="1200" height="630" fill="url(#bg)"/>
+<rect width="1200" height="630" fill="url(#dots)"/>
+<rect x="1" y="1" width="1198" height="628" fill="none" stroke="#8cb478" stroke-opacity="0.25" stroke-width="2"/>
+<text x="64" y="70" font-family="Inter, Arial, sans-serif" font-size="15" letter-spacing="4" fill="#b9d68a">FULL FUNNEL</text>
+<text x="64" y="128" font-family="Georgia, 'Playfair Display', serif" font-size="44" fill="#f5fae6">Attention → trust → conversion</text>
+<rect x="124" y="200" width="952" height="96" rx="10" fill="#141f0b" stroke="#e6f578" stroke-opacity="0.9" stroke-width="2"/>
+<text x="600" y="255" font-family="Inter, Arial, sans-serif" font-size="22" fill="#eef3df" text-anchor="middle">Attention: become relevant</text>
+<rect x="210" y="310" width="781" height="96" rx="10" fill="#141f0b" stroke="#8cb478" stroke-opacity="0.45" stroke-width="1.4"/>
+<text x="600" y="365" font-family="Inter, Arial, sans-serif" font-size="22" fill="#eef3df" text-anchor="middle">Trust: help them believe</text>
+<rect x="295" y="420" width="609" height="96" rx="10" fill="#141f0b" stroke="#8cb478" stroke-opacity="0.45" stroke-width="1.4"/>
+<text x="600" y="475" font-family="Inter, Arial, sans-serif" font-size="22" fill="#eef3df" text-anchor="middle">Conversion: make action clear</text>
+<text x="1136" y="568" font-family="Inter, Arial, sans-serif" font-size="13" fill="#6f8459" text-anchor="end">REVOLVYN</text>
+</svg>

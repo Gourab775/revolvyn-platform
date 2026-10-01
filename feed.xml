@@ -7,7 +7,7 @@
     <language>en</language>
     <managingEditor>revolvynmedia@gmail.com (REVOLVYN)</managingEditor>
     <webMaster>revolvynmedia@gmail.com (REVOLVYN)</webMaster>
-    <lastBuildDate>Tue, 29 Sep 2026 00:00:00 +0530</lastBuildDate>
+    <lastBuildDate>Thu, 01 Oct 2026 09:00:00 +0530</lastBuildDate>
     <atom:link href="https://revolvynmedia.com/feed.xml" rel="self" type="application/rss+xml"/>
     <image>
       <url>https://revolvynmedia.com/favicon.png</url>
@@ -41,6 +41,132 @@
       <guid isPermaLink="true">https://revolvynmedia.com/blog.html</guid>
       <description>Practical playbooks on Meta ads, influencer marketing and content.</description>
       <pubDate>Tue, 16 Sep 2026 00:00:00 +0530</pubDate>
+    </item>
+    <item>
+      <title>What Is Performance Marketing? A Guide for Brands</title>
+      <link>https://revolvynmedia.com/blog/what-is-performance-marketing/</link>
+      <guid isPermaLink="true">https://revolvynmedia.com/blog/what-is-performance-marketing/</guid>
+      <description>Performance marketing is not running ads and checking numbers — it is a feedback loop where creative, audience, landing experience and measurement sharpen each other.</description>
+      <pubDate>Tue, 08 Sep 2026 09:00:00 +0530</pubDate>
+    </item>
+    <item>
+      <title>Meta Ads Creative Testing: What to Test First</title>
+      <link>https://revolvynmedia.com/blog/meta-ads-creative-testing/</link>
+      <guid isPermaLink="true">https://revolvynmedia.com/blog/meta-ads-creative-testing/</guid>
+      <description>Before you raise the budget, check the creative: test the hook and the idea first, change one thing at a time, and read the full funnel.</description>
+      <pubDate>Thu, 10 Sep 2026 09:00:00 +0530</pubDate>
+    </item>
+    <item>
+      <title>How Retargeting Works: A Practical Guide</title>
+      <link>https://revolvynmedia.com/blog/how-retargeting-works/</link>
+      <guid isPermaLink="true">https://revolvynmedia.com/blog/how-retargeting-works/</guid>
+      <description>Most visitors don’t buy on the first visit. Retargeting works when the second message assumes the first conversation already happened.</description>
+      <pubDate>Sat, 12 Sep 2026 09:00:00 +0530</pubDate>
+    </item>
+    <item>
+      <title>PPC vs Meta Ads: Differences &amp; When to Use Each</title>
+      <link>https://revolvynmedia.com/blog/ppc-vs-meta-ads/</link>
+      <guid isPermaLink="true">https://revolvynmedia.com/blog/ppc-vs-meta-ads/</guid>
+      <description>Search captures demand that already exists; Meta creates demand before the search. Most growing brands eventually need both.</description>
+      <pubDate>Tue, 15 Sep 2026 09:00:00 +0530</pubDate>
+    </item>
+    <item>
+      <title>Influencer Marketing for Brands: Campaign Guide</title>
+      <link>https://revolvynmedia.com/blog/influencer-marketing-guide-for-brands/</link>
+      <guid isPermaLink="true">https://revolvynmedia.com/blog/influencer-marketing-guide-for-brands/</guid>
+      <description>Start with the campaign’s job, pick audience fit over follower count, brief clearly — and treat creator content as future ad creative.</description>
+      <pubDate>Thu, 17 Sep 2026 09:00:00 +0530</pubDate>
+    </item>
+    <item>
+      <title>Creator Marketing vs Influencer Marketing</title>
+      <link>https://revolvynmedia.com/blog/creator-marketing-vs-influencer-marketing/</link>
+      <guid isPermaLink="true">https://revolvynmedia.com/blog/creator-marketing-vs-influencer-marketing/</guid>
+      <description>Influencer marketing buys trusted access to an audience; creator marketing buys the ability to make native content. Plan for the job you’re hiring for.</description>
+      <pubDate>Sat, 19 Sep 2026 09:00:00 +0530</pubDate>
+    </item>
+    <item>
+      <title>YouTube Marketing for Brands: Beyond Shoutouts</title>
+      <link>https://revolvynmedia.com/blog/youtube-marketing-for-brands/</link>
+      <guid isPermaLink="true">https://revolvynmedia.com/blog/youtube-marketing-for-brands/</guid>
+      <description>A strong integration gives the product a logical role in the video — then lets that video feed the wider funnel instead of sitting apart from it.</description>
+      <pubDate>Tue, 22 Sep 2026 09:00:00 +0530</pubDate>
+    </item>
+    <item>
+      <title>UGC Ads: Creator-Style Content for Performance</title>
+      <link>https://revolvynmedia.com/blog/ugc-ads-guide/</link>
+      <guid isPermaLink="true">https://revolvynmedia.com/blog/ugc-ads-guide/</guid>
+      <description>Creator-style content earns attention differently — but only when it opens with a real problem and tests different ideas, not 30 versions of one ad.</description>
+      <pubDate>Thu, 24 Sep 2026 09:00:00 +0530</pubDate>
+    </item>
+    <item>
+      <title>Video Production for D2C Brands: What to Produce</title>
+      <link>https://revolvynmedia.com/blog/video-production-for-d2c-brands/</link>
+      <guid isPermaLink="true">https://revolvynmedia.com/blog/video-production-for-d2c-brands/</guid>
+      <description>Plan the shoot from the distribution plan: one production day should fill the ad library — ads, Reels, demos, site video and retargeting cuts.</description>
+      <pubDate>Sat, 26 Sep 2026 09:00:00 +0530</pubDate>
+    </item>
+    <item>
+      <title>Social Media Management for Growing Brands</title>
+      <link>https://revolvynmedia.com/blog/social-media-management-for-growing-brands/</link>
+      <guid isPermaLink="true">https://revolvynmedia.com/blog/social-media-management-for-growing-brands/</guid>
+      <description>Consistency is table stakes. Good management means repeatable themes, trend judgment, community, and reporting that changes next month’s plan.</description>
+      <pubDate>Sun, 27 Sep 2026 09:00:00 +0530</pubDate>
+    </item>
+    <item>
+      <title>SEO for D2C Brands: Foundations Before Keywords</title>
+      <link>https://revolvynmedia.com/blog/seo-for-d2c-brands/</link>
+      <guid isPermaLink="true">https://revolvynmedia.com/blog/seo-for-d2c-brands/</guid>
+      <description>Match pages to search intent, give every topic a clear home, build the technical base — then compound with content only you could write.</description>
+      <pubDate>Mon, 28 Sep 2026 09:00:00 +0530</pubDate>
+    </item>
+    <item>
+      <title>Technical SEO Checklist for Business Websites</title>
+      <link>https://revolvynmedia.com/blog/technical-seo-checklist-for-business-websites/</link>
+      <guid isPermaLink="true">https://revolvynmedia.com/blog/technical-seo-checklist-for-business-websites/</guid>
+      <description>Crawl, index, canonicals, sitemap, titles, headings, mobile, internal links, measurement — the technical checks that actually matter.</description>
+      <pubDate>Tue, 29 Sep 2026 09:00:00 +0530</pubDate>
+    </item>
+    <item>
+      <title>Content Marketing vs Content Production</title>
+      <link>https://revolvynmedia.com/blog/content-marketing-vs-content-production/</link>
+      <guid isPermaLink="true">https://revolvynmedia.com/blog/content-marketing-vs-content-production/</guid>
+      <description>Production asks how we make it; marketing asks why it should exist and where it belongs. Growth needs both, connected by performance feedback.</description>
+      <pubDate>Tue, 29 Sep 2026 09:00:00 +0530</pubDate>
+    </item>
+    <item>
+      <title>Landing Pages for Paid Campaigns: A Guide</title>
+      <link>https://revolvynmedia.com/blog/landing-pages-for-paid-campaigns/</link>
+      <guid isPermaLink="true">https://revolvynmedia.com/blog/landing-pages-for-paid-campaigns/</guid>
+      <description>The ad earns the click; the page earns the next step. Keep the message continuous, answer the visitor’s questions, and test them together.</description>
+      <pubDate>Wed, 30 Sep 2026 09:00:00 +0530</pubDate>
+    </item>
+    <item>
+      <title>AI UGC &amp; AI Product Creatives: Where They Fit</title>
+      <link>https://revolvynmedia.com/blog/ai-ugc-and-ai-product-creatives/</link>
+      <guid isPermaLink="true">https://revolvynmedia.com/blog/ai-ugc-and-ai-product-creatives/</guid>
+      <description>AI buys testing volume — more variations, faster. Human direction still decides the idea, the claims and what ships. The best setup is hybrid.</description>
+      <pubDate>Wed, 30 Sep 2026 09:00:00 +0530</pubDate>
+    </item>
+    <item>
+      <title>Full-Funnel Digital Marketing for Growing Brands</title>
+      <link>https://revolvynmedia.com/blog/full-funnel-digital-marketing-for-growing-brands/</link>
+      <guid isPermaLink="true">https://revolvynmedia.com/blog/full-funnel-digital-marketing-for-growing-brands/</guid>
+      <description>Attention, trust, conversion: one journey, not three departments. The wins come from moving learnings between channels.</description>
+      <pubDate>Wed, 30 Sep 2026 09:00:00 +0530</pubDate>
+    </item>
+    <item>
+      <title>Digital Marketing in Kolkata: A Practical Guide</title>
+      <link>https://revolvynmedia.com/blog/digital-marketing-in-kolkata/</link>
+      <guid isPermaLink="true">https://revolvynmedia.com/blog/digital-marketing-in-kolkata/</guid>
+      <description>Kolkata is context, not strategy: match channels to the business, use local search where it matters, and pair fast paid reads with compounding SEO.</description>
+      <pubDate>Thu, 01 Oct 2026 09:00:00 +0530</pubDate>
+    </item>
+    <item>
+      <title>How to Choose a Digital Marketing Agency in India</title>
+      <link>https://revolvynmedia.com/blog/how-to-choose-digital-marketing-agency-india/</link>
+      <guid isPermaLink="true">https://revolvynmedia.com/blog/how-to-choose-digital-marketing-agency-india/</guid>
+      <description>Define the problem, inspect the work, meet the team behind it, understand testing and reporting — then choose for fit, not vocabulary.</description>
+      <pubDate>Thu, 01 Oct 2026 09:00:00 +0530</pubDate>
     </item>
   </channel>
 </rss>

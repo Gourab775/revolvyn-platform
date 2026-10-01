@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-labelledby="t d">
+<title id="t">The monthly loop</title><desc id="d">Social media: The monthly loop</desc>
+<defs><radialGradient id="bg" cx="50%" cy="85%" r="90%"><stop offset="0%" stop-color="#16230c"/><stop offset="60%" stop-color="#050805"/><stop offset="100%" stop-color="#000"/></radialGradient><pattern id="dots" width="26" height="26" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.4" fill="#223311" opacity="0.55"/></pattern></defs>
+<rect width="1200" height="630" fill="url(#bg)"/>
+<rect width="1200" height="630" fill="url(#dots)"/>
+<rect x="1" y="1" width="1198" height="628" fill="none" stroke="#8cb478" stroke-opacity="0.25" stroke-width="2"/>
+<text x="64" y="70" font-family="Inter, Arial, sans-serif" font-size="15" letter-spacing="4" fill="#b9d68a">SOCIAL MEDIA</text>
+<text x="64" y="128" font-family="Georgia, 'Playfair Display', serif" font-size="44" fill="#f5fae6">The monthly loop</text>
+<rect x="64" y="406" width="157" height="150" rx="10" fill="#141f0b" stroke="#8cb478" stroke-opacity="0.45"/>
+<circle cx="90" cy="434" r="13" fill="none" stroke="#e6f578" stroke-opacity="0.8" stroke-width="1.6"/>
+<text x="90" y="440" font-family="Inter, Arial, sans-serif" font-size="15" fill="#e6f578" text-anchor="middle">1</text>
+<text x="142" y="468" font-family="Inter, Arial, sans-serif" font-size="21" fill="#eef3df" text-anchor="middle">Strategy</text>
+<line x1="225" y1="481" x2="243" y2="481" stroke="#e6f578" stroke-width="2" opacity="0.75"/>
+<polygon points="243,475 243,487 249,481" fill="#e6f578" opacity="0.85"/>
+<rect x="247" y="406" width="157" height="150" rx="10" fill="#141f0b" stroke="#8cb478" stroke-opacity="0.45"/>
+<circle cx="273" cy="434" r="13" fill="none" stroke="#e6f578" stroke-opacity="0.8" stroke-width="1.6"/>
+<text x="273" y="440" font-family="Inter, Arial, sans-serif" font-size="15" fill="#e6f578" text-anchor="middle">2</text>
+<text x="326" y="468" font-family="Inter, Arial, sans-serif" font-size="21" fill="#eef3df" text-anchor="middle">Plan</text>
+<line x1="408" y1="481" x2="426" y2="481" stroke="#e6f578" stroke-width="2" opacity="0.75"/>
+<polygon points="426,475 426,487 432,481" fill="#e6f578" opacity="0.85"/>
+<rect x="430" y="406" width="157" height="150" rx="10" fill="#141f0b" stroke="#8cb478" stroke-opacity="0.45"/>
+<circle cx="456" cy="434" r="13" fill="none" stroke="#e6f578" stroke-opacity="0.8" stroke-width="1.6"/>
+<text x="456" y="440" font-family="Inter, Arial, sans-serif" font-size="15" fill="#e6f578" text-anchor="middle">3</text>
+<text x="508" y="468" font-family="Inter, Arial, sans-serif" font-size="21" fill="#eef3df" text-anchor="middle">Produce</text>
+<line x1="591" y1="481" x2="609" y2="481" stroke="#e6f578" stroke-width="2" opacity="0.75"/>
+<polygon points="609,475 609,487 615,481" fill="#e6f578" opacity="0.85"/>
+<rect x="613" y="406" width="157" height="150" rx="10" fill="#141f0b" stroke="#8cb478" stroke-opacity="0.45"/>
+<circle cx="639" cy="434" r="13" fill="none" stroke="#e6f578" stroke-opacity="0.8" stroke-width="1.6"/>
+<text x="639" y="440" font-family="Inter, Arial, sans-serif" font-size="15" fill="#e6f578" text-anchor="middle">4</text>
+<text x="692" y="468" font-family="Inter, Arial, sans-serif" font-size="21" fill="#eef3df" text-anchor="middle">Publish</text>
+<line x1="774" y1="481" x2="792" y2="481" stroke="#e6f578" stroke-width="2" opacity="0.75"/>
+<polygon points="792,475 792,487 798,481" fill="#e6f578" opacity="0.85"/>
+<rect x="796" y="406" width="157" height="150" rx="10" fill="#141f0b" stroke="#8cb478" stroke-opacity="0.45"/>
+<circle cx="822" cy="434" r="13" fill="none" stroke="#e6f578" stroke-opacity="0.8" stroke-width="1.6"/>
+<text x="822" y="440" font-family="Inter, Arial, sans-serif" font-size="15" fill="#e6f578" text-anchor="middle">5</text>
+<text x="874" y="468" font-family="Inter, Arial, sans-serif" font-size="21" fill="#eef3df" text-anchor="middle">Engage</text>
+<line x1="957" y1="481" x2="975" y2="481" stroke="#e6f578" stroke-width="2" opacity="0.75"/>
+<polygon points="975,475 975,487 981,481" fill="#e6f578" opacity="0.85"/>
+<rect x="979" y="406" width="157" height="150" rx="10" fill="#141f0b" stroke="#8cb478" stroke-opacity="0.45"/>
+<circle cx="1005" cy="434" r="13" fill="none" stroke="#e6f578" stroke-opacity="0.8" stroke-width="1.6"/>
+<text x="1005" y="440" font-family="Inter, Arial, sans-serif" font-size="15" fill="#e6f578" text-anchor="middle">6</text>
+<text x="1058" y="468" font-family="Inter, Arial, sans-serif" font-size="21" fill="#eef3df" text-anchor="middle">Analyse</text>
+<path d="M 104 388 H 1096 " stroke="#e6f578" stroke-width="1.4" stroke-dasharray="6 6" fill="none" opacity="0.5"/>
+<text x="1136" y="568" font-family="Inter, Arial, sans-serif" font-size="13" fill="#6f8459" text-anchor="end">REVOLVYN</text>
+</svg>
