@@ -74,6 +74,23 @@
 		html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
 		.page-transition { will-change: opacity, transform; transform: translateZ(0); backface-visibility: hidden; position: fixed; inset: 0; background: #000; z-index: 9999; pointer-events: none; opacity: 0; transition: opacity 0.2s ease; }
 		.page-transition.active { opacity: 1; }
+		/* Boot cover (2026-10-14): inner pages have no homepage-style loader, so this
+		   plain-black cover hides the ~1s raw-text/font-swap flash on first paint.
+		   JS removes it when webfonts are ready; the animation is the no-JS fallback. */
+		#bootCover { position: fixed; inset: 0; background: #000; z-index: 9998;
+			pointer-events: none; animation: bootCoverAuto 0.4s ease 2.6s forwards; }
+		#bootCover.hide { opacity: 0; visibility: hidden; transition: opacity 0.35s ease, visibility 0.35s; }
+		#bootCover .sk-wrap { max-width: 900px; margin: 0 auto; padding: 110px 24px 0; }
+		#bootCover .sk-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 80px; }
+		#bootCover .sk-nav span { display: block; width: 110px; height: 14px; border-radius: 4px; }
+		#bootCover .sk-title { height: 42px; max-width: 620px; margin: 0 auto 16px; border-radius: 8px; }
+		#bootCover .sk-title.short { max-width: 400px; }
+		#bootCover .sk-sub { height: 13px; max-width: 500px; margin: 28px auto 0; border-radius: 4px; }
+		#bootCover .sk-nav span, #bootCover .sk-title, #bootCover .sk-sub {
+			background: linear-gradient(100deg, rgba(255,255,255,0.045) 30%, rgba(230,245,120,0.10) 50%, rgba(255,255,255,0.045) 70%);
+			background-size: 200% 100%; animation: skShimmer 1.3s linear infinite; }
+		@keyframes skShimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+		@keyframes bootCoverAuto { to { opacity: 0; visibility: hidden; } }
 .nav-float { position: fixed; top: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; z-index: 100; pointer-events: none; background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, transparent 100%); }
 		.nav-logo { font-family: 'Playfair Display', serif; font-size: 18px; color: rgba(245, 250, 230, 0.9); letter-spacing: 1px; pointer-events: auto; cursor: pointer; }
 		.nav-links { display: flex; gap: 28px; pointer-events: auto; }
@@ -235,7 +252,12 @@ p,h1,h2,h3,h4,li,blockquote,.stat-number,.brand-card-name{-webkit-user-select:te
 <body>
   <noscript><div class="noscript-list"><h2>Content Marketing vs Content Production</h2><p>Production asks how we make it; marketing asks why it should exist and where it belongs. Growth needs both, connected by performance feedback.</p><p><a href="../../index.html">Home</a> · <a href="../../blog.html">Blog</a> · <a href="../../contact.html">Contact</a></p></div></noscript>
   <a class="skip-link" href="#main">Skip to content</a>
-  <div class="page-transition" id="pageTransition"></div>
+  <div id="bootCover" aria-hidden="true"><div class="sk-wrap"><div class="sk-nav"><span></span><span></span></div><div class="sk-title"></div><div class="sk-title short"></div><div class="sk-sub"></div></div></div>
+	<script>
+	/* Boot cover: hide as soon as webfonts arrive (kills the raw-text flash); hard fallback 2.2s. */
+	(function(){var done=false;function hide(){if(done)return;done=true;var c=document.getElementById('bootCover');if(!c)return;c.classList.add('hide');setTimeout(function(){if(c.parentNode)c.parentNode.removeChild(c);},450);}try{if(document.fonts&&document.fonts.ready){document.fonts.ready.then(function(){setTimeout(hide,60);});}else{setTimeout(hide,400);}}catch(e){}setTimeout(hide,2200);})();
+	</script>
+	<div class="page-transition" id="pageTransition"></div>
 <nav class="nav-float">
 		<div class="nav-logo" onclick="smoothNavigate('../../index.html')" style="cursor:pointer">REVOLVYN</div>
 		<div class="nav-links"><a href="../../index.html#about" onclick="smoothNavigate(event, '../../index.html#about')">About Us</a><a href="../../portfolio.html" onclick="smoothNavigate(event, '../../portfolio.html')">Portfolio</a><a href="../../brands.html" onclick="smoothNavigate(event, '../../brands.html')">Brands</a><a href="../../services.html" onclick="smoothNavigate(event, '../../services.html')">Services</a><a href="../../contact.html" onclick="smoothNavigate(event, '../../contact.html')">Contact Us</a></div>
