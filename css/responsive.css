@@ -27,7 +27,7 @@
 	.brand-logo-item img { max-height: 120px; }
 	.brands-track { animation-duration: 18s; }
 	.hero h1 { font-size: clamp(36px, 10vw, 60px); }
-	.manifesto h2 { font-size: clamp(18px, 4vw, 32px); }
+	.manifesto h2 { font-size: clamp(16px, 3.6vw, 28px); }
 	.quote-section blockquote { font-size: clamp(18px, 4vw, 32px); }
 	.cta-section h2 { font-size: clamp(24px, 6vw, 40px); }
 	.cta-sub { font-size: 12.5px; line-height: 1.75; max-width: 100%; }
@@ -46,7 +46,7 @@
 	.brand-logo-item { min-width: 200px; height: 130px; padding: 14px 24px; }
 	.brand-logo-item img { max-height: 100px; }
 	.hero h1 { font-size: clamp(28px, 10vw, 48px); }
-	.manifesto h2 { font-size: clamp(16px, 4vw, 28px); }
+	.manifesto h2 { font-size: clamp(15px, 3.8vw, 24px); }
 	.wind-btn { padding: 8px 18px; font-size: 10px; }
 }
 @media (prefers-reduced-motion: reduce) {

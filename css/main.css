@@ -41,14 +41,9 @@ canvas {
 
 .section * { pointer-events: auto; }
 
-/* Scroll snapping */
-html {
-	scroll-snap-type: y proximity;
-}
-
-.section {
-	scroll-snap-align: start;
-}
+/* Scroll snapping disabled (2026-10-14): 'proximity' snap caused
+   magnetic sticking on About section during Hero->Manifesto scroll.
+   Free scroll keeps layout/visuals identical. */
 
 .progress-bar {
 	position: fixed;
@@ -65,14 +60,14 @@ html {
 .revealed {
 	opacity: 1 !important;
 	transform: translateY(0) !important;
-	transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
-				transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+	transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+				transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.delay-1 { transition-delay: 0.1s !important; }
-.delay-2 { transition-delay: 0.25s !important; }
-.delay-3 { transition-delay: 0.4s !important; }
-.delay-4 { transition-delay: 0.55s !important; }
+.delay-1 { transition-delay: 0.05s !important; }
+.delay-2 { transition-delay: 0.12s !important; }
+.delay-3 { transition-delay: 0.2s !important; }
+.delay-4 { transition-delay: 0.28s !important; }
 
 /* Loading Screen */
 #loadingScreen {
