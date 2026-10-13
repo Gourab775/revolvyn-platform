@@ -1,0 +1,342 @@
+[
+  {
+    "order": 1,
+    "brand": "ELEVENLABS",
+    "video": "https://video.wixstatic.com/video/4c7a69_14df8fc89d244a96b8926669d3d7db8d/360p/mp4/file.mp4",
+    "thumb": "https://revolvynmedia.com/portfolio/thumbs/elevenlabs-01.jpg",
+    "file": "elevenlabs-01.jpg",
+    "capture_ts": "00:00:02",
+    "dims": "1280,720",
+    "bytes": 85023
+  },
+  {
+    "order": 2,
+    "brand": "ELEVENLABS",
+    "video": "https://video.wixstatic.com/video/4c7a69_d70cd22e3f424a88a11add0aaa8715e0/360p/mp4/file.mp4",
+    "thumb": "https://revolvynmedia.com/portfolio/thumbs/elevenlabs-02.jpg",
+    "file": "elevenlabs-02.jpg",
+    "capture_ts": "00:00:16.86",
+    "dims": "1280,720",
+    "bytes": 50648
+  },
+  {
+    "order": 3,
+    "brand": "ELEVENLABS",
+    "video": "https://video.wixstatic.com/video/4c7a69_686d4b3aa59148239d4a71b3de795c6c/360p/mp4/file.mp4",
+    "thumb": "https://revolvynmedia.com/portfolio/thumbs/elevenlabs-03.jpg",
+    "file": "elevenlabs-03.jpg",
+    "capture_ts": "00:00:20.26",
+    "dims": "1280,720",
+    "bytes": 15974
+  },
+  {
+    "order": 4,
+    "brand": "ELEVENLABS",
+    "video": "https://video.wixstatic.com/video/4c7a69_23f184027c3549bd99bb139ab1069ccf/360p/mp4/file.mp4",
+    "thumb": "https://revolvynmedia.com/portfolio/thumbs/elevenlabs-04.jpg",
+    "file": "elevenlabs-04.jpg",
+    "capture_ts": "00:00:40.95",
+    "dims": "1280,720",
+    "bytes": 10573
+  },
+  {
+    "order": 5,
+    "brand": "ELEVENLABS",
+    "video": "https://video.wixstatic.com/video/4c7a69_0b31155196524c02b137c09a4adc76f3/360p/mp4/file.mp4",
+    "thumb": "https://revolvynmedia.com/portfolio/thumbs/elevenlabs-05.jpg",
+    "file": "elevenlabs-05.jpg",
+    "capture_ts": "00:00:36.40",
+    "dims": "1280,720",
+    "bytes": 19620
+  },
+  {
+    "order": 6,
+    "brand": "FLEXER AI",
+    "video": "https://video.wixstatic.com/video/4c7a69_222842af6e0041df96c38a0f441f9bea/360p/mp4/file.mp4",
+    "thumb": "https://revolvynmedia.com/portfolio/thumbs/flexer-ai-06.jpg",
+    "file": "flexer-ai-06.jpg",
+    "capture_ts": "00:00:13.00",
+    "dims": "1280,720",
+    "bytes": 17491
+  },
+  {
+    "order": 7,
+    "brand": "LOVABLE",
+    "video": "https://video.wixstatic.com/video/4c7a69_5668e652a6884cd8836549b78cf45743/360p/mp4/file.mp4",
+    "thumb": "https://revolvynmedia.com/portfolio/thumbs/lovable-07.jpg",
+    "file": "lovable-07.jpg",
+    "capture_ts": "00:00:02",
+    "dims": "1280,720",
+    "bytes": 34366
+  },
+  {
+    "order": 8,
+    "brand": "OG USERNAMES",
+    "video": "https://video.wixstatic.com/video/4c7a69_79283b4698b040f89bffa697139f5979/360p/mp4/file.mp4",
+    "thumb": "https://revolvynmedia.com/portfolio/thumbs/og-usernames-08.jpg",
+    "file": "og-usernames-08.jpg",
+    "capture_ts": "00:00:02",
+    "dims": "1280,720",
+    "bytes": 23643
+  },
+  {
+    "order": 9,
+    "brand": "TRIVX",
+    "video": "https://video.wixstatic.com/video/4c7a69_141b2d08cb6748bb987c19f0b683e40f/360p/mp4/file.mp4",
+    "thumb": "https://revolvynmedia.com/portfolio/thumbs/trivx-09.jpg",
+    "file": "trivx-09.jpg",
+    "capture_ts": "00:00:06.12",
+    "dims": "1280,720",
+    "bytes": 28657
+  },
+  {
+    "order": 10,
+    "brand": "SONEPAR",
+    "video": "https://video.wixstatic.com/video/4c7a69_1e1da840cb98495a85faf9d92e5b7cb8/1080p/mp4/file.mp4",
+    "thumb": "https://revolvynmedia.com/portfolio/thumbs/sonepar-10.jpg",
+    "file": "sonepar-10.jpg",
+    "capture_ts": "00:00:02",
+    "dims": "1280,2274",
+    "bytes": 256830
+  },
+  {
+    "order": 11,
+    "brand": "MARK VIBE",
+    "video": "https://video.wixstatic.com/video/4c7a69_1c35e20217e14a8db126397e5e2029e8/1080p/mp4/file.mp4",
+    "thumb": "https://revolvynmedia.com/portfolio/thumbs/mark-vibe-11.jpg",
+    "file": "mark-vibe-11.jpg",
+    "capture_ts": "00:00:02",
+    "dims": "1280,2274",
+    "bytes": 41922
+  },
+  {
+    "order": 12,
+    "brand": "CRISPANA",
+    "video": "https://video.wixstatic.com/video/4c7a69_95ce005d31f74d3bb9dbc36e126d5556/1080p/mp4/file.mp4",
+    "thumb": "https://revolvynmedia.com/portfolio/thumbs/crispana-12.jpg",
+    "file": "crispana-12.jpg",
+    "capture_ts": "00:00:02",
+    "dims": "1280,2276",
+    "bytes": 60965
+  },
+  {
+    "order": 13,
+    "brand": "MR NUTTS OATS",
+    "video": "https://video.wixstatic.com/video/4c7a69_cca1cedb933341988f871a0cdbba540b/1080p/mp4/file.mp4",
+    "thumb": "https://revolvynmedia.com/portfolio/thumbs/mr-nutts-oats-13.jpg",
+    "file": "mr-nutts-oats-13.jpg",
+    "capture_ts": "00:00:02",
+    "dims": "1280,2276",
+    "bytes": 143960
+  },
+  {
+    "order": 14,
+    "brand": "MR NUTTS OATS",
+    "video": "https://video.wixstatic.com/video/4c7a69_deb755ab4ad04c829c94225ee5df4860/1080p/mp4/file.mp4",
+    "thumb": "https://revolvynmedia.com/portfolio/thumbs/mr-nutts-oats-14.jpg",
+    "file": "mr-nutts-oats-14.jpg",
+    "capture_ts": "00:00:02",
+    "dims": "1280,2276",
+    "bytes": 102182
+  },
+  {
+    "order": 15,
+    "brand": "OXINKLE",
+    "video": "https://video.wixstatic.com/video/4c7a69_6e96bd03ea484471b4b8e5df3ec24506/1080p/mp4/file.mp4",
+    "thumb": "https://revolvynmedia.com/portfolio/thumbs/oxinkle-15.jpg",
+    "file": "oxinkle-15.jpg",
+    "capture_ts": "00:00:02",
+    "dims": "1280,2276",
+    "bytes": 96727
+  },
+  {
+    "order": 16,
+    "brand": "DALEN BELTS",
+    "video": "https://video.wixstatic.com/video/4c7a69_a17b296ca1544a43bbc4e618676526f6/1080p/mp4/file.mp4",
+    "thumb": "https://revolvynmedia.com/portfolio/thumbs/dalen-belts-16.jpg",
+    "file": "dalen-belts-16.jpg",
+    "capture_ts": "00:00:02",
+    "dims": "1280,2276",
+    "bytes": 59672
+  },
+  {
+    "order": 17,
+    "brand": "CRISPANA",
+    "video": "https://video.wixstatic.com/video/4c7a69_bf6bc2180a9f4cebaa869ab4b2e2b8a4/720p/mp4/file.mp4",
+    "thumb": "https://revolvynmedia.com/portfolio/thumbs/crispana-17.jpg",
+    "file": "crispana-17.jpg",
+    "capture_ts": "00:00:02",
+    "dims": "1280,2276",
+    "bytes": 114810
+  },
+  {
+    "order": 18,
+    "brand": "EATFESTO",
+    "video": "https://video.wixstatic.com/video/4c7a69_0abcdc24eaed4b3e95a67da99aa1a2b0/1080p/mp4/file.mp4",
+    "thumb": "https://revolvynmedia.com/portfolio/thumbs/eatfesto-18.jpg",
+    "file": "eatfesto-18.jpg",
+    "capture_ts": "00:00:02",
+    "dims": "1280,2274",
+    "bytes": 111619
+  },
+  {
+    "order": 19,
+    "brand": "EATFESTO",
+    "video": "https://video.wixstatic.com/video/4c7a69_c46cfd63cd96443badd9a27a0665fdff/1080p/mp4/file.mp4",
+    "thumb": "https://revolvynmedia.com/portfolio/thumbs/eatfesto-19.jpg",
+    "file": "eatfesto-19.jpg",
+    "capture_ts": "00:00:02",
+    "dims": "1280,2274",
+    "bytes": 144194
+  },
+  {
+    "order": 20,
+    "brand": "TEZZO",
+    "video": "https://video.wixstatic.com/video/4c7a69_50273e50f63d448e818bd9122e3fc5e1/720p/mp4/file.mp4",
+    "thumb": "https://revolvynmedia.com/portfolio/thumbs/tezzo-20.jpg",
+    "file": "tezzo-20.jpg",
+    "capture_ts": "00:00:02",
+    "dims": "1280,2276",
+    "bytes": 95744
+  },
+  {
+    "order": 21,
+    "brand": "NIKE",
+    "video": "https://video.wixstatic.com/video/4c7a69_e9c69930b4f74394a7a24aaa079c9e50/720p/mp4/file.mp4",
+    "thumb": "https://revolvynmedia.com/portfolio/thumbs/nike-21.jpg",
+    "file": "nike-21.jpg",
+    "capture_ts": "00:00:02",
+    "dims": "1280,2276",
+    "bytes": 67839
+  },
+  {
+    "order": 22,
+    "brand": "NIKE",
+    "video": "https://video.wixstatic.com/video/4c7a69_b378be38f16a4a48885fc3ef997da7c6/720p/mp4/file.mp4",
+    "thumb": "https://revolvynmedia.com/portfolio/thumbs/nike-22.jpg",
+    "file": "nike-22.jpg",
+    "capture_ts": "00:00:02",
+    "dims": "1280,2276",
+    "bytes": 87820
+  },
+  {
+    "order": 23,
+    "brand": "NIKE",
+    "video": "https://video.wixstatic.com/video/4c7a69_52ab300a0f5d4f3eb2e022531b7f5f26/720p/mp4/file.mp4",
+    "thumb": "https://revolvynmedia.com/portfolio/thumbs/nike-23.jpg",
+    "file": "nike-23.jpg",
+    "capture_ts": "00:00:02",
+    "dims": "1280,2276",
+    "bytes": 113897
+  },
+  {
+    "order": 24,
+    "brand": "PROSKIRE",
+    "video": "https://video.wixstatic.com/video/4c7a69_e0893a64f65d45c288100d58ed3ac6e7/720p/mp4/file.mp4",
+    "thumb": "https://revolvynmedia.com/portfolio/thumbs/proskire-24.jpg",
+    "file": "proskire-24.jpg",
+    "capture_ts": "00:00:02",
+    "dims": "1280,2276",
+    "bytes": 86631
+  },
+  {
+    "order": 25,
+    "brand": "RELANCE",
+    "video": "https://video.wixstatic.com/video/4c7a69_ae60f198c15a4dabbec575bb07569699/720p/mp4/file.mp4",
+    "thumb": "https://revolvynmedia.com/portfolio/thumbs/relance-25.jpg",
+    "file": "relance-25.jpg",
+    "capture_ts": "00:00:02",
+    "dims": "1280,2276",
+    "bytes": 114880
+  },
+  {
+    "order": 26,
+    "brand": "KERASTASE",
+    "video": "https://video.wixstatic.com/video/4c7a69_85112fcc1b354ceba8e9b7400194de5a/720p/mp4/file.mp4",
+    "thumb": "https://revolvynmedia.com/portfolio/thumbs/kerastase-26.jpg",
+    "file": "kerastase-26.jpg",
+    "capture_ts": "00:00:02",
+    "dims": "1280,2276",
+    "bytes": 121545
+  },
+  {
+    "order": 27,
+    "brand": "MEDICINE MAMA",
+    "video": "https://video.wixstatic.com/video/4c7a69_6e02f73ac2854749902a919538d625f4/720p/mp4/file.mp4",
+    "thumb": "https://revolvynmedia.com/portfolio/thumbs/medicine-mama-27.jpg",
+    "file": "medicine-mama-27.jpg",
+    "capture_ts": "00:00:02",
+    "dims": "1280,2276",
+    "bytes": 96739
+  },
+  {
+    "order": 28,
+    "brand": "KORA ORGANIC",
+    "video": "https://video.wixstatic.com/video/4c7a69_dc3f7913414e4dbe8f3bc3cdd7f07116/480p/mp4/file.mp4",
+    "thumb": "https://revolvynmedia.com/portfolio/thumbs/kora-organic-28.jpg",
+    "file": "kora-organic-28.jpg",
+    "capture_ts": "00:00:02",
+    "dims": "1280,2272",
+    "bytes": 65853
+  },
+  {
+    "order": 29,
+    "brand": "DIOR",
+    "video": "https://video.wixstatic.com/video/4c7a69_f41b341b60e34a8193adb23bb5b7f217/480p/mp4/file.mp4",
+    "thumb": "https://revolvynmedia.com/portfolio/thumbs/dior-29.jpg",
+    "file": "dior-29.jpg",
+    "capture_ts": "00:00:02",
+    "dims": "1280,2276",
+    "bytes": 46059
+  },
+  {
+    "order": 30,
+    "brand": "CARATLANE",
+    "video": "https://video.wixstatic.com/video/4c7a69_14a8db37650e4e048c74550cdc0850bd/360p/mp4/file.mp4",
+    "thumb": "https://revolvynmedia.com/portfolio/thumbs/caratlane-30.jpg",
+    "file": "caratlane-30.jpg",
+    "capture_ts": "00:00:02",
+    "dims": "1280,722",
+    "bytes": 71246
+  },
+  {
+    "order": 31,
+    "brand": "INSTA360",
+    "video": "https://video.wixstatic.com/video/4c7a69_13620f51b0ed46c5914c8523b4a77218/720p/mp4/file.mp4",
+    "thumb": "https://revolvynmedia.com/portfolio/thumbs/insta360-31.jpg",
+    "file": "insta360-31.jpg",
+    "capture_ts": "00:00:02",
+    "dims": "1280,2276",
+    "bytes": 85110
+  },
+  {
+    "order": 32,
+    "brand": "NOTHING",
+    "video": "https://video.wixstatic.com/video/4c7a69_a9f35c5bc14746b1af9e2afae93f07e3/360p/mp4/file.mp4",
+    "thumb": "https://revolvynmedia.com/portfolio/thumbs/nothing-32.jpg",
+    "file": "nothing-32.jpg",
+    "capture_ts": "00:00:02",
+    "dims": "1280,2276",
+    "bytes": 59762
+  },
+  {
+    "order": 33,
+    "brand": "CAFE",
+    "video": "https://video.wixstatic.com/video/4c7a69_0e60df56daa74e448177aac81ff654ce/720p/mp4/file.mp4",
+    "thumb": "https://revolvynmedia.com/portfolio/thumbs/cafe-33.jpg",
+    "file": "cafe-33.jpg",
+    "capture_ts": "00:00:02",
+    "dims": "1280,2276",
+    "bytes": 70437
+  },
+  {
+    "order": 34,
+    "brand": "CAFE",
+    "video": "https://video.wixstatic.com/video/4c7a69_498dc7119da64efc845ed771d89eb7e6/720p/mp4/file.mp4",
+    "thumb": "https://revolvynmedia.com/portfolio/thumbs/cafe-34.jpg",
+    "file": "cafe-34.jpg",
+    "capture_ts": "00:00:02",
+    "dims": "1280,2276",
+    "bytes": 111754
+  }
+]
