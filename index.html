@@ -191,7 +191,7 @@ p,h1,h2,h3,h4,li,blockquote,.stat-number,.brand-card-name{-webkit-user-select:te
 
 		<section class="section manifesto" id="about" data-stage="1">
 			<span class="manifesto-label" data-reveal>Who We Are</span>
-			<h2 data-reveal data-delay="1"><em class="brand-name">REVOLVYN</em> is a next-gen digital marketing agency built for creators and brands. We work with 110+ YouTubers and 320+ brands, creating 4,500+ ads and campaigns. From influencer marketing to content, performance, SEO, and cinematic films. we do it all. We create, connect, and convert.</h2>
+			<h2 data-reveal><em class="brand-name">REVOLVYN</em> is a next-gen digital marketing agency built for creators and brands. We work with 110+ YouTubers and 320+ brands, creating 4,500+ ads and campaigns. From influencer marketing to content, performance, SEO, and cinematic films. we do it all. We create, connect, and convert.</h2>
 		</section>
 
 		<section class="section pillars" data-stage="2">
@@ -347,6 +347,25 @@ p,h1,h2,h3,h4,li,blockquote,.stat-number,.brand-card-name{-webkit-user-select:te
 		</div>
 		</div>
 	</footer>
+	<script>
+	/* Early reveal (2026-10-14): registers immediately during HTML parse so
+	   [data-reveal] text never waits for the heavy three.js module boot.
+	   Uses the same .revealed/.delay-N classes as js/scroll.js (idempotent). */
+	(function () {
+		try {
+			var io = new IntersectionObserver(function (entries) {
+				entries.forEach(function (entry) {
+					if (entry.isIntersecting) {
+						var el = entry.target;
+						el.classList.add('revealed', 'delay-' + (el.dataset.delay || '0'));
+						io.unobserve(el);
+					}
+				});
+			}, { threshold: 0, rootMargin: '0px' });
+			document.querySelectorAll('[data-reveal]').forEach(function (el) { io.observe(el); });
+		} catch (e) {}
+	})();
+	</script>
 	<script src="js/cms-content.js" defer></script>
 </body>
 </html>
