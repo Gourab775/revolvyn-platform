@@ -129,8 +129,10 @@
 /* Manifesto / About */
 .manifesto {
 	flex-direction: column;
-	gap: 40px;
+	gap: 56px;
 	text-align: center;
+	padding-left: 48px;
+	padding-right: 48px;
 }
 
 .manifesto-label {
@@ -149,8 +151,9 @@
 	font-family: 'Playfair Display', serif;
 	font-size: clamp(20px, 2.8vw, 36px);
 	font-weight: 400;
-	line-height: 1.4;
-	max-width: 800px;
+	line-height: 1.55;
+	max-width: 820px;
+	text-wrap: balance;
 	opacity: 0;
 	transform: translateY(40px);
 	color: var(--color-heading, rgba(245, 250, 235, 0.97));

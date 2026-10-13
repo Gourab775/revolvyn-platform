@@ -10,6 +10,8 @@
 	.nav-hamburger { display: flex; }
 	.nav-mobile-overlay { display: flex; }
 	.section { padding: 48px 16px; contain: none; }
+	.manifesto { padding-left: 28px; padding-right: 28px; gap: 36px; }
+	.manifesto h2 { line-height: 1.65; }
 	.stats-section { contain: none; }
 	.section-label { margin-bottom: 20px; }
 	.section-label::before, .section-label::after { display: none; }
@@ -35,6 +37,7 @@
 }
 @media (max-width: 480px) {
 	.section { padding: 36px 14px; }
+	.manifesto { padding-left: 26px; padding-right: 26px; gap: 30px; }
 	.site-footer { padding: 32px 14px 20px; }
 	.portfolio-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 100px; gap: 4px; }
 	.portfolio-item:nth-child(1) { grid-column: 1 / 3; grid-row: 1; }
