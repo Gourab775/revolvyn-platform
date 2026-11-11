@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1Y8TZD3QD3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-1Y8TZD3QD3');
+</script>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Website Showcase | REVOLVYN</title>
+	<link rel="icon" href="favicon.png" type="image/png" sizes="any">
+	<link rel="apple-touch-icon" href="favicon.png">
+	<meta name="robots" content="noindex, follow" />
+	<meta name="description" content="Explore REVOLVYN's custom high-converting brand websites, e-commerce storefronts, and interactive web showcases." />
+	<meta name="theme-color" content="#000000" />
+	<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="css/footer.css">
+	<style>
+		*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+		html { scrollbar-width: none; scroll-behavior: smooth; }
+		html::-webkit-scrollbar { display: none; }
+		body {
+			background: #000;
+			color: #e8ece4;
+			font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+			overflow-x: hidden;
+			-webkit-font-smoothing: antialiased;
+			min-height: 100vh;
+		}
+		a { color: inherit; text-decoration: none; }
+		button { font-family: inherit; cursor: pointer; border: none; background: none; }
+		:focus-visible { outline: 2px solid rgba(230, 245, 120, 0.9); outline-offset: 3px; }
+		::selection { background: rgba(230, 245, 120, 0.35); color: #fff; }
+
+		.bg-ambient {
+			position: fixed; inset: 0; pointer-events: none; z-index: 0;
+			background:
+				radial-gradient(ellipse 65% 45% at 50% 0%, rgba(110, 150, 75, 0.14) 0%, transparent 70%),
+				radial-gradient(ellipse 40% 40% at 88% 82%, rgba(90, 130, 60, 0.08) 0%, transparent 70%);
+		}
+
+		/* Navigation matching portfolio.html */
+		.nav-float {
+			position: fixed; top: 0; left: 0; right: 0;
+			display: flex; justify-content: space-between; align-items: center;
+			padding: 28px 40px; z-index: 100;
+			background: linear-gradient(to bottom, rgba(0, 0, 0, 0.85) 0%, transparent 100%);
+			pointer-events: none;
+		}
+		.nav-logo {
+			font-family: 'Playfair Display', serif; font-size: 18px;
+			color: rgba(245, 250, 230, 0.9); letter-spacing: 1px; pointer-events: auto;
+		}
+		.nav-links { display: flex; gap: 28px; pointer-events: auto; }
+		.nav-links a {
+			font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+			color: rgba(215, 230, 190, 0.6); transition: color 0.3s; font-weight: 500;
+		}
+		.nav-links a:hover, .nav-links a.active { color: rgba(230, 245, 120, 0.95); }
+		.nav-hamburger {
+			display: none; flex-direction: column; gap: 5px;
+			padding: 6px; pointer-events: auto; z-index: 200;
+		}
+		.nav-hamburger span {
+			display: block; width: 22px; height: 2px;
+			background: rgba(215, 230, 190, 0.8); border-radius: 2px;
+			transition: all 0.3s ease;
+		}
+		.nav-hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+		.nav-hamburger.open span:nth-child(2) { opacity: 0; }
+		.nav-hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+		.nav-mobile-overlay {
+			display: none; position: fixed; inset: 0; background: rgba(8, 12, 5, 0.97);
+			z-index: 99; flex-direction: column; align-items: center; justify-content: center;
+			gap: 32px; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+		}
+		.nav-mobile-overlay.open { opacity: 1; pointer-events: auto; }
+		.nav-mobile-overlay a {
+			font-size: 14px; letter-spacing: 3px; text-transform: uppercase;
+			color: rgba(215, 230, 190, 0.75); font-weight: 500;
+		}
+		.nav-mobile-overlay a.active { color: #e6f578; }
+
+		/* Main content */
+		.ws-page {
+			position: relative; z-index: 10;
+			max-width: 1380px; margin: 0 auto;
+			padding: 104px 40px 80px;
+			animation: pageFade 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+		}
+		@keyframes pageFade {
+			from { opacity: 0; transform: translateY(10px); }
+			to { opacity: 1; transform: translateY(0); }
+		}
+
+		.ws-topbar {
+			display: flex; align-items: center; justify-content: space-between;
+			gap: 16px; margin-bottom: 28px; flex-wrap: wrap;
+		}
+		.ws-back-link {
+			display: inline-flex; align-items: center; gap: 10px;
+			padding: 9px 18px; border-radius: 999px;
+			background: rgba(16, 22, 12, 0.72);
+			border: 1px solid rgba(180, 220, 100, 0.22);
+			font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+			color: rgba(230, 245, 160, 0.9); font-weight: 500;
+			transition: border-color 0.25s, background 0.25s, transform 0.25s;
+		}
+		.ws-back-link:hover {
+			border-color: rgba(230, 245, 120, 0.65);
+			background: rgba(26, 36, 16, 0.85);
+			transform: translateX(-2px);
+		}
+		.ws-pager {
+			display: inline-flex; align-items: center; gap: 10px;
+		}
+		.ws-index-badge {
+			font-size: 11px; letter-spacing: 2.2px; text-transform: uppercase;
+			color: rgba(215, 230, 190, 0.55); margin-right: 4px;
+			font-variant-numeric: tabular-nums;
+		}
+		.ws-nav-pill {
+			display: inline-flex; align-items: center; gap: 6px;
+			padding: 8px 14px; border-radius: 999px;
+			border: 1px solid rgba(180, 220, 100, 0.2);
+			background: rgba(14, 18, 10, 0.75);
+			color: rgba(225, 238, 200, 0.85);
+			font-size: 11px; letter-spacing: 1.4px; text-transform: uppercase;
+			transition: border-color 0.25s, color 0.25s, background 0.25s;
+		}
+		.ws-nav-pill:hover {
+			border-color: rgba(230, 245, 120, 0.6);
+			color: #e6f578;
+			background: rgba(26, 36, 16, 0.85);
+		}
+
+		/* Hero Split */
+		.ws-hero {
+			display: grid;
+			grid-template-columns: minmax(0, 1.32fr) minmax(320px, 0.9fr);
+			gap: 36px;
+			align-items: start;
+			margin-bottom: 42px;
+		}
+
+		/* Browser frame player */
+		.ws-browser {
+			background: #0a0d07;
+			border: 1px solid rgba(180, 220, 100, 0.24);
+			border-radius: 16px;
+			overflow: hidden;
+			box-shadow: 0 28px 80px rgba(0, 0, 0, 0.82), 0 0 48px rgba(180, 220, 100, 0.06);
+		}
+		.ws-browser-bar {
+			display: flex; align-items: center; justify-content: space-between; gap: 12px;
+			padding: 11px 16px;
+			background: rgba(16, 20, 11, 0.96);
+			border-bottom: 1px solid rgba(180, 220, 100, 0.14);
+		}
+		.ws-dots { display: flex; gap: 6px; flex-shrink: 0; }
+		.ws-dots span {
+			width: 9px; height: 9px; border-radius: 50%;
+			background: rgba(215, 230, 190, 0.2);
+		}
+		.ws-dots span:first-child { background: rgba(230, 245, 120, 0.45); }
+		.ws-url-bar {
+			flex: 1; min-width: 0;
+			display: flex; align-items: center; justify-content: center; gap: 6px;
+			padding: 5px 12px; border-radius: 999px;
+			background: rgba(0, 0, 0, 0.45);
+			border: 1px solid rgba(140, 180, 120, 0.12);
+			font-size: 11px; color: rgba(215, 230, 190, 0.65);
+			white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+		}
+		.ws-url-dot {
+			width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+			background: #b8e64c;
+			box-shadow: 0 0 8px rgba(230, 245, 120, 0.7);
+		}
+		.ws-chrome-preview-btn {
+			display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0;
+			padding: 5px 12px; border-radius: 999px;
+			border: 1px solid rgba(230, 245, 120, 0.38);
+			background: rgba(230, 245, 120, 0.1);
+			color: #e6f578;
+			font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 600;
+			transition: background 0.25s, transform 0.2s, border-color 0.25s;
+		}
+		.ws-chrome-preview-btn:hover {
+			background: rgba(230, 245, 120, 0.2);
+			border-color: #e6f578;
+			transform: translateY(-1px);
+		}
+
+		.ws-stage {
+			position: relative;
+			aspect-ratio: 16 / 9;
+			background: #040503;
+			overflow: hidden;
+		}
+		.ws-stage video {
+			width: 100%; height: 100%; object-fit: cover; display: block;
+		}
+		.ws-controls {
+			display: flex; align-items: center; justify-content: space-between; gap: 12px;
+			padding: 12px 16px;
+			background: rgba(11, 14, 8, 0.96);
+			border-top: 1px solid rgba(140, 180, 120, 0.12);
+		}
+		.ws-ctrl-left, .ws-ctrl-right { display: flex; align-items: center; gap: 10px; }
+		.ws-icon-btn {
+			width: 34px; height: 34px; border-radius: 50%;
+			display: inline-flex; align-items: center; justify-content: center;
+			border: 1px solid rgba(180, 220, 100, 0.2);
+			color: rgba(240, 248, 220, 0.88);
+			background: rgba(255, 255, 255, 0.03);
+			transition: border-color 0.2s, background 0.2s, color 0.2s;
+		}
+		.ws-icon-btn:hover {
+			border-color: #e6f578;
+			color: #e6f578;
+			background: rgba(230, 245, 120, 0.08);
+		}
+		.ws-scrubber {
+			flex: 1; height: 5px; border-radius: 999px;
+			background: rgba(255, 255, 255, 0.12);
+			cursor: pointer; position: relative; overflow: hidden;
+		}
+		.ws-scrubber-fill {
+			height: 100%; width: 0%;
+			background: linear-gradient(90deg, #b4dc64, #e6f578);
+			border-radius: 999px; transition: width 0.1s linear;
+		}
+		.ws-time {
+			font-size: 11px; color: rgba(215, 230, 190, 0.65);
+			font-variant-numeric: tabular-nums; white-space: nowrap;
+		}
+		.ws-speed-pill {
+			padding: 5px 11px; border-radius: 999px;
+			border: 1px solid rgba(180, 220, 100, 0.24);
+			background: rgba(20, 28, 12, 0.7);
+			color: rgba(230, 245, 150, 0.9);
+			font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase; font-weight: 600;
+			transition: border-color 0.2s, background 0.2s;
+		}
+		.ws-speed-pill:hover { border-color: #e6f578; background: rgba(230, 245, 120, 0.14); }
+
+		/* Right Column Summary */
+		.ws-summary {
+			display: flex; flex-direction: column; gap: 20px;
+			padding-top: 4px;
+		}
+		.ws-cat-pill {
+			align-self: flex-start;
+			display: inline-flex; align-items: center; gap: 8px;
+			padding: 6px 14px; border-radius: 999px;
+			background: rgba(180, 220, 100, 0.08);
+			border: 1px solid rgba(180, 220, 100, 0.24);
+			font-size: 10px; letter-spacing: 2.2px; text-transform: uppercase;
+			color: #e6f578; font-weight: 500;
+		}
+		.ws-title {
+			font-family: 'Playfair Display', serif;
+			font-size: clamp(32px, 4.2vw, 52px);
+			font-weight: 400; line-height: 1.06;
+			color: rgba(248, 252, 240, 0.98);
+			letter-spacing: -0.5px;
+		}
+		.ws-subtitle {
+			font-size: 14px; font-weight: 500;
+			color: rgba(230, 245, 140, 0.82);
+			margin-top: -8px;
+		}
+		.ws-desc {
+			font-size: 14.5px; line-height: 1.75;
+			color: rgba(215, 230, 195, 0.78); font-weight: 300;
+		}
+
+		.ws-actions {
+			display: flex; flex-wrap: wrap; align-items: center; gap: 12px;
+			margin-top: 4px;
+		}
+		.ws-preview-btn {
+			display: inline-flex; align-items: center; gap: 10px;
+			padding: 13px 24px; border-radius: 999px;
+			background: linear-gradient(135deg, #e6f578, #b4dc64);
+			color: #070a04;
+			font-size: 12px; letter-spacing: 1.8px; text-transform: uppercase; font-weight: 700;
+			box-shadow: 0 8px 26px rgba(180, 220, 100, 0.24);
+			transition: transform 0.25s ease, box-shadow 0.25s ease;
+		}
+		.ws-preview-btn:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 12px 32px rgba(230, 245, 120, 0.35);
+		}
+		.ws-ext-btn {
+			display: inline-flex; align-items: center; gap: 8px;
+			padding: 12px 18px; border-radius: 999px;
+			border: 1px solid rgba(230, 245, 120, 0.35);
+			background: rgba(16, 22, 11, 0.75);
+			color: rgba(235, 248, 175, 0.95);
+			font-size: 11px; letter-spacing: 1.6px; text-transform: uppercase; font-weight: 600;
+			transition: border-color 0.25s, background 0.25s, transform 0.25s;
+		}
+		.ws-ext-btn:hover {
+			border-color: #e6f578;
+			background: rgba(230, 245, 120, 0.12);
+			transform: translateY(-1px);
+		}
+		.ws-cta-link {
+			display: inline-flex; align-items: center; gap: 8px;
+			padding: 12px 20px; border-radius: 999px;
+			border: 1px solid rgba(180, 220, 100, 0.24);
+			color: rgba(225, 238, 200, 0.85);
+			font-size: 11px; letter-spacing: 1.8px; text-transform: uppercase; font-weight: 500;
+			transition: border-color 0.25s, color 0.25s;
+		}
+		.ws-cta-link:hover { border-color: rgba(230, 245, 120, 0.6); color: #e6f578; }
+
+		/* Metrics Row */
+		.ws-specs {
+			display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 12px; margin-top: 6px;
+		}
+		.ws-spec-card {
+			padding: 14px 16px; border-radius: 12px;
+			background: rgba(18, 24, 11, 0.55);
+			border: 1px solid rgba(140, 180, 120, 0.14);
+		}
+		.ws-spec-label {
+			font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+			color: rgba(210, 230, 160, 0.5); margin-bottom: 5px;
+		}
+		.ws-spec-val {
+			font-family: 'Playfair Display', serif;
+			font-size: 19px; color: rgba(248, 252, 240, 0.94);
+		}
+
+		/* Deep-dive sections */
+		.ws-details-grid {
+			display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 20px; margin-bottom: 64px;
+		}
+		.ws-panel {
+			padding: 28px 30px; border-radius: 14px;
+			background: rgba(14, 18, 9, 0.68);
+			border: 1px solid rgba(140, 180, 120, 0.14);
+		}
+		.ws-panel-eyebrow {
+			font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+			color: rgba(210, 230, 160, 0.52); margin-bottom: 10px;
+		}
+		.ws-panel h2 {
+			font-family: 'Playfair Display', serif;
+			font-size: 24px; font-weight: 400; color: rgba(248, 252, 240, 0.95);
+			margin-bottom: 18px;
+		}
+		.ws-highlights { list-style: none; display: flex; flex-direction: column; gap: 13px; }
+		.ws-highlights li {
+			display: flex; align-items: flex-start; gap: 12px;
+			font-size: 14px; line-height: 1.6; color: rgba(220, 232, 200, 0.82);
+			font-weight: 300;
+		}
+		.ws-highlights li svg { flex-shrink: 0; margin-top: 3px; color: #e6f578; }
+
+		.ws-stack-list { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 22px; }
+		.ws-stack-chip {
+			padding: 7px 14px; border-radius: 999px;
+			background: rgba(230, 245, 120, 0.08);
+			border: 1px solid rgba(230, 245, 120, 0.22);
+			font-size: 12px; color: rgba(238, 248, 195, 0.92); font-weight: 500;
+		}
+		.ws-quote-box {
+			padding: 16px 18px; border-radius: 10px;
+			border-left: 2px solid #e6f578;
+			background: rgba(0, 0, 0, 0.35);
+			font-family: 'Playfair Display', serif; font-style: italic;
+			font-size: 17px; line-height: 1.5; color: rgba(245, 250, 235, 0.88);
+		}
+
+		/* More websites */
+		.ws-more-head {
+			display: flex; align-items: flex-end; justify-content: space-between;
+			gap: 16px; margin-bottom: 22px;
+		}
+		.ws-more-head h2 {
+			font-family: 'Playfair Display', serif;
+			font-size: clamp(24px, 3vw, 32px); font-weight: 400; color: rgba(248, 252, 240, 0.95);
+		}
+		.ws-more-head a {
+			font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+			color: #e6f578;
+		}
+		.ws-more-grid {
+			display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+			gap: 16px;
+		}
+		.ws-more-card {
+			display: flex; flex-direction: column;
+			border-radius: 12px; overflow: hidden;
+			background: #0a0d07;
+			border: 1px solid rgba(180, 220, 100, 0.14);
+			transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+		}
+		.ws-more-card:hover {
+			transform: translateY(-4px);
+			border-color: rgba(230, 245, 120, 0.45);
+			box-shadow: 0 16px 36px rgba(0, 0, 0, 0.7);
+		}
+		.ws-more-thumb { aspect-ratio: 16 / 10; overflow: hidden; background: #050603; }
+		.ws-more-thumb img {
+			width: 100%; height: 100%; object-fit: cover; display: block;
+			transition: transform 0.4s ease;
+		}
+		.ws-more-card:hover .ws-more-thumb img { transform: scale(1.04); }
+		.ws-more-body { padding: 14px 16px; }
+		.ws-more-title {
+			font-family: 'Playfair Display', serif; font-size: 18px;
+			color: rgba(248, 252, 240, 0.95); margin-bottom: 4px;
+		}
+		.ws-more-cat { font-size: 11px; color: rgba(215, 230, 190, 0.65); }
+
+		/* Live Preview Studio Modal */
+		.lp-modal {
+			position: fixed; inset: 0; z-index: 1200;
+			background: rgba(3, 5, 2, 0.94);
+			backdrop-filter: blur(14px);
+			display: none; flex-direction: column;
+			padding: 16px 20px 20px;
+		}
+		.lp-modal.open { display: flex; animation: pageFade 0.25s ease; }
+		.lp-toolbar {
+			display: flex; align-items: center; justify-content: space-between; gap: 14px;
+			padding: 10px 16px; border-radius: 12px;
+			background: #0b0f08; border: 1px solid rgba(180, 220, 100, 0.22);
+			margin-bottom: 14px; flex-wrap: wrap;
+		}
+		.lp-title-group { display: flex; align-items: center; gap: 10px; }
+		.lp-title {
+			font-family: 'Playfair Display', serif; font-size: 18px;
+			color: rgba(248, 252, 240, 0.95);
+		}
+		.lp-status {
+			display: inline-flex; align-items: center; gap: 6px;
+			padding: 4px 10px; border-radius: 999px;
+			background: rgba(230, 245, 120, 0.1);
+			border: 1px solid rgba(230, 245, 120, 0.28);
+			font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase;
+			color: #e6f578; font-weight: 600;
+		}
+		.lp-devices {
+			display: inline-flex; gap: 4px; padding: 3px; border-radius: 999px;
+			background: rgba(0, 0, 0, 0.45);
+			border: 1px solid rgba(140, 180, 120, 0.18);
+		}
+		.lp-dev-btn {
+			display: inline-flex; align-items: center; gap: 6px;
+			padding: 6px 12px; border-radius: 999px;
+			font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase;
+			color: rgba(215, 230, 190, 0.65); font-weight: 600;
+			transition: background 0.2s, color 0.2s;
+		}
+		.lp-dev-btn.active {
+			background: linear-gradient(135deg, #e6f578, #b4dc64);
+			color: #060803;
+		}
+		.lp-right-actions { display: flex; align-items: center; gap: 8px; }
+		.lp-mode-btn {
+			padding: 6px 12px; border-radius: 999px;
+			border: 1px solid rgba(180, 220, 100, 0.24);
+			color: rgba(230, 245, 160, 0.9);
+			font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; font-weight: 600;
+		}
+		.lp-mode-btn:hover { border-color: #e6f578; color: #e6f578; }
+		.lp-close {
+			width: 34px; height: 34px; border-radius: 50%;
+			border: 1px solid rgba(180, 220, 100, 0.25);
+			color: #fff; font-size: 18px; line-height: 1;
+			display: inline-flex; align-items: center; justify-content: center;
+			transition: border-color 0.2s, color 0.2s;
+		}
+		.lp-close:hover { border-color: #e6f578; color: #e6f578; }
+
+		.lp-viewport-wrap {
+			flex: 1; min-height: 0;
+			display: flex; align-items: center; justify-content: center;
+			overflow: hidden;
+		}
+		.lp-frame-shell {
+			width: 100%; height: 100%; max-width: 100%;
+			background: #0a0d07;
+			border: 1px solid rgba(180, 220, 100, 0.24);
+			border-radius: 14px; overflow: hidden;
+			display: flex; flex-direction: column;
+			transition: width 0.35s cubic-bezier(0.22, 1, 0.36, 1), max-width 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+			box-shadow: 0 24px 80px rgba(0, 0, 0, 0.85);
+		}
+		.lp-frame-shell[data-device="tablet"] { width: 780px; }
+		.lp-frame-shell[data-device="mobile"] { width: 396px; }
+		.lp-stage {
+			position: relative; flex: 1; min-height: 0; background: #000;
+		}
+		.lp-stage iframe, .lp-stage video {
+			width: 100%; height: 100%; border: 0; display: block;
+		}
+		.lp-stage video { object-fit: contain; background: #050703; }
+		.lp-interactive-bar {
+			display: flex; align-items: center; justify-content: space-between; gap: 12px;
+			padding: 10px 16px;
+			background: #0b0e08; border-top: 1px solid rgba(140, 180, 120, 0.14);
+			flex-wrap: wrap;
+		}
+		.lp-jumps { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+		.lp-jump-btn {
+			padding: 5px 11px; border-radius: 999px;
+			border: 1px solid rgba(180, 220, 100, 0.2);
+			color: rgba(220, 235, 195, 0.85);
+			font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase;
+		}
+		.lp-jump-btn:hover { border-color: #e6f578; color: #e6f578; }
+		.lp-range { flex: 1; min-width: 140px; accent-color: #e6f578; cursor: pointer; }
+
+		@media (max-width: 1024px) {
+			.ws-hero { grid-template-columns: 1fr; gap: 28px; }
+			.ws-more-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+		}
+		@media (max-width: 768px) {
+			.nav-float { padding: 18px 20px; }
+			.nav-links { display: none; }
+			.nav-hamburger { display: flex; }
+			.nav-mobile-overlay { display: flex; }
+			.ws-page { padding: 86px 20px 60px; }
+			.ws-details-grid { grid-template-columns: 1fr; }
+			.ws-panel { padding: 22px 20px; }
+			.ws-browser-bar { padding: 10px 12px; }
+			.ws-url-bar { display: none; }
+			.ws-controls { flex-wrap: wrap; row-gap: 10px; padding: 10px 12px; }
+			.ws-scrubber { order: 3; flex: 1 1 100%; height: 6px; }
+			.ws-more-grid { grid-template-columns: 1fr; }
+		}
+	</style>
+</head>
+<body>
+	<div class="bg-ambient"></div>
+
+	<nav class="nav-float">
+		<a href="index.html" class="nav-logo">REVOLVYN</a>
+		<div class="nav-links">
+			<a href="index.html#about">About Us</a>
+			<a href="portfolio.html" class="active">Portfolio</a>
+			<a href="brands.html">Brands</a>
+			<a href="services.html">Services</a>
+			<a href="contact.html">Contact Us</a>
+		</div>
+		<button class="nav-hamburger" id="navHamburger" aria-label="Menu">
+			<span></span><span></span><span></span>
+		</button>
+	</nav>
+
+	<div class="nav-mobile-overlay" id="navMobile">
+		<a href="index.html#about">About Us</a>
+		<a href="portfolio.html" class="active">Portfolio</a>
+		<a href="brands.html">Brands</a>
+		<a href="services.html">Services</a>
+		<a href="contact.html">Contact Us</a>
+	</div>
+
+	<main class="ws-page" id="wsMain">
+		<div class="ws-topbar">
+			<a href="portfolio.html?tab=websites" class="ws-back-link">
+				<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+				<span>Back to Websites</span>
+			</a>
+			<div class="ws-pager">
+				<span class="ws-index-badge" id="wsCounter">01 / 19</span>
+				<a href="#" class="ws-nav-pill" id="wsPrevLink" aria-label="Previous website showcase">&#8592; Prev</a>
+				<a href="#" class="ws-nav-pill" id="wsNextLink" aria-label="Next website showcase">Next &#8594;</a>
+			</div>
+		</div>
+
+		<section class="ws-hero">
+			<div class="ws-browser">
+				<div class="ws-browser-bar">
+					<div class="ws-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+					<div class="ws-url-bar">
+						<span class="ws-url-dot"></span>
+						<span id="wsUrlText">revolvyn.studio/showcase</span>
+					</div>
+					<button type="button" class="ws-chrome-preview-btn" id="wsChromePreviewBtn" aria-label="Open live preview">
+						<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/><polygon points="10 7 15 10 10 13 10 7" fill="currentColor" stroke="none"/></svg>
+						<span>Live Preview</span>
+					</button>
+				</div>
+
+				<div class="ws-stage">
+					<video id="wsHeroVideo" muted loop playsinline autoplay preload="metadata"></video>
+				</div>
+
+				<div class="ws-controls">
+					<div class="ws-ctrl-left">
+						<button type="button" class="ws-icon-btn" id="wsPlayBtn" aria-label="Play or pause showcase video">
+							<svg id="wsPlayIcon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>
+						</button>
+						<span class="ws-time" id="wsTimeLabel">0:00 / 0:00</span>
+					</div>
+					<div class="ws-scrubber" id="wsScrubber" role="slider" aria-label="Showcase progress">
+						<div class="ws-scrubber-fill" id="wsScrubberFill"></div>
+					</div>
+					<div class="ws-ctrl-right">
+						<button type="button" class="ws-speed-pill" id="wsSpeedBtn" title="Cycle playback speed">Speed: Adaptive</button>
+						<button type="button" class="ws-icon-btn" id="wsFullscreenBtn" aria-label="Toggle fullscreen preview">
+							<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+						</button>
+					</div>
+				</div>
+			</div>
+
+			<div class="ws-summary">
+				<span class="ws-cat-pill" id="wsCategory">Web Experience</span>
+				<h1 class="ws-title" id="wsTitle">Website Title</h1>
+				<p class="ws-subtitle" id="wsFullTitle"></p>
+				<p class="ws-desc" id="wsDesc"></p>
+
+				<div class="ws-actions">
+					<button type="button" class="ws-preview-btn" id="livePreviewBtn">
+						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3.6 9h16.8"/><path d="M3.6 15h16.8"/><path d="M12 3a14 14 0 0 1 0 18"/><path d="M12 3a14 14 0 0 0 0 18"/></svg>
+						<span>Live Preview</span>
+					</button>
+					<a href="#" target="_blank" rel="noopener" class="ws-ext-btn" id="wsExternalLink" style="display:none;">
+						<span>Open Site</span>
+						<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+					</a>
+					<a href="contact.html" class="ws-cta-link">Build Similar Site &#8594;</a>
+				</div>
+
+				<div class="ws-specs">
+					<div class="ws-spec-card">
+						<div class="ws-spec-label">Scroll Depth</div>
+						<div class="ws-spec-val" id="wsSpecDepth">-</div>
+					</div>
+					<div class="ws-spec-card">
+						<div class="ws-spec-label">Showcase Length</div>
+						<div class="ws-spec-val" id="wsSpecDuration">-</div>
+					</div>
+					<div class="ws-spec-card">
+						<div class="ws-spec-label">Core Engine</div>
+						<div class="ws-spec-val" id="wsSpecEngine">Next.js</div>
+					</div>
+					<div class="ws-spec-card">
+						<div class="ws-spec-label">Preview Status</div>
+						<div class="ws-spec-val" id="wsSpecPreview">Interactive</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<section class="ws-details-grid">
+			<article class="ws-panel">
+				<div class="ws-panel-eyebrow">Experience Architecture</div>
+				<h2>What Makes It Convert</h2>
+				<ul class="ws-highlights" id="wsHighlights"></ul>
+			</article>
+
+			<article class="ws-panel">
+				<div class="ws-panel-eyebrow">Engineering &amp; Motion</div>
+				<h2>Technology Stack</h2>
+				<div class="ws-stack-list" id="wsStack"></div>
+				<blockquote class="ws-quote-box" id="wsTagline"></blockquote>
+			</article>
+		</section>
+
+		<section class="ws-more">
+			<div class="ws-more-head">
+				<div>
+					<div class="ws-panel-eyebrow">More From Our Studio</div>
+					<h2>Explore Other Websites</h2>
+				</div>
+				<a href="portfolio.html?tab=websites">View All 19 Websites &#8594;</a>
+			</div>
+			<div class="ws-more-grid" id="wsMoreGrid"></div>
+		</section>
+	</main>
+
+	<!-- Live Preview Studio Modal -->
+	<div class="lp-modal" id="lpModal" role="dialog" aria-modal="true" aria-labelledby="lpTitle">
+		<div class="lp-toolbar">
+			<div class="lp-title-group">
+				<span class="lp-title" id="lpTitle">Live Preview</span>
+				<span class="lp-status" id="lpStatusBadge">Live Preview</span>
+			</div>
+
+			<div class="lp-devices" role="group" aria-label="Viewport device size">
+				<button type="button" class="lp-dev-btn active" data-device="desktop">
+					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg>
+					Desktop
+				</button>
+				<button type="button" class="lp-dev-btn" data-device="tablet">
+					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+					Tablet
+				</button>
+				<button type="button" class="lp-dev-btn" data-device="mobile">
+					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+					Mobile
+				</button>
+			</div>
+
+			<div class="lp-right-actions">
+				<button type="button" class="lp-mode-btn" id="lpModeToggle" style="display:none;">Switch to Scroll View</button>
+				<a href="#" target="_blank" rel="noopener" class="lp-mode-btn" id="lpExternalBtn" style="display:none;">Open Live ↗</a>
+				<button type="button" class="lp-close" id="lpCloseBtn" aria-label="Close live preview">&times;</button>
+			</div>
+		</div>
+
+		<div class="lp-viewport-wrap">
+			<div class="lp-frame-shell" id="lpFrameShell" data-device="desktop">
+				<div class="lp-stage" id="lpStage"></div>
+				<div class="lp-interactive-bar" id="lpInteractiveBar">
+					<div class="lp-jumps">
+						<button type="button" class="lp-jump-btn" data-pct="0">Hero</button>
+						<button type="button" class="lp-jump-btn" data-pct="0.33">Features</button>
+						<button type="button" class="lp-jump-btn" data-pct="0.66">Showcase</button>
+						<button type="button" class="lp-jump-btn" data-pct="0.92">Footer</button>
+					</div>
+					<input type="range" min="0" max="1000" value="0" class="lp-range" id="lpScrubRange" aria-label="Scrub live preview scroll position" />
+					<button type="button" class="lp-jump-btn" id="lpPlayToggle">Pause</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<footer class="site-footer">
+		<div class="site-footer-inner">
+			<div class="sf-brand">
+				<div class="sf-brand-name">REVOLVYN</div>
+				<p class="sf-brand-desc">From bold ideas to meaningful experiences, we turn creativity into impact.</p>
+			</div>
+			<div class="sf-col">
+				<div class="sf-col-title">Explore</div>
+				<a href="index.html">About Us</a>
+				<a href="portfolio.html">Portfolio</a>
+				<a href="brands.html">Brands</a>
+				<a href="services.html">Services</a>
+			</div>
+			<div class="sf-col">
+				<div class="sf-col-title">Resources</div>
+				<a href="privacy.html">Privacy Policy</a>
+				<a href="refund.html">Refund Policy</a>
+				<a href="blog.html">Blog</a>
+				<a href="research.html">Research</a>
+				<a href="community.html">Community</a>
+			</div>
+			<div class="sf-col">
+				<div class="sf-col-title">Connect</div>
+				<a href="contact.html">Contact</a>
+				<a href="newsletter.html">Newsletter</a>
+				<a href="partnerships.html">Partnerships</a>
+				<a href="careers.html">Careers</a>
+			</div>
+		</div>
+		<div class="sf-bottom">
+			<span class="sf-copy">&copy; 2026 REVOLVYN. All futures reserved.</span>
+			<div class="sf-socials">
+				<a href="https://www.instagram.com/revolvynmedia?igsi=bmFlaHFyMG92eDNk" target="_blank" rel="noopener">Instagram</a>
+				<a href="https://www.facebook.com/share/1F5rfL4tPS/?mibextid=LQQJ4d" target="_blank" rel="noopener">Facebook</a>
+				<a href="https://www.youtube.com/@REVOLVYNMEDIA" target="_blank" rel="noopener">YouTube</a>
+			</div>
+		</div>
+	</footer>
+
+	<script src="portfolio/websites/catalog.js"></script>
+	<script>
+		// Hamburger mobile nav
+		const ham = document.getElementById('navHamburger');
+		const mob = document.getElementById('navMobile');
+		ham.addEventListener('click', () => {
+			ham.classList.toggle('open');
+			mob.classList.toggle('open');
+		});
+		mob.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+			ham.classList.remove('open');
+			mob.classList.remove('open');
+		}));
+
+		const sites = window.REVOLVYN_WEBSITES || [];
+		const params = new URLSearchParams(window.location.search);
+		const reqSlug = params.get('slug') || (sites[0] && sites[0].slug);
+		let currentIndex = sites.findIndex(s => s.slug === reqSlug);
+		if (currentIndex < 0) currentIndex = 0;
+		const site = sites[currentIndex];
+
+		function fmtTime(sec) {
+			const s = Math.max(0, Math.floor(sec || 0));
+			return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+		}
+
+		// Populate detailed page
+		if (site) {
+			document.title = `${site.title} — Website Showcase | REVOLVYN`;
+			document.getElementById('wsCounter').textContent = `${String(currentIndex + 1).padStart(2, '0')} / ${sites.length}`;
+
+			const prevIdx = (currentIndex - 1 + sites.length) % sites.length;
+			const nextIdx = (currentIndex + 1) % sites.length;
+			document.getElementById('wsPrevLink').href = `website.html?slug=${sites[prevIdx].slug}`;
+			document.getElementById('wsNextLink').href = `website.html?slug=${sites[nextIdx].slug}`;
+
+			document.getElementById('wsUrlText').textContent = site.liveUrl
+				? site.liveUrl.replace(/^https?:\/\//, '')
+				: `showcase.revolvyn.studio/${site.slug}`;
+			document.getElementById('wsCategory').textContent = site.category;
+			document.getElementById('wsTitle').textContent = site.title;
+			document.getElementById('wsFullTitle').textContent = site.fullTitle;
+			document.getElementById('wsDesc').textContent = site.description;
+			document.getElementById('wsTagline').textContent = `"${site.tagline}"`;
+			document.getElementById('wsSpecDepth').textContent = `${Number(site.scrollHeight || 0).toLocaleString()} px`;
+			document.getElementById('wsSpecDuration').textContent = `${site.durationSec}s Loop`;
+			document.getElementById('wsSpecEngine').textContent = (site.stack && site.stack[0]) || 'Next.js';
+			document.getElementById('wsSpecPreview').textContent = site.liveUrl ? 'Live URL Ready' : 'Interactive';
+
+			if (site.liveUrl) {
+				const extLink = document.getElementById('wsExternalLink');
+				extLink.href = site.liveUrl;
+				extLink.style.display = 'inline-flex';
+			}
+
+			// Highlights list
+			const hlEl = document.getElementById('wsHighlights');
+			(site.highlights || []).forEach(item => {
+				const li = document.createElement('li');
+				li.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span></span>`;
+				li.querySelector('span').textContent = item;
+				hlEl.appendChild(li);
+			});
+
+			// Stack pills
+			const stackEl = document.getElementById('wsStack');
+			(site.stack || []).forEach(tech => {
+				const span = document.createElement('span');
+				span.className = 'ws-stack-chip';
+				span.textContent = tech;
+				stackEl.appendChild(span);
+			});
+
+			// Hero showcase video player
+			const heroVideo = document.getElementById('wsHeroVideo');
+			heroVideo.poster = site.thumb;
+			heroVideo.src = site.video;
+
+			let speedMode = 'adaptive';
+			const speedLabels = { 'adaptive': 'Speed: Adaptive', 'fixed-slow': 'Speed: 0.28x', 'fixed-normal': 'Speed: 1.0x' };
+			const speedOrder = ['adaptive', 'fixed-slow', 'fixed-normal'];
+			window.bindWebsiteSpeed(heroVideo, () => speedMode);
+
+			const playBtn = document.getElementById('wsPlayBtn');
+			const playIcon = document.getElementById('wsPlayIcon');
+			const timeLabel = document.getElementById('wsTimeLabel');
+			const scrubber = document.getElementById('wsScrubber');
+			const scrubberFill = document.getElementById('wsScrubberFill');
+			const speedBtn = document.getElementById('wsSpeedBtn');
+
+			function syncPlayIcon() {
+				playIcon.innerHTML = heroVideo.paused
+					? '<path d="M8 5v14l11-7z"/>'
+					: '<path d="M6 5h4v14H6zm8 0h4v14h-4z"/>';
+			}
+			playBtn.addEventListener('click', () => {
+				if (heroVideo.paused) heroVideo.play().catch(() => {});
+				else heroVideo.pause();
+			});
+			heroVideo.addEventListener('play', syncPlayIcon);
+			heroVideo.addEventListener('pause', syncPlayIcon);
+			heroVideo.addEventListener('timeupdate', () => {
+				const dur = heroVideo.duration || site.durationSec || 1;
+				const pct = Math.min(100, (heroVideo.currentTime / dur) * 100);
+				scrubberFill.style.width = `${pct}%`;
+				timeLabel.textContent = `${fmtTime(heroVideo.currentTime)} / ${fmtTime(dur)}`;
+			});
+			scrubber.addEventListener('click', (e) => {
+				const rect = scrubber.getBoundingClientRect();
+				const ratio = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
+				if (heroVideo.duration) heroVideo.currentTime = ratio * heroVideo.duration;
+			});
+			speedBtn.addEventListener('click', () => {
+				speedMode = speedOrder[(speedOrder.indexOf(speedMode) + 1) % speedOrder.length];
+				speedBtn.textContent = speedLabels[speedMode];
+				if (heroVideo.__applyWebsiteSpeed) heroVideo.__applyWebsiteSpeed();
+			});
+			document.getElementById('wsFullscreenBtn').addEventListener('click', () => {
+				const target = document.querySelector('.ws-browser');
+				if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+				else if (target.requestFullscreen) target.requestFullscreen().catch(() => {});
+			});
+			heroVideo.play().catch(() => {});
+
+			// Related 4 cards
+			const moreGrid = document.getElementById('wsMoreGrid');
+			for (let offset = 1; offset <= 4; offset++) {
+				const item = sites[(currentIndex + offset) % sites.length];
+				const card = document.createElement('a');
+				card.className = 'ws-more-card';
+				card.href = `website.html?slug=${item.slug}`;
+				card.innerHTML = `
+					<div class="ws-more-thumb"><img src="${item.thumb}" alt="${item.title} preview" loading="lazy"></div>
+					<div class="ws-more-body">
+						<div class="ws-more-title"></div>
+						<div class="ws-more-cat"></div>
+					</div>
+				`;
+				card.querySelector('.ws-more-title').textContent = item.title;
+				card.querySelector('.ws-more-cat').textContent = item.category;
+				moreGrid.appendChild(card);
+			}
+		}
+
+		// Live Preview Studio Overlay
+		const lpModal = document.getElementById('lpModal');
+		const lpStage = document.getElementById('lpStage');
+		const lpFrameShell = document.getElementById('lpFrameShell');
+		const lpInteractiveBar = document.getElementById('lpInteractiveBar');
+		const lpModeToggle = document.getElementById('lpModeToggle');
+		const lpExternalBtn = document.getElementById('lpExternalBtn');
+		const lpStatusBadge = document.getElementById('lpStatusBadge');
+		const lpScrubRange = document.getElementById('lpScrubRange');
+		const lpPlayToggle = document.getElementById('lpPlayToggle');
+		let lpVideo = null;
+		let lpMode = 'scroll'; // 'iframe' | 'scroll'
+
+		function renderPreviewStage(mode) {
+			lpMode = mode;
+			lpStage.innerHTML = '';
+			lpVideo = null;
+
+			if (mode === 'iframe' && site && site.liveUrl) {
+				lpStatusBadge.textContent = 'Live Hosted Site';
+				lpModeToggle.textContent = 'Switch to Scroll Preview';
+				lpInteractiveBar.style.display = 'none';
+				const iframe = document.createElement('iframe');
+				iframe.src = site.liveUrl;
+				iframe.title = `${site.title} Live Website Preview`;
+				iframe.loading = 'eager';
+				iframe.referrerPolicy = 'no-referrer';
+				lpStage.appendChild(iframe);
+			} else if (site) {
+				lpStatusBadge.textContent = 'Interactive Preview';
+				if (site.liveUrl) lpModeToggle.textContent = 'Switch to Live URL';
+				lpInteractiveBar.style.display = 'flex';
+				const vid = document.createElement('video');
+				vid.muted = true;
+				vid.loop = true;
+				vid.playsInline = true;
+				vid.autoplay = true;
+				vid.poster = site.thumb;
+				vid.src = site.video;
+				window.bindWebsiteSpeed(vid, () => 'adaptive');
+				vid.addEventListener('timeupdate', () => {
+					if (vid.duration) lpScrubRange.value = String(Math.round((vid.currentTime / vid.duration) * 1000));
+				});
+				vid.play().catch(() => {});
+				lpVideo = vid;
+				lpPlayToggle.textContent = 'Pause';
+				lpStage.appendChild(vid);
+			}
+		}
+
+		function openLivePreview() {
+			if (!site) return;
+			document.getElementById('lpTitle').textContent = site.fullTitle;
+			if (site.liveUrl) {
+				lpExternalBtn.href = site.liveUrl;
+				lpExternalBtn.style.display = 'inline-flex';
+				lpModeToggle.style.display = 'inline-flex';
+				renderPreviewStage('iframe');
+			} else {
+				lpExternalBtn.style.display = 'none';
+				lpModeToggle.style.display = 'none';
+				renderPreviewStage('scroll');
+			}
+			lpModal.classList.add('open');
+			document.body.style.overflow = 'hidden';
+		}
+
+		function closeLivePreview() {
+			if (lpVideo) lpVideo.pause();
+			lpStage.innerHTML = '';
+			lpModal.classList.remove('open');
+			document.body.style.overflow = '';
+		}
+
+		document.getElementById('livePreviewBtn').addEventListener('click', openLivePreview);
+		document.getElementById('wsChromePreviewBtn').addEventListener('click', openLivePreview);
+		document.getElementById('lpCloseBtn').addEventListener('click', closeLivePreview);
+		lpModal.addEventListener('click', (e) => { if (e.target === lpModal) closeLivePreview(); });
+		document.addEventListener('keydown', (e) => {
+			if (e.key === 'Escape' && lpModal.classList.contains('open')) closeLivePreview();
+		});
+
+		lpModeToggle.addEventListener('click', () => {
+			renderPreviewStage(lpMode === 'iframe' ? 'scroll' : 'iframe');
+		});
+
+		document.querySelectorAll('.lp-dev-btn').forEach(btn => {
+			btn.addEventListener('click', () => {
+				document.querySelectorAll('.lp-dev-btn').forEach(b => b.classList.remove('active'));
+				btn.classList.add('active');
+				lpFrameShell.setAttribute('data-device', btn.dataset.device);
+			});
+		});
+
+		document.querySelectorAll('.lp-jump-btn[data-pct]').forEach(btn => {
+			btn.addEventListener('click', () => {
+				if (!lpVideo || !lpVideo.duration) return;
+				const pct = parseFloat(btn.dataset.pct) || 0;
+				lpVideo.currentTime = pct * lpVideo.duration;
+			});
+		});
+
+		lpScrubRange.addEventListener('input', () => {
+			if (!lpVideo || !lpVideo.duration) return;
+			lpVideo.currentTime = (Number(lpScrubRange.value) / 1000) * lpVideo.duration;
+		});
+
+		lpPlayToggle.addEventListener('click', () => {
+			if (!lpVideo) return;
+			if (lpVideo.paused) {
+				lpVideo.play().catch(() => {});
+				lpPlayToggle.textContent = 'Pause';
+			} else {
+				lpVideo.pause();
+				lpPlayToggle.textContent = 'Play';
+			}
+		});
+
+		if (params.get('preview') === '1' && site) {
+			openLivePreview();
+		}
+	</script>
+	<script src="js/cms-content.js" defer></script>
+</body>
+</html>

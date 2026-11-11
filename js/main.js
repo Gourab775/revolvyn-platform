@@ -3,11 +3,15 @@ import { initScrollSync, updateScroll, updateProgressbar, updateScrollHint, upda
 import { initNavigation } from './navigation.js';
 import { initVideos } from './videos.js';
 
-// --- Loader fallback: never trap users behind 3D boot ---
+// --- Loader integration: let percentage counter reach 100% once home page loads ---
 let loaderHidden = false;
 function hideLoader() {
 	if (loaderHidden) return;
 	loaderHidden = true;
+	if (window.__rvLoader && typeof window.__rvLoader.done === 'function') {
+		window.__rvLoader.done();
+		return;
+	}
 	const loadingScreen = document.getElementById('loadingScreen');
 	if (loadingScreen) {
 		loadingScreen.style.opacity = '0';
@@ -15,10 +19,10 @@ function hideLoader() {
 		setTimeout(() => loadingScreen.remove(), 600);
 	}
 }
-// Content-first: reveal on window load even if WebGPU is still booting.
-window.addEventListener('load', hideLoader);
-// Hard fallback: reveal after timeout no matter what.
-const LOADER_TIMEOUT_MS = 5000;
+if (window.__rvLoader && typeof window.__rvLoader.setTarget === 'function') {
+	window.__rvLoader.setTarget(68);
+}
+const LOADER_TIMEOUT_MS = 6500;
 setTimeout(hideLoader, LOADER_TIMEOUT_MS);
 
 // --- Independent UI (works with or without 3D) ---

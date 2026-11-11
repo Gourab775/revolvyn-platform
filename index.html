@@ -139,15 +139,116 @@ p,h1,h2,h3,h4,li,blockquote,.stat-number,.brand-card-name{-webkit-user-select:te
 	<noscript><div class="noscript-list"><h2>REVOLVYN — Digital Marketing, Influencer &amp; Video Ads Agency</h2><p>We help brands get more customers with high-converting Meta ads, influencer campaigns, SEO websites, content production and cinematic brand films. 110+ creators, 320+ brands, 4,500+ ads.</p><p><a href="services.html">Services</a> · <a href="portfolio.html">Portfolio</a> · <a href="brands.html">Brands</a> · <a href="contact.html">Book free consultation</a></p></div></noscript>
 	<a class="skip-link" href="#scroll-container">Skip to content</a>
 	<!-- Loading Screen -->
-	<div id="loadingScreen">
+	<style>
+		#loadingScreen{position:fixed;inset:0;z-index:99999;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center}
+		#loadingScreen .loading-brand{opacity:1!important;transform:none!important;animation:none!important}
+	</style>
+	<div id="loadingScreen" aria-live="polite" style="background:#000">
 		<div class="loading-inner">
 			<div class="loading-brand">REVOLVYN</div>
+			<div class="loading-percent" id="loadingPercent">0%</div>
 			<div class="loading-bar-track">
-				<div class="loading-bar-sweep"></div>
+				<div class="loading-bar-fill" id="loadingBarFill"></div>
 			</div>
-			<div class="loading-label">Loading Experience</div>
+			<div class="loading-label" id="loadingLabel">Loading Experience</div>
 		</div>
 	</div>
+	<script>
+	(function () {
+		var screenEl = document.getElementById('loadingScreen');
+		var pctEl = document.getElementById('loadingPercent');
+		var barEl = document.getElementById('loadingBarFill');
+		if (!screenEl || !pctEl || !barEl) return;
+
+		var shown = 0;
+		var target = 24;
+		var pageLoaded = document.readyState === 'complete';
+		var sceneDone = false;
+		var finishing = false;
+		var dismissed = false;
+
+		function render(val) {
+			var v = Math.min(100, Math.max(0, Math.round(val)));
+			pctEl.textContent = v + '%';
+			barEl.style.width = v + '%';
+		}
+
+		function setTarget(next) {
+			if (next > target) target = Math.min(100, next);
+		}
+
+		function dismiss() {
+			if (dismissed) return;
+			dismissed = true;
+			render(100);
+			screenEl.style.opacity = '0';
+			screenEl.style.visibility = 'hidden';
+			setTimeout(function () { if (screenEl.parentNode) screenEl.remove(); }, 650);
+		}
+
+		function tryComplete() {
+			if (finishing) return;
+			if (pageLoaded && sceneDone) {
+				finishing = true;
+				setTarget(100);
+			}
+		}
+
+		function tick() {
+			if (dismissed) return;
+			if (!pageLoaded && target < 84) {
+				setTarget(Math.min(84, target + 0.35));
+			}
+			var step = finishing ? Math.max(1.8, (target - shown) * 0.24) : Math.max(0.45, (target - shown) * 0.12);
+			if (shown < target) {
+				shown = Math.min(target, shown + step);
+				render(shown);
+			}
+			if (finishing && Math.round(shown) >= 100) {
+				setTimeout(dismiss, 140);
+				return;
+			}
+			requestAnimationFrame(tick);
+		}
+		requestAnimationFrame(tick);
+
+		document.addEventListener('DOMContentLoaded', function () {
+			setTarget(58);
+			try {
+				if (document.fonts && document.fonts.ready) {
+					document.fonts.ready.then(function () { setTarget(78); });
+				}
+			} catch (e) {}
+		});
+
+		window.addEventListener('load', function () {
+			pageLoaded = true;
+			setTarget(sceneDone ? 100 : 94);
+			tryComplete();
+			setTimeout(function () {
+				sceneDone = true;
+				tryComplete();
+			}, 900);
+		});
+
+		setTimeout(function () {
+			pageLoaded = true;
+			sceneDone = true;
+			finishing = true;
+			setTarget(100);
+			setTimeout(dismiss, 900);
+		}, 8000);
+
+		window.__rvLoader = {
+			setTarget: setTarget,
+			done: function () {
+				sceneDone = true;
+				setTarget(pageLoaded ? 100 : 90);
+				tryComplete();
+			}
+		};
+	})();
+	</script>
 
 	<div class="progress-bar" id="progressBar"></div>
 
@@ -271,37 +372,6 @@ p,h1,h2,h3,h4,li,blockquote,.stat-number,.brand-card-name{-webkit-user-select:te
 			<h2 data-reveal>Step into<br>the <em>Journey</em></h2>
 			<p class="cta-sub" data-reveal data-delay="1">Are you a creator? Join 110+ YouTubers earning with brand deals — email us at <a href="mailto:revolvynmedia@gmail.com">revolvynmedia@gmail.com</a> to collaborate.</p>
 			<a href="contact.html" class="cta-btn" data-reveal data-delay="2">Contact Us</a>
-		</section>
-
-		<section class="section seo-overview" id="services-overview">
-			<div class="seo-inner">
-				<span class="seo-label" data-reveal>What we do</span>
-				<h2 data-reveal data-delay="1">Full-stack growth for brands &amp; creators</h2>
-				<p class="seo-lead" data-reveal data-delay="2">REVOLVYN is a digital marketing agency in India built for the creator economy. One team plans the strategy, shoots the creative, runs the ads and reports the revenue — so brands stop juggling freelancers and start compounding growth. Based in Kolkata, India, we ship for D2C, tech and lifestyle brands across the country and beyond. From a first Meta test to 4,500+ campaigns, our work covers the full funnel: attention, trust and conversion.</p>
-				<div class="seo-grid">
-					<a class="seo-card" href="services.html#growth-consulting" data-reveal><h3>Growth Consulting</h3><p>Positioning, content and paid-media strategy with weekly consultation and competitor intelligence.</p></a>
-					<a class="seo-card" href="services.html#performance-marketing" data-reveal data-delay="1"><h3>Performance Marketing</h3><p>Meta ads, retargeting and full-funnel testing with landing-page and conversion optimization.</p></a>
-					<a class="seo-card" href="services.html#website-seo" data-reveal data-delay="2"><h3>Website + SEO</h3><p>Conversion-focused custom websites with technical SEO, content strategy and analytics.</p></a>
-					<a class="seo-card" href="services.html#content-production" data-reveal><h3>Content Production</h3><p>35–40+ videos a month — scripts, shoots, edits, motion graphics, grading and captions.</p></a>
-					<a class="seo-card" href="services.html#social-media" data-reveal data-delay="1"><h3>Social Media Management</h3><p>Reels, carousels and stories with copywriting, trend research and monthly reporting.</p></a>
-					<a class="seo-card" href="services.html#influencer-marketing" data-reveal data-delay="2"><h3>Influencer Marketing</h3><p>20 creator videos a month from our network of 110+ YouTubers — strategy to coordination.</p></a>
-					<a class="seo-card" href="services.html#ai-content" data-reveal><h3>AI Content</h3><p>AI UGC, product creatives, brand imagery and voiceovers for fast, affordable volume.</p></a>
-					<a class="seo-card" href="services.html#bundle" data-reveal data-delay="1"><h3>Full-Service Bundle</h3><p>Content, social, Meta ads and SEO under one roof with monthly analytics and consultation.</p></a>
-				</div>
-				<div class="seo-faq" id="faq">
-					<h2 data-reveal>Frequently asked questions</h2>
-					<details data-reveal><summary>What services does REVOLVYN offer?</summary><p>Growth consulting, performance (Meta) ads, websites + SEO, content production, social media management, influencer and creator campaigns, AI UGC and product ads, and full-service bundles. Explore all <a href="services.html">growth services</a>.</p></details>
-					<details data-reveal><summary>How much do REVOLVYN's services cost?</summary><p>Pricing depends on scope — ad spend stays separate for performance campaigns. <a href="contact.html">Contact us</a> for a tailored quote after a free 15-minute growth consultation.</p></details>
-					<details data-reveal><summary>How fast will we see results?</summary><p><a href="services.html#performance-marketing">Paid campaigns</a> typically show directional reads in 2–4 weeks of testing; SEO and content compound over 3–6 months. You get weekly reporting throughout.</p></details>
-					<details data-reveal><summary>Who is REVOLVYN best for?</summary><p>D2C, tech, lifestyle and creator-led brands that need scroll-stopping creative plus performance rigor — from the first ad to scaled spend. See the <a href="brands.html">brands we've scaled</a>.</p></details>
-					<details data-reveal><summary>Do you work with creators?</summary><p>Yes — 110+ YouTubers are part of our network. Brands tap them for authentic distribution; creators get brand deals with hands-on coordination. How it runs: <a href="services.html#influencer-marketing">influencer marketing</a>.</p></details>
-					<details data-reveal><summary>How do we start?</summary><p>Fill the <a href="contact.html">contact form</a> or email revolvynmedia@gmail.com. We reply within one business day and book your free consultation.</p></details>
-					<details data-reveal><summary>Where is REVOLVYN located?</summary><p>We are based in Kolkata, India and serve D2C, tech and lifestyle brands across India and beyond. Explore our <a href="services.html">growth services</a> or <a href="contact.html">book a free consultation</a>.</p></details>
-					<details data-reveal><summary>What results can D2C brands expect from Meta ads?</summary><p>Paid campaigns typically show directional reads in 2–4 weeks of creative testing, then scale on winning hooks and audiences. See how we work in <a href="services.html#performance-marketing">performance marketing</a> and proof in our <a href="portfolio.html">portfolio of 4,500+ REVOLVYN ads</a>.</p></details>
-					<details data-reveal><summary>Do you provide SEO and website development together?</summary><p>Yes — conversion-focused custom websites with technical SEO, content strategy and analytics from day one. Details on our <a href="services.html#website-seo">Website + SEO service</a>.</p></details>
-					<details data-reveal><summary>How do influencer and creator campaigns work?</summary><p>We set the strategy, pick creators from 110+ YouTubers, handle scripts, shoots, edits and monthly reviews. How it runs: <a href="services.html#influencer-marketing">influencer marketing</a>.</p></details>
-				</div>
-			</div>
 		</section>
 
 		<section class="section footer" data-stage="6">

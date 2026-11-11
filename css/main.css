@@ -87,35 +87,46 @@ canvas {
 #loadingScreen .loading-brand {
 	font-family: 'Playfair Display', serif;
 	font-size: clamp(28px, 5vw, 42px);
-	color: rgba(248, 252, 240, 0.9);
-	letter-spacing: 4px;
-	margin-bottom: 32px;
+	color: rgba(248, 252, 240, 0.92);
+	letter-spacing: 5px;
+	margin-bottom: 22px;
 	opacity: 0;
-	transform: translateY(20px);
-	animation: loadFadeUp 0.8s ease forwards 0.2s;
+	transform: translateY(16px);
+	animation: loadFadeUp 0.6s ease forwards 0.05s;
+}
+#loadingScreen .loading-percent {
+	font-family: 'Playfair Display', serif;
+	font-variant-numeric: tabular-nums;
+	font-size: clamp(40px, 7vw, 68px);
+	font-weight: 400;
+	line-height: 1;
+	color: #e6f578;
+	letter-spacing: 2px;
+	margin-bottom: 20px;
+	text-shadow: 0 0 28px rgba(230, 245, 120, 0.28);
 }
 #loadingScreen .loading-bar-track {
-	width: 120px;
-	height: 1px;
-	background: rgba(140, 180, 120, 0.1);
-	margin: 0 auto 24px;
+	width: 180px;
+	height: 2px;
+	background: rgba(140, 180, 120, 0.14);
+	border-radius: 2px;
+	margin: 0 auto 18px;
 	position: relative;
 	overflow: hidden;
 }
-#loadingScreen .loading-bar-sweep {
+#loadingScreen .loading-bar-fill {
 	position: absolute;
 	top: 0;
-	left: -100%;
-	width: 100%;
-	height: 100%;
-	background: linear-gradient(90deg, transparent, rgba(230, 245, 120, 0.8), transparent);
-	animation: loadSweep 1.2s ease-in-out infinite;
+	left: 0;
+	bottom: 0;
+	width: 0%;
+	background: linear-gradient(90deg, rgba(180, 220, 100, 0.85), #e6f578);
+	box-shadow: 0 0 14px rgba(230, 245, 120, 0.5);
+	transition: width 0.14s linear;
 }
 #loadingScreen .loading-label {
 	font-size: 10px;
 	letter-spacing: 4px;
 	text-transform: uppercase;
-	color: rgba(210, 230, 160, 0.4);
-	opacity: 0;
-	animation: loadFadeUp 0.8s ease forwards 0.5s;
+	color: rgba(210, 230, 160, 0.52);
 }
