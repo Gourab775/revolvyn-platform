@@ -197,7 +197,8 @@
 			border-radius: 999px;
 			background: linear-gradient(135deg, rgba(230, 245, 120, 0.96), rgba(185, 225, 105, 0.92));
 			box-shadow: 0 4px 16px rgba(230, 245, 120, 0.25);
-			transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+			transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.45s ease;
+			will-change: transform;
 			pointer-events: none;
 		}
 		.work-switch[data-active="websites"] .work-switch-pill {
@@ -212,11 +213,30 @@
 			font-size: 11px; letter-spacing: 2px; text-transform: uppercase; font-weight: 500;
 			color: rgba(215, 230, 190, 0.74);
 			border-radius: 999px; white-space: nowrap;
-			transition: color 0.28s ease;
+			transition: color 0.32s ease, transform 0.2s ease;
 		}
+		.work-switch-btn:active { transform: scale(0.97); }
 		.work-switch-btn:hover { color: rgba(245, 250, 230, 0.95); }
 		.work-switch-btn[aria-selected="true"] {
 			color: #080c05; font-weight: 600;
+		}
+
+		/* Smooth panel switch transition */
+		.work-panel {
+			opacity: 1;
+			transform: translateY(0);
+			transition: opacity 0.34s cubic-bezier(0.22, 1, 0.36, 1),
+						transform 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+			will-change: opacity, transform;
+		}
+		.work-panel.is-leaving {
+			opacity: 0;
+			transform: translateY(10px);
+			pointer-events: none;
+		}
+		.work-panel.is-entering {
+			opacity: 0;
+			transform: translateY(14px);
 		}
 
 		/* Websites showcase grid */
@@ -468,7 +488,7 @@ transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
 			.portfolio-cta { padding: 24px 16px 60px; }
 		}
 		@media (prefers-reduced-motion: reduce) {
-			.collage-item, .website-card, .work-switch-pill { transition: opacity 0.2s; transform: none; }
+			.collage-item, .website-card, .work-switch-pill, .work-panel { transition: opacity 0.2s; transform: none; }
 			.collage-item:hover video, .website-card:hover video { transform: none; }
 			.portfolio-cta a, .work-switch { backdrop-filter: none; }
 		}
@@ -594,8 +614,8 @@ p,h1,h2,h3,h4,li,blockquote,.stat-number,.brand-card-name{-webkit-user-select:te
 	</section>
 
 	<section class="collage-section" id="main">
-		<div class="collage-grid" id="collageGrid" role="tabpanel" aria-labelledby="tabVideos"></div>
-		<div class="websites-grid" id="websitesGrid" role="tabpanel" aria-labelledby="tabWebsites"></div>
+		<div class="collage-grid work-panel" id="collageGrid" role="tabpanel" aria-labelledby="tabVideos"></div>
+		<div class="websites-grid work-panel" id="websitesGrid" role="tabpanel" aria-labelledby="tabWebsites"></div>
 		<noscript>
 			<div class="noscript-list">
 				<h2>All projects</h2>
@@ -929,15 +949,11 @@ p,h1,h2,h3,h4,li,blockquote,.stat-number,.brand-card-name{-webkit-user-select:te
 
 		document.querySelectorAll('.website-card').forEach(card => wsObserver.observe(card));
 
-		function setWorkTab(tab, updateUrl = true) {
-			activeWorkTab = tab === 'websites' ? 'websites' : 'videos';
-			workSwitch.setAttribute('data-active', activeWorkTab);
-			tabVideos.setAttribute('aria-selected', String(activeWorkTab === 'videos'));
-			tabWebsites.setAttribute('aria-selected', String(activeWorkTab === 'websites'));
+		let switchSeq = 0;
+		let switchTimer = null;
 
-			if (activeWorkTab === 'websites') {
-				grid.classList.add('hidden');
-				websitesGrid.classList.add('active');
+		function activatePanelMedia(tab) {
+			if (tab === 'websites') {
 				grid.querySelectorAll('video').forEach(v => v.pause());
 				websitesGrid.querySelectorAll('.website-card').forEach((card, idx) => {
 					setTimeout(() => card.classList.add('revealed'), Math.min(idx, 6) * 45);
@@ -951,8 +967,6 @@ p,h1,h2,h3,h4,li,blockquote,.stat-number,.brand-card-name{-webkit-user-select:te
 					}
 				});
 			} else {
-				websitesGrid.classList.remove('active');
-				grid.classList.remove('hidden');
 				websitesGrid.querySelectorAll('video').forEach(v => v.pause());
 				grid.querySelectorAll('.collage-item').forEach(item => {
 					const rect = item.getBoundingClientRect();
@@ -962,15 +976,59 @@ p,h1,h2,h3,h4,li,blockquote,.stat-number,.brand-card-name{-webkit-user-select:te
 					}
 				});
 			}
+		}
 
-			if (updateUrl) {
-				try {
-					const targetHash = activeWorkTab === 'websites' ? '#websites' : '#videos';
-					if (window.location.hash !== targetHash) {
-						history.replaceState(null, '', targetHash);
-					}
-				} catch (e) {}
+		function setWorkTab(tab, immediate = false) {
+			const nextTab = tab === 'websites' ? 'websites' : 'videos';
+			workSwitch.setAttribute('data-active', nextTab);
+			tabVideos.setAttribute('aria-selected', String(nextTab === 'videos'));
+			tabWebsites.setAttribute('aria-selected', String(nextTab === 'websites'));
+
+			if (nextTab === activeWorkTab && !immediate) return;
+			activeWorkTab = nextTab;
+
+			if (switchTimer) { clearTimeout(switchTimer); switchTimer = null; }
+			const mySeq = ++switchSeq;
+
+			const fromEl = nextTab === 'websites' ? grid : websitesGrid;
+			const toEl = nextTab === 'websites' ? websitesGrid : grid;
+
+			if (immediate) {
+				fromEl.classList.remove('is-leaving', 'is-entering');
+				toEl.classList.remove('is-leaving', 'is-entering');
+				if (nextTab === 'websites') {
+					grid.classList.add('hidden');
+					websitesGrid.classList.add('active');
+				} else {
+					websitesGrid.classList.remove('active');
+					grid.classList.remove('hidden');
+				}
+				activatePanelMedia(nextTab);
+				return;
 			}
+
+			toEl.classList.remove('is-leaving');
+			fromEl.classList.remove('is-entering');
+			fromEl.classList.add('is-leaving');
+
+			switchTimer = setTimeout(() => {
+				if (mySeq !== switchSeq) return;
+				fromEl.classList.remove('is-leaving');
+				if (nextTab === 'websites') {
+					grid.classList.add('hidden');
+					websitesGrid.classList.add('is-entering', 'active');
+				} else {
+					websitesGrid.classList.remove('active');
+					grid.classList.remove('hidden');
+					grid.classList.add('is-entering');
+				}
+				void toEl.offsetWidth;
+				requestAnimationFrame(() => {
+					if (mySeq !== switchSeq) return;
+					toEl.classList.remove('is-entering');
+				});
+				activatePanelMedia(nextTab);
+			}, 220);
 		}
 
 		tabVideos.addEventListener('click', () => setWorkTab('videos'));
@@ -1028,11 +1086,14 @@ p,h1,h2,h3,h4,li,blockquote,.stat-number,.brand-card-name{-webkit-user-select:te
 			else if (e.key === 'ArrowRight') openWsModal(activeModalIdx + 1);
 		});
 
-		// Respect initial hash or ?tab=websites
+		// Always default to Videos on page load / Ctrl+F5 (only open Websites via explicit ?tab=websites)
 		(function initWorkTab() {
+			if (window.location.hash === '#websites' || window.location.hash === '#videos') {
+				try { history.replaceState(null, '', window.location.pathname + window.location.search); } catch (e) {}
+			}
 			const qp = new URLSearchParams(window.location.search).get('tab');
-			if (qp === 'websites' || window.location.hash === '#websites') {
-				setWorkTab('websites', false);
+			if (qp === 'websites') {
+				setWorkTab('websites', true);
 			}
 		})();
 	</script>
