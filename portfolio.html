@@ -218,17 +218,6 @@
 		.work-switch-btn[aria-selected="true"] {
 			color: #080c05; font-weight: 600;
 		}
-		.switch-count {
-			font-size: 10px; letter-spacing: 0.4px;
-			padding: 1px 7px; border-radius: 999px;
-			background: rgba(255, 255, 255, 0.08);
-			color: inherit; opacity: 0.78;
-			transition: background 0.28s ease, opacity 0.28s ease;
-		}
-		.work-switch-btn[aria-selected="true"] .switch-count {
-			background: rgba(0, 0, 0, 0.14);
-			opacity: 0.9;
-		}
 
 		/* Websites showcase grid */
 		.collage-grid.hidden { display: none; }
@@ -595,10 +584,10 @@ p,h1,h2,h3,h4,li,blockquote,.stat-number,.brand-card-name{-webkit-user-select:te
 			<div class="work-switch" id="workSwitch" data-active="videos" role="tablist" aria-label="Portfolio showcase type">
 				<span class="work-switch-pill" aria-hidden="true"></span>
 				<button type="button" class="work-switch-btn" id="tabVideos" role="tab" aria-selected="true" aria-controls="collageGrid" data-tab="videos">
-					Videos <span class="switch-count">34</span>
+					Videos
 				</button>
 				<button type="button" class="work-switch-btn" id="tabWebsites" role="tab" aria-selected="false" aria-controls="websitesGrid" data-tab="websites">
-					Websites <span class="switch-count">19</span>
+					Websites
 				</button>
 			</div>
 		</div>
@@ -864,6 +853,13 @@ p,h1,h2,h3,h4,li,blockquote,.stat-number,.brand-card-name{-webkit-user-select:te
 		let activeWorkTab = 'videos';
 		let activeModalIdx = 0;
 
+		const WEBSITE_PLAYBACK_RATE = 0.6;
+		function applyWebsiteSpeed(video) {
+			if (!video) return;
+			video.defaultPlaybackRate = WEBSITE_PLAYBACK_RATE;
+			video.playbackRate = WEBSITE_PLAYBACK_RATE;
+		}
+
 		websiteShowcases.forEach((site, idx) => {
 			const card = document.createElement('div');
 			card.className = 'website-card';
@@ -880,6 +876,10 @@ p,h1,h2,h3,h4,li,blockquote,.stat-number,.brand-card-name{-webkit-user-select:te
 					<div class="website-hint">Watch Showcase</div>
 				</div>
 			`;
+			const vid = card.querySelector('video');
+			applyWebsiteSpeed(vid);
+			vid.addEventListener('loadedmetadata', () => applyWebsiteSpeed(vid));
+			vid.addEventListener('play', () => applyWebsiteSpeed(vid));
 			card.addEventListener('click', () => openWsModal(idx));
 			card.addEventListener('keydown', (e) => {
 				if (e.key === 'Enter' || e.key === ' ') {
@@ -980,10 +980,13 @@ p,h1,h2,h3,h4,li,blockquote,.stat-number,.brand-card-name{-webkit-user-select:te
 			wsModalSub.textContent = site.category;
 			wsModalVideo.setAttribute('poster', site.thumb);
 			wsModalVideo.src = site.video;
+			applyWebsiteSpeed(wsModalVideo);
 			wsModal.classList.add('open');
 			document.body.style.overflow = 'hidden';
-			wsModalVideo.play().catch(() => {});
+			wsModalVideo.play().then(() => applyWebsiteSpeed(wsModalVideo)).catch(() => {});
 		}
+		wsModalVideo.addEventListener('loadedmetadata', () => applyWebsiteSpeed(wsModalVideo));
+		wsModalVideo.addEventListener('play', () => applyWebsiteSpeed(wsModalVideo));
 
 		function closeWsModal() {
 			wsModal.classList.remove('open');
