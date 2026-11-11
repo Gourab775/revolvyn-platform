@@ -853,11 +853,33 @@ p,h1,h2,h3,h4,li,blockquote,.stat-number,.brand-card-name{-webkit-user-select:te
 		let activeWorkTab = 'videos';
 		let activeModalIdx = 0;
 
-		const WEBSITE_PLAYBACK_RATE = 0.6;
+		// Videos were recorded with a sine ease-in-out curve that peaks in the middle;
+		// smoothly slow playback in the middle so all sections remain easy to read.
+		const WEBSITE_EDGE_RATE = 0.55;
+		function getWebsitePlaybackRate(video) {
+			const dur = video && video.duration;
+			if (!dur || !isFinite(dur) || dur <= 0) return WEBSITE_EDGE_RATE;
+			const p = video.currentTime / dur;
+			if (p <= 0.07 || p >= 0.91) return WEBSITE_EDGE_RATE;
+			const u = (p - 0.07) / 0.84;
+			const minMidRate = dur >= 10.5 ? 0.18 : 0.24;
+			return Number((WEBSITE_EDGE_RATE - (WEBSITE_EDGE_RATE - minMidRate) * Math.sin(Math.PI * u)).toFixed(3));
+		}
 		function applyWebsiteSpeed(video) {
 			if (!video) return;
-			video.defaultPlaybackRate = WEBSITE_PLAYBACK_RATE;
-			video.playbackRate = WEBSITE_PLAYBACK_RATE;
+			const rate = getWebsitePlaybackRate(video);
+			video.defaultPlaybackRate = WEBSITE_EDGE_RATE;
+			if (Math.abs(video.playbackRate - rate) > 0.015) {
+				video.playbackRate = rate;
+			}
+		}
+		function bindWebsiteSpeed(video) {
+			if (!video || video.dataset.speedBound) return;
+			video.dataset.speedBound = '1';
+			applyWebsiteSpeed(video);
+			video.addEventListener('loadedmetadata', () => applyWebsiteSpeed(video));
+			video.addEventListener('play', () => applyWebsiteSpeed(video));
+			video.addEventListener('timeupdate', () => applyWebsiteSpeed(video));
 		}
 
 		websiteShowcases.forEach((site, idx) => {
@@ -877,9 +899,7 @@ p,h1,h2,h3,h4,li,blockquote,.stat-number,.brand-card-name{-webkit-user-select:te
 				</div>
 			`;
 			const vid = card.querySelector('video');
-			applyWebsiteSpeed(vid);
-			vid.addEventListener('loadedmetadata', () => applyWebsiteSpeed(vid));
-			vid.addEventListener('play', () => applyWebsiteSpeed(vid));
+			bindWebsiteSpeed(vid);
 			card.addEventListener('click', () => openWsModal(idx));
 			card.addEventListener('keydown', (e) => {
 				if (e.key === 'Enter' || e.key === ' ') {
@@ -980,13 +1000,12 @@ p,h1,h2,h3,h4,li,blockquote,.stat-number,.brand-card-name{-webkit-user-select:te
 			wsModalSub.textContent = site.category;
 			wsModalVideo.setAttribute('poster', site.thumb);
 			wsModalVideo.src = site.video;
+			bindWebsiteSpeed(wsModalVideo);
 			applyWebsiteSpeed(wsModalVideo);
 			wsModal.classList.add('open');
 			document.body.style.overflow = 'hidden';
 			wsModalVideo.play().then(() => applyWebsiteSpeed(wsModalVideo)).catch(() => {});
 		}
-		wsModalVideo.addEventListener('loadedmetadata', () => applyWebsiteSpeed(wsModalVideo));
-		wsModalVideo.addEventListener('play', () => applyWebsiteSpeed(wsModalVideo));
 
 		function closeWsModal() {
 			wsModal.classList.remove('open');
