@@ -1663,7 +1663,8 @@
     var infoLbl = el('div', 'sec-info');
     infoLbl.appendChild(el('div', 'sec-title', 'Website Showcase Page Labels'));
     infoLbl.appendChild(el('div', 'sec-desc', 'Headings and button labels shared across every website detail page.'));
-    var boxLbl = el('div'); boxLbl.style.marginTop = '12px';
+    var boxLbl = el('div');
+    boxLbl.style.cssText = 'margin-top:12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px 14px;';
     var lblInputs = {};
     [
       ['featuresHeading', 'Features Card Heading'],
@@ -1676,6 +1677,7 @@
       ['workUrl', 'CTA Button URL']
     ].forEach(function (pair) {
       var fld = el('div', 'field');
+      fld.style.marginBottom = '0';
       fld.appendChild(el('label', null, pair[1]));
       var inp = document.createElement('input');
       inp.type = 'text';
@@ -1703,48 +1705,73 @@
     cardLbl.appendChild(actsLbl);
     c.appendChild(cardLbl);
 
-    var searchWrap = el('div', 'search-wrap');
-    searchWrap.innerHTML = SEARCH_SVG;
+    var bar = el('div', 'toolbar');
+    var sWrap = el('div', 'search');
+    sWrap.innerHTML = SEARCH_SVG;
     var sInput = document.createElement('input');
-    sInput.type = 'search'; sInput.placeholder = 'Filter websites…'; sInput.value = ui.search || '';
-    sInput.oninput = function () { ui.search = sInput.value; drawList(); };
-    searchWrap.appendChild(sInput);
-    var tb = el('div', 'toolbar'); tb.appendChild(searchWrap);
-    c.appendChild(tb);
+    sInput.type = 'text'; sInput.placeholder = 'Search websites…'; sInput.value = ui.search || '';
+    sInput.oninput = function () { ui.search = sInput.value.toLowerCase(); drawList(); };
+    sWrap.appendChild(sInput);
+    bar.appendChild(sWrap);
+    var chips = el('div', 'chips');
+    function drawChips() {
+      chips.innerHTML = '';
+      [['all', 'All'], ['visible', 'Visible'], ['hidden', 'Hidden']].forEach(function (ch) {
+        var b = el('button', 'chip' + (ui.filter === ch[0] ? ' active' : ''), ch[1] + (ch[0] === 'all' ? ' (' + list.length + ')' : ''));
+        b.onclick = function () { ui.filter = ch[0]; drawChips(); drawList(); };
+        chips.appendChild(b);
+      });
+    }
+    drawChips();
+    bar.appendChild(chips);
+    c.appendChild(bar);
 
-    var host = el('div');
-    c.appendChild(host);
+    var grid = el('div', 'cards');
+    c.appendChild(grid);
 
     function drawList() {
-      host.innerHTML = '';
+      grid.innerHTML = '';
       var q = (ui.search || '').toLowerCase().trim();
       var shown = list.filter(function (w) {
+        if (ui.filter === 'visible' && w.visible === false) return false;
+        if (ui.filter === 'hidden' && w.visible !== false) return false;
         if (!q) return true;
         return ((w.title || '') + ' ' + (w.fullTitle || '') + ' ' + (w.category || '') + ' ' + (w.slug || '')).toLowerCase().indexOf(q) >= 0;
       });
       if (!shown.length) {
-        host.appendChild(el('div', 'empty', 'No websites match that search.'));
+        grid.appendChild(emptyState('Nothing matches.', 'Try a different search or filter.', null, null));
         return;
       }
       shown.forEach(function (w) {
         var realIdx = list.indexOf(w);
-        var card = el('div', 'item-card');
+        var isVis = w.visible !== false;
+        var card = el('div', 'item-card' + (isVis ? '' : ' is-hidden'));
         if (w.thumb) {
           var img = document.createElement('img');
-          img.className = 'thumb'; img.src = w.thumb; img.alt = '';
+          img.className = 'item-media wide'; img.src = w.thumb; img.alt = ''; img.loading = 'lazy';
           card.appendChild(img);
         } else {
-          var blank = el('div', 'thumb-empty');
+          var blank = el('div', 'item-media wide');
           blank.innerHTML = FILM_SVG;
+          blank.style.cssText = 'display:flex;align-items:center;justify-content:center;color:var(--faint);';
+          if (blank.firstChild) { blank.firstChild.style.width = '28px'; blank.firstChild.style.height = '28px'; }
           card.appendChild(blank);
         }
-        var info = el('div', 'item-info');
-        info.appendChild(el('div', 'item-title', w.fullTitle || w.title || w.slug));
-        info.appendChild(el('div', 'item-sub', (w.category || '') + (w.liveUrl ? ' · Live URL ready' : '')));
-        var b = el('div', 'item-badges');
-        b.appendChild(el('span', 'badge' + (w.visible !== false ? '' : ' off'), w.visible !== false ? 'Visible' : 'Hidden'));
-        info.appendChild(b);
-        card.appendChild(info);
+        var body = el('div', 'item-body');
+        body.appendChild(el('div', 'item-title', w.fullTitle || w.title || w.slug));
+        body.appendChild(el('div', 'item-meta', (w.category || '') + (w.liveUrl ? '  ·  Live URL' : '')));
+        var flags = el('div', 'item-flags');
+        flags.appendChild(el('span', 'order-num', '#' + (realIdx + 1)));
+        flags.appendChild(el('span', 'badge' + (isVis ? '' : ' off'), isVis ? 'Visible' : 'Hidden'));
+        body.appendChild(flags);
+
+        var vis = visSwitch(isVis, async function (on) {
+          var next = list.slice();
+          next[realIdx] = Object.assign({}, next[realIdx], { visible: on });
+          await saveWebsitesCatalog(next, on ? 'Visible ✓' : 'Hidden ✓');
+        });
+        vis.querySelector('.switch-label').textContent = isVis ? 'On' : 'Off';
+        body.appendChild(vis);
 
         var acts = el('div', 'item-actions');
         var ed = el('button', 'btn small primary', 'Edit');
@@ -1772,14 +1799,6 @@
           acts.appendChild(dn);
         }
 
-        var vis = el('button', 'btn small ghost', w.visible !== false ? 'Hide' : 'Show');
-        vis.onclick = async function () {
-          var next = list.slice();
-          next[realIdx] = Object.assign({}, next[realIdx], { visible: w.visible === false });
-          await saveWebsitesCatalog(next, next[realIdx].visible ? 'Visible ✓' : 'Hidden ✓');
-        };
-        acts.appendChild(vis);
-
         var del = el('button', 'btn small danger', 'Delete');
         del.onclick = async function () {
           var ok = await confirmDialog('Delete website?', 'Remove “' + (w.title || w.slug) + '” from the showcase?', 'Delete');
@@ -1790,8 +1809,9 @@
         };
         acts.appendChild(del);
 
-        card.appendChild(acts);
-        host.appendChild(card);
+        body.appendChild(acts);
+        card.appendChild(body);
+        grid.appendChild(card);
       });
     }
     drawList();
@@ -2339,8 +2359,12 @@
     window.addEventListener('beforeunload', function (e) {
       if (dirty || unsavedForm) { e.preventDefault(); e.returnValue = ''; }
     });
-    var h = (window.location.hash || '').replace('#/manage/', '');
-    if (h && ['home', 'portfolio', 'websites', 'brands', 'services', 'contact', 'footer', 'more', 'history', 'activity', 'team'].indexOf(h) >= 0) tab = h;
+    tab = 'home';
+    try {
+      if (window.location.hash && window.history && window.history.replaceState) {
+        window.history.replaceState(null, '', window.location.pathname + window.location.search);
+      }
+    } catch (e) {}
   }
 
   document.addEventListener('DOMContentLoaded', function () { bind(); boot(); });
