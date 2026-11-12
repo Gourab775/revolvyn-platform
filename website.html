@@ -23,7 +23,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-body { font-family: 'Inter', sans-serif; background: #0f0f0f; color: #f1f1f1; min-height: 100vh; overflow-x: hidden; }
+body { font-family: 'Inter', sans-serif; background: #0f0f0f; color: #f1f1f1; min-height: 100vh; overflow-x: clip; }
 a { text-decoration: none; color: inherit; }
 button { border: none; cursor: pointer; font-family: inherit; background: none; }
 
@@ -51,12 +51,12 @@ button { border: none; cursor: pointer; font-family: inherit; background: none; 
 .nav-mobile-overlay a { font-size: 14px; letter-spacing: 3px; text-transform: uppercase; color: rgba(215, 230, 190, 0.7); font-weight: 500; }
 
 /* Main Layout matching video.html */
-.main-layout { display: flex; max-width: 1800px; margin: 76px auto 48px; padding: 0 24px; gap: 24px; }
+.main-layout { display: flex; align-items: flex-start; max-width: 1800px; margin: 76px auto 32px; min-height: calc(100vh - 108px); padding: 0 24px; gap: 24px; }
 .main-content { flex: 1; min-width: 0; }
-.sidebar { width: 402px; flex-shrink: 0; position: sticky; top: 72px; height: calc(100vh - 88px); display: flex; flex-direction: column; }
+.sidebar { width: 402px; flex-shrink: 0; align-self: flex-start; position: sticky; top: 76px; height: calc(100vh - 108px); display: flex; flex-direction: column; }
 .sidebar-section { flex: 1; min-height: 0; display: flex; flex-direction: column; }
 
-.sidebar-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-shrink: 0; }
+.sidebar-header { position: sticky; top: 0; z-index: 4; background: #0f0f0f; display: flex; align-items: center; justify-content: space-between; padding: 2px 0 12px; flex-shrink: 0; border-bottom: 1px solid rgba(255,255,255,0.06); margin-bottom: 10px; }
 .sidebar-title { font-size: 16px; font-weight: 600; }
 .sidebar-arrows { display: inline-flex; gap: 6px; }
 .rail-arrow-btn {
@@ -121,6 +121,32 @@ button { border: none; cursor: pointer; font-family: inherit; background: none; 
 	margin-top: 14px;
 }
 .features-box { margin-top: 8px; }
+.value-grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 10px;
+	margin-bottom: 16px;
+}
+.value-item {
+	background: rgba(255,255,255,0.03);
+	border: 1px solid rgba(255,255,255,0.07);
+	border-radius: 10px;
+	padding: 11px 13px;
+}
+.value-label {
+	font-size: 11px;
+	text-transform: uppercase;
+	letter-spacing: 1.1px;
+	color: rgba(230,245,120,0.85);
+	font-weight: 600;
+	margin-bottom: 4px;
+}
+.value-text {
+	font-size: 13px;
+	line-height: 1.45;
+	color: #ececec;
+	font-weight: 500;
+}
 .tech-head {
 	font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 10px;
 	display: flex; align-items: center; justify-content: space-between; gap: 12px;
@@ -216,6 +242,7 @@ button { border: none; cursor: pointer; font-family: inherit; background: none; 
 	.action-buttons { width: 100%; }
 	.preview-btn, .work-btn, .share-btn { justify-content: center; }
 	.tech-features { grid-template-columns: 1fr; }
+	.value-grid { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -285,6 +312,9 @@ button { border: none; cursor: pointer; font-family: inherit; background: none; 
 		<!-- Plain-Language Website Features Card (First) -->
 		<section class="tech-box features-box" aria-labelledby="featuresHeading">
 			<div class="tech-head" id="featuresHeading">Website Features</div>
+			<p class="tech-summary" id="wsUserSummary"></p>
+			<div class="value-grid" id="wsValueGrid"></div>
+			<div class="tech-subhead">What Visitors Can Do</div>
 			<ul class="tech-features" id="wsSiteFeatures"></ul>
 		</section>
 
@@ -444,6 +474,23 @@ if (site) {
 			ulEl.appendChild(li);
 		});
 	}
+
+	document.getElementById('wsUserSummary').textContent = site.userSummary || '';
+
+	const valueGrid = document.getElementById('wsValueGrid');
+	[
+		{ label: 'Best For', value: site.bestFor },
+		{ label: 'Key User Actions', value: site.userActions },
+		{ label: 'Experience & Access', value: site.usability }
+	].forEach(entry => {
+		if (!entry.value) return;
+		const card = document.createElement('div');
+		card.className = 'value-item';
+		card.innerHTML = `<div class="value-label"></div><div class="value-text"></div>`;
+		card.querySelector('.value-label').textContent = entry.label;
+		card.querySelector('.value-text').textContent = entry.value;
+		valueGrid.appendChild(card);
+	});
 
 	renderCheckList(document.getElementById('wsSiteFeatures'), site.siteFeatures);
 
