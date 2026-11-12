@@ -14,10 +14,8 @@ function hideLoader() {
 	}
 	const loadingScreen = document.getElementById('loadingScreen');
 	if (loadingScreen) {
-		loadingScreen.classList.add('is-fading');
-		loadingScreen.style.pointerEvents = 'none';
-		loadingScreen.style.opacity = '0';
-		setTimeout(() => loadingScreen.remove(), 1000);
+		loadingScreen.classList.add('is-sliding');
+		setTimeout(() => loadingScreen.remove(), 950);
 	}
 }
 if (window.__rvLoader && typeof window.__rvLoader.setTarget === 'function') {
