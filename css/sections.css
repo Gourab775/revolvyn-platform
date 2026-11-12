@@ -274,8 +274,6 @@
 	flex-direction: column;
 	gap: 30px;
 	text-align: center;
-	content-visibility: auto;
-	contain-intrinsic-size: 0 60vh;
 }
 
 .stats-label {
@@ -298,13 +296,16 @@
 	width: 100%;
 	overflow: hidden;
 	position: relative;
+	-webkit-mask-image: linear-gradient(to right, transparent 0%, #000 7%, #000 93%, transparent 100%);
+	mask-image: linear-gradient(to right, transparent 0%, #000 7%, #000 93%, transparent 100%);
 }
 
 .brands-track {
 	display: flex;
 	gap: 6px;
 	align-items: center;
-	animation: marqueeScroll 30s linear infinite;
+	animation: marqueeScroll 24s linear infinite;
+	animation-play-state: running;
 	width: max-content;
 	will-change: transform;
 	transform: translateZ(0);
@@ -313,10 +314,6 @@
 @keyframes marqueeScroll {
 	0% { transform: translateX(0); }
 	100% { transform: translateX(-50%); }
-}
-
-.brands-track:hover {
-	animation-play-state: paused;
 }
 
 .brand-logo-item {

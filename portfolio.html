@@ -277,49 +277,27 @@
 		}
 		.website-overlay {
 			position: absolute; inset: 0;
-			background: linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.22) 38%, transparent 62%);
+			background: linear-gradient(to top, rgba(0,0,0,0.84) 0%, rgba(0,0,0,0.18) 38%, transparent 62%);
 			display: flex; align-items: flex-end; justify-content: space-between; gap: 12px;
 			padding: 18px 20px; opacity: 0;
 			transition: opacity 0.28s ease;
 		}
 		.website-card:hover .website-overlay,
 		.website-card:focus-visible .website-overlay { opacity: 1; }
-		.website-meta { text-align: left; }
 		.website-title {
 			font-family: 'Playfair Display', serif;
 			font-size: clamp(16px, 1.8vw, 22px);
 			color: rgba(248, 252, 240, 0.96);
 			line-height: 1.2;
+			text-align: left;
 		}
-		.website-cat {
-			margin-top: 4px;
-			font-size: 11px; letter-spacing: 0.4px;
-			color: rgba(215, 230, 190, 0.74);
-		}
-		.website-actions {
-			display: inline-flex; align-items: center; gap: 10px; flex-shrink: 0;
-		}
-		.website-live-icon {
-			width: 30px; height: 30px; border-radius: 50%;
+		.website-arrow {
+			color: rgba(230, 245, 120, 0.94);
 			display: inline-flex; align-items: center; justify-content: center;
-			background: rgba(14, 18, 10, 0.85);
-			border: 1px solid rgba(230, 245, 120, 0.4);
-			color: #e6f578;
-			transition: background 0.25s, border-color 0.25s, transform 0.25s;
+			flex-shrink: 0;
+			transition: transform 0.28s ease;
 		}
-		.website-live-icon:hover {
-			background: linear-gradient(135deg, #e6f578, #b4dc64);
-			border-color: #e6f578;
-			color: #070a04;
-			transform: scale(1.08);
-		}
-		.website-hint {
-			font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
-			color: rgba(230, 245, 120, 0.88); font-weight: 500;
-			white-space: nowrap; display: inline-flex; align-items: center; gap: 5px;
-		}
-		.website-hint::after { content: '\2192'; transition: transform 0.3s; }
-		.website-card:hover .website-hint::after { transform: translateX(3px); }
+		.website-card:hover .website-arrow { transform: translateX(4px); }
 		@media (hover: none) {
 			.website-overlay { opacity: 1; padding: 12px 14px; }
 		}
@@ -869,7 +847,6 @@ p,h1,h2,h3,h4,li,blockquote,.stat-number,.brand-card-name{-webkit-user-select:te
 			websitesGrid.innerHTML = '';
 			websiteShowcases.forEach((site) => {
 				const detailUrl = `website.html?slug=${site.slug}`;
-				const previewUrl = `website.html?slug=${site.slug}&preview=1`;
 				const card = document.createElement('div');
 				card.className = 'website-card' + (activeWorkTab === 'websites' ? ' revealed' : '');
 				card.tabIndex = 0;
@@ -878,27 +855,15 @@ p,h1,h2,h3,h4,li,blockquote,.stat-number,.brand-card-name{-webkit-user-select:te
 				card.innerHTML = `
 					<video muted loop playsinline preload="none" poster="${site.thumb || ''}" data-src="${site.video || ''}"></video>
 					<div class="website-overlay">
-						<div class="website-meta">
-							<div class="website-title"></div>
-							<div class="website-cat"></div>
-						</div>
-						<div class="website-actions">
-							<a href="${previewUrl}" class="website-live-icon" title="Live Preview" aria-label="Live Preview">
-								<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg>
-							</a>
-							<span class="website-hint">View Details</span>
-						</div>
+						<div class="website-title"></div>
+						<span class="website-arrow" aria-hidden="true">
+							<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+						</span>
 					</div>
 				`;
 				card.querySelector('.website-title').textContent = site.title || '';
-				card.querySelector('.website-cat').textContent = site.category || '';
 				const vid = card.querySelector('video');
 				if (window.bindWebsiteSpeed) window.bindWebsiteSpeed(vid);
-				const liveBtn = card.querySelector('.website-live-icon');
-				liveBtn.addEventListener('click', (e) => {
-					e.stopPropagation();
-					smoothNavigate(e, previewUrl);
-				});
 				card.addEventListener('click', () => smoothNavigate(null, detailUrl));
 				card.addEventListener('keydown', (e) => {
 					if (e.key === 'Enter' || e.key === ' ') {
