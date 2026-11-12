@@ -5,15 +5,14 @@
 		{
 			slug: 'amber-skincare',
 			title: 'AMBER',
-			fullTitle: 'AMBER — Natural Skincare',
-			category: 'Natural Skincare · E-Commerce',
-			tagline: 'Skincare that breathes with you.',
-			description: 'Full-stack e-commerce storefront for a clean botanical skincare label, pairing calm editorial layouts with trust proof, ingredient breakdowns, and Shopify-ready product discovery.',
-			highlights: [
-				'Editorial full-bleed hero with gentle ritual storytelling & trust badges',
-				'Curated product showcase with barrier cream, serum & face oil collection',
-				'Transparent botanical ingredients & brand impact proof sections',
-				'Social proof testimonials, conversion CTA banner & newsletter capture'
+			fullTitle: 'AMBER — E-Commerce Storefront',
+			category: 'Next.js · Shopify Storefront',
+			techSummary: 'Built with Next.js App Router, React 19, TypeScript, Tailwind CSS 4, Radix UI primitives, and Shopify Storefront API integration.',
+			techFeatures: [
+				'Shopify Storefront API data fetching layer with typed catalog & collection queries',
+				'React Context global shopping cart state with persistent drawer, quantity & checkout actions',
+				'Modular Radix UI accessible dialogs, accordions, tabs, and toast notification system',
+				'Responsive Tailwind CSS v4 design tokens with dynamic Recharts analytics utilities'
 			],
 			stack: ['Next.js 16', 'React 19', 'TypeScript', 'Tailwind CSS 4', 'Radix UI', 'Shopify API'],
 			scrollHeight: 10609,
@@ -25,15 +24,14 @@
 		{
 			slug: 'bakery-store',
 			title: "L'\u00c9TOILE",
-			fullTitle: "L'\u00c9toile Artisan Bakery",
-			category: 'Artisan Bakery · E-Commerce',
-			tagline: 'Handcrafted sourdough, pastries & custom cakes.',
-			description: 'Warm, appetite-driven bakery storefront crafted for online ordering of daily sourdough loaves, French butter croissants, and bespoke celebration cakes with flavor customization.',
-			highlights: [
-				'Warm bakery hero highlighting fresh daily bakes and doorway delivery',
-				'Interactive product cards & custom celebration cake flavor configurator',
-				'Motion-driven reveal choreography powered by Framer Motion',
-				'Customer reviews strip and friction-free quick-order flow'
+			fullTitle: "L'\u00c9TOILE — Interactive Storefront App",
+			category: 'Next.js · Framer Motion',
+			techSummary: 'Built with Next.js App Router, React, TypeScript, Framer Motion, Tailwind CSS, and accessible Radix UI components.',
+			techFeatures: [
+				'Dynamic multi-step product & flavor configurator with real-time price delta calculation',
+				'Framer Motion scroll-triggered section choreography and card micro-interactions',
+				'Client-side cart state management with Sonner toast feedback & variant filtering',
+				'Responsive multi-breakpoint grid with Radix UI dialogs, tabs & form controls'
 			],
 			stack: ['Next.js', 'React', 'TypeScript', 'Framer Motion', 'Tailwind CSS', 'Radix UI'],
 			scrollHeight: 6226,
@@ -45,15 +43,14 @@
 		{
 			slug: 'biometic',
 			title: 'BIOMETIC',
-			fullTitle: 'Biometic — Science du Microbiome',
-			category: 'Microbiome Science · Brand & Shop',
-			tagline: 'Rigorous microbiome science meets living nature.',
-			description: 'Clinical-meets-organic digital brand house and storefront translating gut-health & microbiome biotechnology into clear visual storytelling and credible product conversion.',
-			highlights: [
-				'Science-backed hero architecture balancing clinical precision and warmth',
-				'Dedicated formula product showcase & scientific validation blocks',
-				'Editorial brand mission narrative & customer outcome stories',
-				'Integrated blog, careers, and brand storytelling navigation structure'
+			fullTitle: 'BIOMETIC — Multi-Page Brand Platform',
+			category: 'Next.js · Framer Motion',
+			techSummary: 'Built with Next.js App Router, React, TypeScript, Framer Motion, Tailwind CSS, and Radix UI component primitives.',
+			techFeatures: [
+				'Multi-route Next.js App Router architecture (Home, Science, Blog, Careers & Store)',
+				'Framer Motion viewport-driven reveal transitions across modular content sections',
+				'Accessible Radix UI navigation menu, accordions, dialogs, and responsive drawer',
+				'Reusable design system tokens with Tailwind CSS utilities and Lucide icon set'
 			],
 			stack: ['Next.js', 'React', 'TypeScript', 'Framer Motion', 'Tailwind CSS', 'Radix UI'],
 			scrollHeight: 4909,
@@ -65,17 +62,16 @@
 		{
 			slug: 'closet-studio',
 			title: 'CLOSET STUDIO',
-			fullTitle: 'CLOSET Studio — Timeless Minimalist Fashion',
-			category: 'Minimalist Fashion · E-Commerce',
-			tagline: 'Where minimalism meets quiet luxury.',
-			description: 'High-fashion editorial e-commerce experience built around architectural typography, grayscale-to-color hover reveals, lookbook pacing, and refined Anime.js motion.',
-			highlights: [
-				'Architectural fashion hero with lookbook rhythm and restrained grid balance',
-				'Scroll-triggered Anime.js product reveals & grayscale-to-color transitions',
-				'Curated seasonal collections built for high average order value',
-				'Streamlined bag drawer and distraction-free checkout experience'
+			fullTitle: 'CLOSET Studio — Editorial Commerce Build',
+			category: 'Next.js 16 · Anime.js',
+			techSummary: 'Built with Next.js 16, React 19, TypeScript, Tailwind CSS 4, Anime.js choreography, and Base UI primitives.',
+			techFeatures: [
+				'Anime.js timeline & scroll-driven product entrance choreography',
+				'Client-side collection filtering, variant selection, and interactive bag drawer',
+				'Server/Client component split with Next.js 16 App Router and React 19',
+				'Custom CSS filter transitions with responsive image grid layout'
 			],
-			stack: ['Next.js 16', 'React 19', 'TypeScript', 'Tailwind CSS 4', 'Anime.js'],
+			stack: ['Next.js 16', 'React 19', 'TypeScript', 'Tailwind CSS 4', 'Anime.js', 'Base UI'],
 			scrollHeight: 7389,
 			durationSec: 11.3,
 			video: 'portfolio/websites/closet-studio.mp4',
@@ -85,15 +81,14 @@
 		{
 			slug: 'designer-brand',
 			title: 'SERENE ATELIER',
-			fullTitle: 'Serene Atelier — Timeless Clothing',
-			category: 'Timeless Clothing · Fashion',
-			tagline: 'Mindfully crafted apparel for style & sustainability.',
-			description: 'Refined sustainable fashion atelier showcase focused on tactile garment imagery, curated silhouettes, and effortless boutique navigation.',
-			highlights: [
-				'Clean boutique navigation with crisp editorial typography',
-				'Curated collection grid featuring signature mindful garments',
-				'Sustainability & craft philosophy blocks tailored for conscious buyers',
-				'Mobile-first responsive layout tuned for fast visual browsing'
+			fullTitle: 'SERENE ATELIER — Catalog Web App',
+			category: 'Next.js · Radix UI',
+			techSummary: 'Built with Next.js, React, TypeScript, Tailwind CSS, and Radix UI / shadcn-style accessible components.',
+			techFeatures: [
+				'Typed TypeScript catalog module powering reusable product card components',
+				'Sticky responsive header navigation with mobile drawer & category routing',
+				'Accessible Radix UI dialogs, tooltips, and interactive filter controls',
+				'Utility-first responsive grid built with Tailwind CSS & tailwind-merge'
 			],
 			stack: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'Radix UI'],
 			scrollHeight: 3477,
@@ -105,15 +100,14 @@
 		{
 			slug: 'evasion-e-commerce',
 			title: 'EVASION',
-			fullTitle: 'EVASION | Go Further',
-			category: 'Outdoor & Adventure · E-Commerce',
-			tagline: 'Lightweight, durable gear engineered for the modern explorer.',
-			description: 'Multi-section technical outdoor storefront combining expedition photography, material engineering storytelling, gear galleries, and editorial field notes.',
-			highlights: [
-				'Full-bleed expedition hero & brand philosophy narrative band',
-				'Featured technical outerwear grid plus material technology breakdown',
-				'Immersive field gallery, seasonal collection & editorial sections',
-				'Verified explorer testimonials engineered for high-ticket gear trust'
+			fullTitle: 'EVASION — Section-Modular Commerce',
+			category: 'Next.js · TypeScript',
+			techSummary: 'Built with Next.js, React, TypeScript, Tailwind CSS, and modular Radix UI interface components.',
+			techFeatures: [
+				'10-section modular App Router landing architecture with strict component isolation',
+				'Interactive product gallery, technology spec tabs, and collection showcase sliders',
+				'Responsive image optimization with hardware-accelerated hover transitions',
+				'Accessible Radix UI primitive integration across navigation and modals'
 			],
 			stack: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'Radix UI'],
 			scrollHeight: 18639,
@@ -125,17 +119,16 @@
 		{
 			slug: 'fitness-platform',
 			title: 'SOBERS',
-			fullTitle: 'Fitness Studio — Performance & Wellness Platform',
-			category: 'Wellness & Habit Tracking · Web App',
-			tagline: 'Cinematic performance coaching and wellness landing experience.',
-			description: 'High-contrast, GSAP-choreographed fitness and wellness web platform combining dramatic scroll storytelling, coaching tiers, and clean conversion prompts.',
-			highlights: [
-				'Cinematic GSAP hero entrance & scroll-linked performance storytelling',
-				'Modular training program highlights built for rapid user scannability',
-				'Minimalist typography paired with high-contrast dark surfaces',
-				'Conversion-focused waitlist & onboarding CTAs'
+			fullTitle: 'SOBERS — GSAP Motion Landing App',
+			category: 'Next.js 16 · GSAP',
+			techSummary: 'Built with Next.js 16, React 19, TypeScript, Tailwind CSS 4, and GSAP timeline animation engine.',
+			techFeatures: [
+				'GSAP scroll-triggered timelines and scrubbed hero element orchestration',
+				'GPU-composited transforms and opacity choreography for 60fps scroll performance',
+				'Tailwind CSS v4 custom theme variables paired with Base UI controls',
+				'Modular Next.js App Router layout tuned for responsive desktop & mobile views'
 			],
-			stack: ['Next.js 16', 'React 19', 'TypeScript', 'Tailwind CSS 4', 'GSAP'],
+			stack: ['Next.js 16', 'React 19', 'TypeScript', 'Tailwind CSS 4', 'GSAP', 'Base UI'],
 			scrollHeight: 7810,
 			durationSec: 11.6,
 			video: 'portfolio/websites/fitness-platform.mp4',
@@ -145,15 +138,14 @@
 		{
 			slug: 'fork-of-cake-shop',
 			title: 'SWEET CAKES',
-			fullTitle: 'Sweet Cakes | Home-Baked Cakes & Treats',
-			category: 'Home-Baked Treats · E-Commerce',
-			tagline: 'Handcrafted cakes, cupcakes & celebration tiers delivered fresh.',
-			description: 'Playful yet conversion-sharp bakery storefront with an interactive cake-box builder, flavor picker, quick-add cards, and animated bakery stats.',
-			highlights: [
-				'Custom Cake Box Builder & interactive Flavor Picker experience',
-				'Quick-Add storefront cards designed for impulse celebration orders',
-				'Animated CountUp craft metrics and scroll-reveal product rows',
-				'Integrated custom inquiry & celebration cake booking form'
+			fullTitle: 'SWEET CAKES — Configurator Commerce App',
+			category: 'Next.js · Radix UI',
+			techSummary: 'Built with Next.js, React, TypeScript, Tailwind CSS, interactive state builders, and Radix UI.',
+			techFeatures: [
+				'Custom interactive Box Builder & flavor-selection state engine',
+				'Viewport-triggered CountUp number interpolation and ScrollReveal observer hooks',
+				'Quick-Add cart synchronization across category filter cards',
+				'Validated multi-field order inquiry form with accessible Radix UI controls'
 			],
 			stack: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'Radix UI'],
 			scrollHeight: 6991,
@@ -165,17 +157,16 @@
 		{
 			slug: 'homie',
 			title: 'HOMIE',
-			fullTitle: 'Homie — Peer-to-Peer Vacation Rentals',
-			category: 'Vacation Rentals · Platform',
-			tagline: 'Simple, trusted home rentals between owners & travelers.',
-			description: 'Modern real-estate and short-stay rental platform featuring animated stats counters, host vs. guest service breakdowns, transparent pricing, and interactive FAQs.',
-			highlights: [
-				'Animated property hero with smooth Framer Motion section pacing',
-				'Live platform trust counters & host/renter service comparison grid',
-				'Clear tiered pricing module, verified host reviews & accordion FAQ',
-				'Direct listing & booking CTA engineered for marketplace conversions'
+			fullTitle: 'HOMIE — Platform Web Application',
+			category: 'Next.js 16 · Framer Motion',
+			techSummary: 'Built with Next.js 16, React, TypeScript, Tailwind CSS 4, Framer Motion, and Radix UI.',
+			techFeatures: [
+				'Framer Motion scroll-triggered staggered entrances & interactive spring states',
+				'Real-time animated statistics counters and interactive pricing comparison toggles',
+				'Radix UI accordion FAQ module with keyboard & screen-reader support',
+				'Responsive multi-column marketplace sections with zero layout shift'
 			],
-			stack: ['Next.js 16', 'React', 'TypeScript', 'Tailwind CSS 4', 'Framer Motion'],
+			stack: ['Next.js 16', 'React', 'TypeScript', 'Tailwind CSS 4', 'Framer Motion', 'Radix UI'],
 			scrollHeight: 7797,
 			durationSec: 11.6,
 			video: 'portfolio/websites/homie.mp4',
@@ -185,17 +176,16 @@
 		{
 			slug: 'hously-architecture',
 			title: 'HOUSLY',
-			fullTitle: 'Hously — Modern Architecture Studio',
-			category: 'Modern Architecture · Studio',
-			tagline: 'Designing spaces where form, light, and intention meet.',
-			description: 'Architectural portfolio & studio website balancing sweeping spatial photography with philosophy narratives, signature project showcases, and consultation lead capture.',
-			highlights: [
-				'Layered spatial hero crafted around architectural light and proportion',
-				'Curated studio philosophy & multidisciplinary expertise bands',
-				'Selected residential & commercial architecture project index',
-				'Structured client FAQ & studio consultation conversion flow'
+			fullTitle: 'HOUSLY — Architecture Studio Platform',
+			category: 'Next.js 16 · Radix UI',
+			techSummary: 'Built with Next.js 16, React 19, TypeScript, Tailwind CSS 4, and shadcn/Radix UI primitives.',
+			techFeatures: [
+				'Layered foreground/background parallax hero built with semantic layout containers',
+				'Modular project showcase grid with dynamic filtering and smooth transitions',
+				'Accessible Radix UI FAQ accordion and responsive header drawer',
+				'Strict TypeScript component library styled via Tailwind CSS v4 tokens'
 			],
-			stack: ['Next.js 16', 'React 19', 'TypeScript', 'Tailwind CSS 4', 'Radix UI'],
+			stack: ['Next.js 16', 'React 19', 'TypeScript', 'Tailwind CSS 4', 'Radix UI', 'shadcn/ui'],
 			scrollHeight: 6382,
 			durationSec: 9.8,
 			video: 'portfolio/websites/hously-architecture.mp4',
@@ -205,17 +195,16 @@
 		{
 			slug: 'katachi',
 			title: 'KATACHI',
-			fullTitle: 'Katachi — Design Furniture for Spaces That Breathe',
-			category: 'Design Furniture · E-Commerce',
-			tagline: 'Architected in Belgium, built to last.',
-			description: 'Museum-grade interior furniture brand storefront featuring quiet sculptural grids, tactile material stories, and architectural product curation.',
-			highlights: [
-				'Sculptural full-width hero spotlighting Belgian furniture craft',
-				'Featured piece grid plus horizontal collection exploration strip',
-				'Dedicated natural woods, stone & textile materials showcase',
-				'Minimalist newsletter invitation & global showroom cadence'
+			fullTitle: 'KATACHI — Motion Storefront',
+			category: 'Next.js · Framer Motion',
+			techSummary: 'Built with Next.js, React, TypeScript, Framer Motion, Tailwind CSS, and Radix UI.',
+			techFeatures: [
+				'Framer Motion layout transitions across horizontal strips and featured grids',
+				'Interactive material & collection switchers driven by TypeScript datasets',
+				'Responsive viewport scaling for high-resolution product media',
+				'Accessible Radix UI navigation, modal overlays, and form validation'
 			],
-			stack: ['Next.js', 'React', 'TypeScript', 'Framer Motion', 'Tailwind CSS'],
+			stack: ['Next.js', 'React', 'TypeScript', 'Framer Motion', 'Tailwind CSS', 'Radix UI'],
 			scrollHeight: 5743,
 			durationSec: 8.9,
 			video: 'portfolio/websites/katachi.mp4',
@@ -225,15 +214,14 @@
 		{
 			slug: 'luxury-jewellery',
 			title: 'AURELIA',
-			fullTitle: 'Aurelia — Luxury Fine Jewelry, Paris since 1924',
-			category: 'Fine Jewelry House · Luxury',
-			tagline: 'French haute joaillerie craftsmanship for over a century.',
-			description: 'Heritage haute-joaillerie digital flagship celebrating bespoke commissions, high jewelry collections, certified gemstones, and white-glove Maison service.',
-			highlights: [
-				'Maison heritage storytelling steeped in Parisian goldsmithing craft',
-				'Fine & High Jewelry curated collections with detailed piece cards',
-				'Authenticity, insured courier & bespoke atelier commission pillars',
-				'Private clientelist newsletter & concierge appointment pathways'
+			fullTitle: 'AURELIA — High-Resolution Storefront',
+			category: 'Next.js · TypeScript',
+			techSummary: 'Built with Next.js, React, TypeScript, Tailwind CSS, and Radix UI component architecture.',
+			techFeatures: [
+				'Typed multi-collection product catalog with helper lookup queries (`getProduct`)',
+				'Interactive newsletter capture form with state-driven feedback & validation',
+				'Reusable ProductCard & Collection components across dynamic routes',
+				'Responsive Tailwind CSS grid with subtle border & hover elevation states'
 			],
 			stack: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'Radix UI'],
 			scrollHeight: 6444,
@@ -245,17 +233,16 @@
 		{
 			slug: 'modern-pet-store',
 			title: 'PETDO',
-			fullTitle: 'PetDo — Modern Pet Nutrition & Care Store',
-			category: 'Premium Pet Store · E-Commerce',
-			tagline: 'Tailored nutrition, orthopedic comfort, and playful care.',
-			description: 'Friendly yet structured D2C pet care storefront with category navigation, curated nutrition & gear picks, live store context cart, and satisfaction guarantees.',
-			highlights: [
-				'Clean multi-category navigation covering food, beds, toys & grooming',
-				'Conversion-focused product tiles with instant store cart state',
-				'Trust badges highlighting vet-approved formulas & fast delivery',
-				'Responsive storefront layout built for repeat pet-parent reorders'
+			fullTitle: 'PETDO — Context-Driven E-Commerce',
+			category: 'Next.js · Context API',
+			techSummary: 'Built with Next.js, React, TypeScript, React Context state provider, Tailwind CSS, and Radix UI.',
+			techFeatures: [
+				'Global `useStore` React Context provider for live cart, badge counts & filters',
+				'Resilient `SafeImage` fallback component preventing broken external media states',
+				'Category tabs & search-friendly grid wired with Sonner toast notifications',
+				'Accessible Radix UI dialogs, inputs, and mobile drawer controls'
 			],
-			stack: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'Radix UI'],
+			stack: ['Next.js', 'React', 'TypeScript', 'React Context', 'Tailwind CSS', 'Radix UI'],
 			scrollHeight: 4004,
 			durationSec: 7.1,
 			video: 'portfolio/websites/modern-pet-store.mp4',
@@ -265,15 +252,14 @@
 		{
 			slug: 'mono-e-commerce',
 			title: 'MONO',
-			fullTitle: 'MONO — Architectural Outdoor & Gear Store',
-			category: 'Architectural Pods · Brand & Shop',
-			tagline: 'Precision-engineered objects for modern utility.',
-			description: 'Monochrome brutalist-meets-luxury commerce platform combining stark editorial contrast, technical product breakdowns, and high-impact gallery pacing.',
-			highlights: [
-				'Stark monochrome visual identity with oversized typographic hierarchy',
-				'Modular philosophy, technology, gallery & collection bands',
-				'High-clarity gear cards with technical durability specs',
-				'Field editorial stories & customer proof integrated before footer'
+			fullTitle: 'MONO — Monochrome Storefront System',
+			category: 'Next.js · Radix UI',
+			techSummary: 'Built with Next.js, React, TypeScript, Tailwind CSS, and modular Radix UI primitives.',
+			techFeatures: [
+				'High-contrast design system structured across 10 independent section modules',
+				'Multi-page App Router navigation (Home, Collections, Contact & Product views)',
+				'Interactive accordion specs, sliders, and persistent header navigation',
+				'Responsive CSS grid system optimized for mobile and widescreen displays'
 			],
 			stack: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'Radix UI'],
 			scrollHeight: 17804,
@@ -285,15 +271,14 @@
 		{
 			slug: 'olea',
 			title: 'OLEA',
-			fullTitle: 'Olea | Australian Botanical Skincare',
-			category: 'Botanical Skincare · E-Commerce',
-			tagline: 'Pure Australian botanicals formulated for skin longevity.',
-			description: 'Earthy luxury D2C skincare store spotlighting clean botanical actives, product ritual cards, formulation purity pledges, and customer star ratings.',
-			highlights: [
-				'Botanical ingredient hero & skincare ritual storytelling',
-				'Curated formulation cards with clean benefits & star social proof',
-				'Dermatological safety, cruelty-free & sustainability proof icons',
-				'Warm Sydney-studio brand tone paired with newsletter opt-in'
+			fullTitle: 'OLEA — Modular Commerce Platform',
+			category: 'Next.js · TypeScript',
+			techSummary: 'Built with Next.js, React, TypeScript, Tailwind CSS, and Radix UI component primitives.',
+			techFeatures: [
+				'Structured TypeScript product data driving reusable `ProductCard` grids',
+				'Client-side React hook interactions (`useState`/`useEffect`) for dynamic UI state',
+				'Validated newsletter subscription module paired with custom Icon/Badge system',
+				'Responsive multi-column storefront layout with Radix UI accessibility'
 			],
 			stack: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'Radix UI'],
 			scrollHeight: 5892,
@@ -305,15 +290,14 @@
 		{
 			slug: 'pixelforge',
 			title: 'PIXELFORGE',
-			fullTitle: 'PixelForge | Creative Video Agency',
-			category: 'Creative Video Agency · Portfolio',
-			tagline: 'Scroll-to-expand hero & immersive production showcase.',
-			description: 'Agency flagship anchored by an interactive scroll-expansion video hero that smoothly scales into full-bleed motion alongside production services and creative proof.',
-			highlights: [
-				'Interactive ScrollExpandMedia hero expanding card into full viewport',
-				'Staggered Framer Motion service cards (Production, Direction, Post)',
-				'Gradient spotlight surfaces tuned for dark creative agency appeal',
-				'Multi-page portfolio, case study & contact flow architecture'
+			fullTitle: 'PIXELFORGE — Scroll-Expansion Media App',
+			category: 'Next.js 16 · Framer Motion',
+			techSummary: 'Built with Next.js 16, React, TypeScript, Tailwind CSS 4, and Framer Motion.',
+			techFeatures: [
+				'Custom `ScrollExpandMedia` hero scaling inline video card to full viewport on scroll',
+				'Reusable `SectionReveal` and `StaggerChildren` Framer Motion wrappers',
+				'Cursor/gradient highlight `GradientCard` surfaces built with Tailwind CSS 4',
+				'Configured `next/image` pipeline supporting external video & high-res assets'
 			],
 			stack: ['Next.js 16', 'React', 'TypeScript', 'Tailwind CSS 4', 'Framer Motion'],
 			scrollHeight: 5250,
@@ -325,17 +309,16 @@
 		{
 			slug: 'premium-luxury-store',
 			title: 'MAISON',
-			fullTitle: 'MAISON | Luxury Essentials',
-			category: 'Quiet Luxury Fashion · E-Commerce',
-			tagline: 'Timeless elegance, modern refinement.',
-			description: 'Ultra-refined luxury flagship featuring butter-smooth Lenis scrolling, curated heirloom collections, Maison heritage chapters, and restraint-first editorial pacing.',
-			highlights: [
-				'Lenis buttery smooth scroll paired with Framer Motion reveal timing',
-				'Editorial CollectionGrid with understated luxury hover treatments',
-				'Dedicated HeritageSection celebrating atelier craft & provenance',
-				'Bespoke navigation and concierge-style footer architecture'
+			fullTitle: 'MAISON — Lenis Smooth-Scroll Commerce',
+			category: 'Next.js · Lenis + Motion',
+			techSummary: 'Built with Next.js, React, TypeScript, Lenis smooth scroll, Framer Motion, Tailwind CSS, and Radix UI.',
+			techFeatures: [
+				'Lenis smooth-scroll physics synchronized with Framer Motion section reveals',
+				'Modular `CollectionGrid` and heritage timeline UI components',
+				'Responsive viewport scaling with GPU-composited image zoom effects',
+				'Accessible Radix UI navigation & overlay primitive system'
 			],
-			stack: ['Next.js', 'React', 'TypeScript', 'Framer Motion', 'Lenis', 'Tailwind CSS'],
+			stack: ['Next.js', 'React', 'TypeScript', 'Lenis', 'Framer Motion', 'Tailwind CSS'],
 			scrollHeight: 4144,
 			durationSec: 7.1,
 			video: 'portfolio/websites/premium-luxury-store.mp4',
@@ -345,15 +328,14 @@
 		{
 			slug: 'thudarum-luxury-fashion',
 			title: 'THUDARUM',
-			fullTitle: 'Thudarum — Modern Contemporary Fashion',
-			category: 'Modern Luxury Fashion · E-Commerce',
-			tagline: 'Minimalist contemporary silhouettes for the discerning buyer.',
-			description: 'Sharp contemporary apparel storefront balancing bold runway framing with streamlined product filtering, promo code validation, and instant cart access.',
-			highlights: [
-				'High-contrast editorial header & full-bleed campaign hero',
-				'Clean contemporary product grid built for fast garment discovery',
-				'Interactive coupon validation & streamlined shopping bag UX',
-				'Focused hierarchy designed to turn lookbook traffic into orders'
+			fullTitle: 'THUDARUM — Fashion Storefront App',
+			category: 'Next.js · TypeScript',
+			techSummary: 'Built with Next.js, React, TypeScript, Tailwind CSS, and Radix UI / Recharts UI primitives.',
+			techFeatures: [
+				'Client-side promo/coupon discount validation logic inside checkout flow',
+				'Modular `ProductGrid` & shopping cart drawer state synchronized across routes',
+				'Accessible Radix UI form inputs, dialogs, tooltips, and tabs',
+				'Responsive grid system built with Tailwind CSS utility tokens'
 			],
 			stack: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'Radix UI'],
 			scrollHeight: 2283,
@@ -365,15 +347,14 @@
 		{
 			slug: 'webrenew',
 			title: 'WEBRENEW',
-			fullTitle: 'WebRenew | Digital & AI Agency',
-			category: 'Digital & AI Agency · Landing Page',
-			tagline: 'Custom web platforms, automations, and AI workflows.',
-			description: 'High-tech agency platform combining Lenis smooth scroll, luminous border glow cards, interactive capability tabs, and conversion-tuned enterprise positioning.',
-			highlights: [
-				'Interactive capability Tabs covering Web, Mobile, AI & Automation',
-				'Luminous cursor-reactive GlowingEffect cards & Motion transitions',
-				'Lenis smooth-scroll cadence for effortless long-page reading',
-				'Enterprise partnership messaging & direct project scoping CTAs'
+			fullTitle: 'WEBRENEW — Agency Web Platform',
+			category: 'Next.js 16 · Motion + Lenis',
+			techSummary: 'Built with Next.js 16, React, TypeScript, Tailwind CSS 4, Lenis, and Motion.',
+			techFeatures: [
+				'Interactive capability `Tabs` system switching dynamically across service pillars',
+				'Pointer-tracked `GlowingEffect` border shader cards powered by Motion',
+				'Lenis smooth-scrolling runtime integrated with App Router pages',
+				'Full Radix UI primitive suite & modular responsive layout sections'
 			],
 			stack: ['Next.js 16', 'React', 'TypeScript', 'Tailwind CSS 4', 'Lenis', 'Motion'],
 			scrollHeight: 3024,

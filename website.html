@@ -9,830 +9,542 @@
   gtag('js', new Date());
   gtag('config', 'G-1Y8TZD3QD3');
 </script>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Website Showcase | REVOLVYN</title>
-	<link rel="icon" href="favicon.png" type="image/png" sizes="any">
-	<link rel="apple-touch-icon" href="favicon.png">
-	<meta name="robots" content="noindex, follow" />
-	<meta name="description" content="Explore REVOLVYN's custom high-converting brand websites, e-commerce storefronts, and interactive web showcases." />
-	<meta name="theme-color" content="#000000" />
-	<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-	<link rel="stylesheet" href="css/footer.css">
-	<style>
-		*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-		html { scrollbar-width: none; scroll-behavior: smooth; }
-		html::-webkit-scrollbar { display: none; }
-		body {
-			background: #000;
-			color: #e8ece4;
-			font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-			overflow-x: hidden;
-			-webkit-font-smoothing: antialiased;
-			min-height: 100vh;
-		}
-		a { color: inherit; text-decoration: none; }
-		button { font-family: inherit; cursor: pointer; border: none; background: none; }
-		:focus-visible { outline: 2px solid rgba(230, 245, 120, 0.9); outline-offset: 3px; }
-		::selection { background: rgba(230, 245, 120, 0.35); color: #fff; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Website Showcase | REVOLVYN</title>
+<link rel="icon" href="favicon.png" type="image/png" sizes="any">
+<link rel="apple-touch-icon" href="favicon.png">
+<meta name="robots" content="noindex, follow" />
+<meta name="description" content="Explore REVOLVYN's custom web applications, frontend architectures, and interactive live previews." />
+<meta name="theme-color" content="#000000" />
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+body { font-family: 'Inter', sans-serif; background: #0f0f0f; color: #f1f1f1; min-height: 100vh; overflow-x: hidden; }
+a { text-decoration: none; color: inherit; }
+button { border: none; cursor: pointer; font-family: inherit; background: none; }
 
-		.bg-ambient {
-			position: fixed; inset: 0; pointer-events: none; z-index: 0;
-			background:
-				radial-gradient(ellipse 65% 45% at 50% 0%, rgba(110, 150, 75, 0.12) 0%, transparent 70%),
-				radial-gradient(ellipse 40% 40% at 88% 82%, rgba(90, 130, 60, 0.07) 0%, transparent 70%);
-		}
+::-webkit-scrollbar { width: 0; height: 0; }
+* { scrollbar-width: none; -ms-overflow-style: none; }
+:focus-visible { outline: 2px solid rgba(230,245,120,.9); outline-offset: 3px; }
+::selection { background: rgba(230,245,120,.35); }
 
-		/* Navigation matching portfolio.html */
-		.nav-float {
-			position: fixed; top: 0; left: 0; right: 0;
-			display: flex; justify-content: space-between; align-items: center;
-			padding: 28px 40px; z-index: 100;
-			background: linear-gradient(to bottom, rgba(0, 0, 0, 0.85) 0%, transparent 100%);
-			pointer-events: none;
-		}
-		.nav-logo {
-			font-family: 'Playfair Display', serif; font-size: 18px;
-			color: rgba(245, 250, 230, 0.9); letter-spacing: 1px; pointer-events: auto;
-		}
-		.nav-links { display: flex; gap: 28px; pointer-events: auto; }
-		.nav-links a {
-			font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
-			color: rgba(215, 230, 190, 0.6); transition: color 0.3s; font-weight: 500;
-		}
-		.nav-links a:hover, .nav-links a.active { color: rgba(230, 245, 120, 0.95); }
-		.nav-hamburger {
-			display: none; flex-direction: column; gap: 5px;
-			padding: 6px; pointer-events: auto; z-index: 200;
-		}
-		.nav-hamburger span {
-			display: block; width: 22px; height: 2px;
-			background: rgba(215, 230, 190, 0.8); border-radius: 2px;
-			transition: all 0.3s ease;
-		}
-		.nav-hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
-		.nav-hamburger.open span:nth-child(2) { opacity: 0; }
-		.nav-hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
-		.nav-mobile-overlay {
-			display: none; position: fixed; inset: 0; background: rgba(8, 12, 5, 0.97);
-			z-index: 99; flex-direction: column; align-items: center; justify-content: center;
-			gap: 32px; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
-		}
-		.nav-mobile-overlay.open { opacity: 1; pointer-events: auto; }
-		.nav-mobile-overlay a {
-			font-size: 14px; letter-spacing: 3px; text-transform: uppercase;
-			color: rgba(215, 230, 190, 0.75); font-weight: 500;
-		}
-		.nav-mobile-overlay a.active { color: #e6f578; }
+.skip-link { position: absolute; left: -9999px; top: 8px; background: #e6f578; color: #000; padding: 10px 18px; z-index: 10000; font-size: 13px; font-weight: 600; border-radius: 0 0 8px 0; }
+.skip-link:focus { left: 8px; }
 
-		/* Main Page Layout */
-		.ws-page {
-			position: relative; z-index: 10;
-			max-width: 1320px; margin: 0 auto;
-			padding: 104px 40px 80px;
-			animation: pageFade 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-		}
-		@keyframes pageFade {
-			from { opacity: 0; transform: translateY(10px); }
-			to { opacity: 1; transform: translateY(0); }
-		}
+/* Navigation matching video.html */
+.nav-float { position: fixed; top: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; z-index: 100; pointer-events: none; background: linear-gradient(to bottom, rgba(0,0,0,0.82) 0%, transparent 100%); }
+.nav-logo { font-family: 'Playfair Display', serif; font-size: 18px; color: rgba(245, 250, 230, 0.9); letter-spacing: 1px; pointer-events: auto; }
+.nav-links { display: flex; gap: 28px; pointer-events: auto; }
+.nav-links a { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: rgba(215, 230, 190, 0.6); transition: color 0.3s; font-weight: 500; }
+.nav-links a:hover, .nav-links a.active { color: rgba(230, 245, 120, 0.95); }
+.nav-hamburger { display: none; flex-direction: column; gap: 5px; padding: 6px; pointer-events: auto; z-index: 200; }
+.nav-hamburger span { display: block; width: 22px; height: 2px; background: rgba(215, 230, 190, 0.8); border-radius: 2px; transition: all 0.3s ease; }
+.nav-hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+.nav-hamburger.open span:nth-child(2) { opacity: 0; }
+.nav-hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+.nav-mobile-overlay { display: none; position: fixed; inset: 0; background: rgba(8, 12, 5, 0.97); z-index: 99; flex-direction: column; align-items: center; justify-content: center; gap: 32px; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+.nav-mobile-overlay.open { opacity: 1; pointer-events: auto; }
+.nav-mobile-overlay a { font-size: 14px; letter-spacing: 3px; text-transform: uppercase; color: rgba(215, 230, 190, 0.7); font-weight: 500; }
 
-		.ws-topbar {
-			display: flex; align-items: center; justify-content: space-between;
-			gap: 16px; margin-bottom: 36px; flex-wrap: wrap;
-		}
-		.ws-back-link {
-			display: inline-flex; align-items: center; gap: 10px;
-			padding: 9px 18px; border-radius: 999px;
-			background: rgba(16, 22, 12, 0.72);
-			border: 1px solid rgba(180, 220, 100, 0.22);
-			font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
-			color: rgba(230, 245, 160, 0.9); font-weight: 500;
-			transition: border-color 0.25s, background 0.25s, transform 0.25s;
-		}
-		.ws-back-link:hover {
-			border-color: rgba(230, 245, 120, 0.65);
-			background: rgba(26, 36, 16, 0.85);
-			transform: translateX(-2px);
-		}
-		.ws-pager { display: inline-flex; align-items: center; gap: 10px; }
-		.ws-index-badge {
-			font-size: 11px; letter-spacing: 2.2px; text-transform: uppercase;
-			color: rgba(215, 230, 190, 0.55); margin-right: 4px;
-			font-variant-numeric: tabular-nums;
-		}
-		.ws-nav-pill {
-			display: inline-flex; align-items: center; gap: 6px;
-			padding: 8px 14px; border-radius: 999px;
-			border: 1px solid rgba(180, 220, 100, 0.2);
-			background: rgba(14, 18, 10, 0.75);
-			color: rgba(225, 238, 200, 0.85);
-			font-size: 11px; letter-spacing: 1.4px; text-transform: uppercase;
-			transition: border-color 0.25s, color 0.25s, background 0.25s;
-		}
-		.ws-nav-pill:hover {
-			border-color: rgba(230, 245, 120, 0.6);
-			color: #e6f578;
-			background: rgba(26, 36, 16, 0.85);
-		}
+/* Main Layout matching video.html */
+.main-layout { display: flex; max-width: 1800px; margin: 76px auto 48px; padding: 0 24px; gap: 24px; }
+.main-content { flex: 1; min-width: 0; }
+.sidebar { width: 402px; flex-shrink: 0; position: sticky; top: 72px; height: calc(100vh - 88px); display: flex; flex-direction: column; }
+.sidebar-section { flex: 1; min-height: 0; display: flex; flex-direction: column; }
 
-		/* Details-first Clean Hero Split */
-		.ws-hero {
-			display: grid;
-			grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
-			gap: 48px;
-			align-items: center;
-			margin-bottom: 52px;
-		}
+.sidebar-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-shrink: 0; }
+.sidebar-title { font-size: 16px; font-weight: 600; }
+.sidebar-arrows { display: inline-flex; gap: 6px; }
+.rail-arrow-btn {
+	width: 30px; height: 30px; border-radius: 50%;
+	display: inline-flex; align-items: center; justify-content: center;
+	background: rgba(255,255,255,0.06);
+	border: 1px solid rgba(255,255,255,0.12);
+	color: rgba(230,245,120,0.9);
+	transition: background 0.2s, border-color 0.2s, transform 0.2s;
+}
+.rail-arrow-btn:hover { background: rgba(230,245,120,0.16); border-color: rgba(230,245,120,0.55); transform: scale(1.06); }
 
-		.ws-summary {
-			display: flex; flex-direction: column; gap: 20px;
-		}
-		.ws-title {
-			font-family: 'Playfair Display', serif;
-			font-size: clamp(38px, 4.8vw, 60px);
-			font-weight: 400; line-height: 1.04;
-			color: rgba(248, 252, 240, 0.98);
-			letter-spacing: -0.5px;
-		}
-		.ws-subtitle {
-			font-size: 15px; font-weight: 500;
-			color: rgba(230, 245, 140, 0.84);
-			margin-top: -8px;
-		}
-		.ws-desc {
-			font-size: 15.5px; line-height: 1.8;
-			color: rgba(215, 230, 195, 0.8); font-weight: 300;
-			max-width: 580px;
-		}
+.sidebar-scroll { flex: 1; overflow-y: auto; padding-right: 4px; cursor: grab; scroll-behavior: smooth; }
+.sidebar-scroll.dragging { cursor: grabbing; scroll-behavior: auto; }
 
-		.ws-actions {
-			display: flex; flex-wrap: wrap; align-items: center; gap: 12px;
-			margin-top: 6px;
-		}
-		.ws-preview-btn {
-			display: inline-flex; align-items: center; gap: 10px;
-			padding: 13px 26px; border-radius: 999px;
-			background: linear-gradient(135deg, #e6f578, #b4dc64);
-			color: #070a04;
-			font-size: 12px; letter-spacing: 1.8px; text-transform: uppercase; font-weight: 700;
-			box-shadow: 0 8px 26px rgba(180, 220, 100, 0.22);
-			transition: transform 0.25s ease, box-shadow 0.25s ease;
-		}
-		.ws-preview-btn:hover {
-			transform: translateY(-2px);
-			box-shadow: 0 12px 32px rgba(230, 245, 120, 0.34);
-		}
-		.ws-ext-btn {
-			display: inline-flex; align-items: center; gap: 8px;
-			padding: 12px 18px; border-radius: 999px;
-			border: 1px solid rgba(230, 245, 120, 0.35);
-			background: rgba(16, 22, 11, 0.75);
-			color: rgba(235, 248, 175, 0.95);
-			font-size: 11px; letter-spacing: 1.6px; text-transform: uppercase; font-weight: 600;
-			transition: border-color 0.25s, background 0.25s, transform 0.25s;
-		}
-		.ws-ext-btn:hover {
-			border-color: #e6f578;
-			background: rgba(230, 245, 120, 0.12);
-			transform: translateY(-1px);
-		}
-		.ws-cta-link {
-			display: inline-flex; align-items: center; gap: 8px;
-			padding: 12px 20px; border-radius: 999px;
-			border: 1px solid rgba(180, 220, 100, 0.22);
-			color: rgba(225, 238, 200, 0.85);
-			font-size: 11px; letter-spacing: 1.8px; text-transform: uppercase; font-weight: 500;
-			transition: border-color 0.25s, color 0.25s;
-		}
-		.ws-cta-link:hover { border-color: rgba(230, 245, 120, 0.6); color: #e6f578; }
+/* Clean Video Player — Zero Overlays */
+.video-player-wrapper { position: relative; width: 100%; border-radius: 12px; overflow: hidden; background: #000; aspect-ratio: 16 / 9; border: 1px solid rgba(255,255,255,0.06); }
+.video-player-wrapper video { width: 100%; height: 100%; display: block; object-fit: cover; }
 
-		/* Pure Clean Video Surface — Zero Overlays */
-		.ws-video-frame {
-			position: relative;
-			aspect-ratio: 16 / 9;
-			border-radius: 14px;
-			overflow: hidden;
-			background: #050703;
-			border: 1px solid rgba(180, 220, 100, 0.18);
-			box-shadow: 0 24px 64px rgba(0, 0, 0, 0.72);
-		}
-		.ws-video-frame video {
-			width: 100%; height: 100%; object-fit: cover; display: block;
-		}
+/* Info & Channel Row matching video.html */
+.video-info { padding: 16px 0 12px; }
+.back-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+.back-pill {
+	display: inline-flex; align-items: center; gap: 6px;
+	font-size: 12px; color: rgba(215, 230, 190, 0.7);
+	transition: color 0.2s;
+}
+.back-pill:hover { color: #e6f578; }
+.video-title { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 600; line-height: 1.35; color: #fff; }
+.channel-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-top: 14px; }
+.channel-info { display: flex; align-items: center; gap: 12px; }
+.channel-avatar { width: 40px; height: 40px; border-radius: 50%; background: #000; display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; }
+.channel-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block; }
+.channel-name { font-weight: 600; font-size: 15px; }
+.channel-subs { font-size: 12px; color: #aaa; }
 
-		/* Deep-dive Website Detail Cards */
-		.ws-details-grid {
-			display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
-			gap: 22px; margin-bottom: 68px;
-		}
-		.ws-panel {
-			padding: 30px 32px; border-radius: 14px;
-			background: rgba(14, 18, 9, 0.62);
-			border: 1px solid rgba(140, 180, 120, 0.14);
-		}
-		.ws-panel-eyebrow {
-			font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
-			color: rgba(210, 230, 160, 0.52); margin-bottom: 10px;
-		}
-		.ws-panel h2 {
-			font-family: 'Playfair Display', serif;
-			font-size: 25px; font-weight: 400; color: rgba(248, 252, 240, 0.95);
-			margin-bottom: 20px;
-		}
-		.ws-highlights { list-style: none; display: flex; flex-direction: column; gap: 14px; }
-		.ws-highlights li {
-			display: flex; align-items: flex-start; gap: 12px;
-			font-size: 14.5px; line-height: 1.65; color: rgba(220, 232, 200, 0.84);
-			font-weight: 300;
-		}
-		.ws-highlights li svg { flex-shrink: 0; margin-top: 4px; color: #e6f578; }
+.action-buttons { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.nav-switch-pill { display: inline-flex; align-items: center; background: rgba(255,255,255,0.08); border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
+.nav-switch-pill a { padding: 8px 14px; color: #f1f1f1; font-size: 13px; font-weight: 500; display: inline-flex; align-items: center; gap: 5px; transition: background 0.2s, color 0.2s; }
+.nav-switch-pill a:first-child { border-right: 1px solid rgba(255,255,255,0.12); }
+.nav-switch-pill a:hover { background: rgba(255,255,255,0.1); color: #e6f578; }
 
-		.ws-stack-list { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 22px; }
-		.ws-stack-chip {
-			padding: 7px 14px; border-radius: 999px;
-			background: rgba(230, 245, 120, 0.08);
-			border: 1px solid rgba(230, 245, 120, 0.22);
-			font-size: 12px; color: rgba(238, 248, 195, 0.92); font-weight: 500;
-		}
-		.ws-quote-box {
-			padding: 18px 20px; border-radius: 10px;
-			border-left: 2px solid #e6f578;
-			background: rgba(0, 0, 0, 0.35);
-			font-family: 'Playfair Display', serif; font-style: italic;
-			font-size: 18px; line-height: 1.5; color: rgba(245, 250, 235, 0.88);
-		}
+.preview-btn {
+	background: linear-gradient(135deg, #e6f578, #b4dc64); color: #000;
+	padding: 8px 18px; border-radius: 24px; font-size: 13px; font-weight: 600;
+	display: inline-flex; align-items: center; gap: 7px;
+	transition: transform 0.2s, box-shadow 0.2s;
+}
+.preview-btn:hover { transform: scale(1.03); box-shadow: 0 2px 14px rgba(180,220,100,0.3); }
 
-		/* Explore Other Websites: Mouse-Interactive Horizontal Video Rail */
-		.ws-more-head {
-			display: flex; align-items: center; justify-content: space-between;
-			gap: 16px; margin-bottom: 24px;
-		}
-		.ws-more-head h2 {
-			font-family: 'Playfair Display', serif;
-			font-size: clamp(24px, 3vw, 34px); font-weight: 400; color: rgba(248, 252, 240, 0.95);
-		}
-		.ws-slider-arrows {
-			display: inline-flex; align-items: center; gap: 10px; flex-shrink: 0;
-		}
-		.ws-arrow-btn {
-			width: 42px; height: 42px; border-radius: 50%;
-			display: inline-flex; align-items: center; justify-content: center;
-			background: rgba(16, 22, 11, 0.85);
-			border: 1px solid rgba(180, 220, 100, 0.28);
-			color: #e6f578;
-			transition: background 0.25s, border-color 0.25s, transform 0.2s, opacity 0.25s;
-		}
-		.ws-arrow-btn:hover:not(:disabled) {
-			background: linear-gradient(135deg, #e6f578, #b4dc64);
-			border-color: #e6f578;
-			color: #070a04;
-			transform: scale(1.06);
-		}
-		.ws-arrow-btn:disabled { opacity: 0.32; cursor: default; }
+.share-btn { background: rgba(255,255,255,0.08); color: #f1f1f1; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; transition: background 0.2s; border: 1px solid rgba(255,255,255,0.1); }
+.share-btn:hover { background: rgba(255,255,255,0.16); }
+.work-btn { background: rgba(255,255,255,0.08); color: #e6f578; padding: 8px 18px; border-radius: 24px; font-size: 13px; font-weight: 600; border: 1px solid rgba(230,245,120,0.28); transition: background 0.2s, border-color 0.2s; display: inline-flex; align-items: center; }
+.work-btn:hover { background: rgba(230,245,120,0.14); border-color: rgba(230,245,120,0.6); }
 
-		.ws-more-track {
-			display: flex; gap: 18px;
-			overflow-x: auto; overflow-y: hidden;
-			scroll-snap-type: x proximity;
-			scrollbar-width: none;
-			cursor: grab;
-			padding-bottom: 6px;
-			user-select: none; -webkit-user-select: none;
-		}
-		.ws-more-track::-webkit-scrollbar { display: none; }
-		.ws-more-track.dragging { cursor: grabbing; scroll-snap-type: none; scroll-behavior: auto; }
+/* Technology Stack Box (Tech-focused only) */
+.tech-box {
+	background: rgba(255,255,255,0.04);
+	border: 1px solid rgba(255,255,255,0.07);
+	border-radius: 12px;
+	padding: 18px 20px;
+	margin-top: 8px;
+}
+.tech-head {
+	font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 10px;
+	display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.tech-summary { font-size: 14px; line-height: 1.6; color: #cfcfcf; margin-bottom: 14px; }
+.tech-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.tech-chip {
+	background: rgba(230,245,120,0.1);
+	border: 1px solid rgba(230,245,120,0.24);
+	color: #e6f578;
+	font-size: 12px; font-weight: 500;
+	padding: 5px 12px; border-radius: 999px;
+}
+.tech-subhead { font-size: 12px; text-transform: uppercase; letter-spacing: 1.4px; color: #999; font-weight: 600; margin-bottom: 10px; }
+.tech-features { list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 18px; }
+.tech-features li { display: flex; align-items: flex-start; gap: 8px; font-size: 13.5px; line-height: 1.5; color: #d6d6d6; }
+.tech-features li svg { flex-shrink: 0; margin-top: 3px; color: #e6f578; }
 
-		.ws-more-card {
-			flex: 0 0 320px;
-			scroll-snap-align: start;
-			display: flex; flex-direction: column;
-			border-radius: 12px; overflow: hidden;
-			background: #0a0d07;
-			border: 1px solid rgba(180, 220, 100, 0.14);
-			transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-		}
-		.ws-more-card:hover {
-			transform: translateY(-4px);
-			border-color: rgba(230, 245, 120, 0.48);
-			box-shadow: 0 16px 36px rgba(0, 0, 0, 0.72);
-		}
-		.ws-more-media {
-			aspect-ratio: 16 / 10; overflow: hidden; background: #050603;
-		}
-		.ws-more-media video {
-			width: 100%; height: 100%; object-fit: cover; display: block;
-			pointer-events: none;
-		}
-		.ws-more-body {
-			padding: 14px 16px;
-			display: flex; align-items: center; justify-content: space-between; gap: 10px;
-		}
-		.ws-more-title {
-			font-family: 'Playfair Display', serif; font-size: 18px;
-			color: rgba(248, 252, 240, 0.95);
-		}
-		.ws-more-arrow {
-			color: rgba(230, 245, 120, 0.78); font-size: 15px;
-			transition: transform 0.25s ease, color 0.25s ease;
-		}
-		.ws-more-card:hover .ws-more-arrow {
-			color: #e6f578;
-			transform: translateX(3px);
-		}
+/* Sidebar Items matching video.html */
+.sidebar-item { display: flex; gap: 10px; margin-bottom: 10px; cursor: pointer; border-radius: 8px; overflow: hidden; transition: background 0.2s; padding: 4px; }
+.sidebar-item:hover { background: rgba(255,255,255,0.06); }
+.sidebar-thumb { width: 168px; height: 94px; border-radius: 8px; overflow: hidden; position: relative; flex-shrink: 0; background: #191919; }
+.sidebar-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; position: relative; z-index: 1; transition: opacity 0.25s; pointer-events: none; }
+.sidebar-thumb video { width: 100%; height: 100%; object-fit: cover; display: block; position: absolute; inset: 0; z-index: 2; opacity: 0; transition: opacity 0.25s; pointer-events: none; }
+.sidebar-item:hover .sidebar-thumb video { opacity: 1; }
+.sidebar-item:hover .sidebar-thumb img { opacity: 0; }
+.sidebar-item-info { padding: 4px 0; min-width: 0; flex: 1; }
+.sidebar-item-title { font-size: 13px; font-weight: 600; line-height: 1.35; color: #f1f1f1; }
+.sidebar-item-sub { font-size: 12px; color: #9a9a9a; margin-top: 4px; line-height: 1.35; }
 
-		/* Clean Live Preview Modal */
-		.lp-modal {
-			position: fixed; inset: 0; z-index: 1200;
-			background: rgba(3, 5, 2, 0.94);
-			backdrop-filter: blur(14px);
-			display: none; flex-direction: column;
-			padding: 16px 20px 20px;
-		}
-		.lp-modal.open { display: flex; animation: pageFade 0.25s ease; }
-		.lp-toolbar {
-			display: flex; align-items: center; justify-content: space-between; gap: 14px;
-			padding: 10px 18px; border-radius: 12px;
-			background: #0b0f08; border: 1px solid rgba(180, 220, 100, 0.22);
-			margin-bottom: 14px; flex-wrap: wrap;
-		}
-		.lp-title {
-			font-family: 'Playfair Display', serif; font-size: 18px;
-			color: rgba(248, 252, 240, 0.95);
-		}
-		.lp-devices {
-			display: inline-flex; gap: 4px; padding: 3px; border-radius: 999px;
-			background: rgba(0, 0, 0, 0.45);
-			border: 1px solid rgba(140, 180, 120, 0.18);
-		}
-		.lp-dev-btn {
-			display: inline-flex; align-items: center; gap: 6px;
-			padding: 6px 12px; border-radius: 999px;
-			font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase;
-			color: rgba(215, 230, 190, 0.65); font-weight: 600;
-			transition: background 0.2s, color 0.2s;
-		}
-		.lp-dev-btn.active {
-			background: linear-gradient(135deg, #e6f578, #b4dc64);
-			color: #060803;
-		}
-		.lp-right-actions { display: flex; align-items: center; gap: 10px; }
-		.lp-mode-btn {
-			padding: 7px 14px; border-radius: 999px;
-			border: 1px solid rgba(180, 220, 100, 0.28);
-			color: rgba(230, 245, 160, 0.92);
-			font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; font-weight: 600;
-			display: inline-flex; align-items: center; gap: 6px;
-		}
-		.lp-mode-btn:hover { border-color: #e6f578; color: #e6f578; }
-		.lp-close {
-			width: 34px; height: 34px; border-radius: 50%;
-			border: 1px solid rgba(180, 220, 100, 0.25);
-			color: #fff; font-size: 18px; line-height: 1;
-			display: inline-flex; align-items: center; justify-content: center;
-			transition: border-color 0.2s, color 0.2s;
-		}
-		.lp-close:hover { border-color: #e6f578; color: #e6f578; }
+/* Mobile Horizontal Interactive Scroll Section matching video.html */
+.mobile-more-section { display: none; margin-top: 28px; }
+.mobile-more-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.mobile-more-title { font-size: 16px; font-weight: 600; }
+.mobile-more-scroll { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 8px; cursor: grab; scroll-behavior: smooth; }
+.mobile-more-scroll.dragging { cursor: grabbing; scroll-snap-type: none; scroll-behavior: auto; }
+.mobile-more-scroll .sidebar-item { flex-shrink: 0; width: 270px; flex-direction: column; scroll-snap-align: start; margin-bottom: 0; padding: 0; gap: 0; }
+.mobile-more-scroll .sidebar-thumb { width: 100%; height: 152px; }
+.mobile-more-scroll .sidebar-item-info { padding: 8px 2px 0; }
 
-		.lp-viewport-wrap {
-			flex: 1; min-height: 0;
-			display: flex; align-items: center; justify-content: center;
-			overflow: hidden;
-		}
-		.lp-frame-shell {
-			width: 100%; height: 100%; max-width: 100%;
-			background: #0a0d07;
-			border: 1px solid rgba(180, 220, 100, 0.24);
-			border-radius: 14px; overflow: hidden;
-			transition: width 0.35s cubic-bezier(0.22, 1, 0.36, 1), max-width 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-			box-shadow: 0 24px 80px rgba(0, 0, 0, 0.85);
-		}
-		.lp-frame-shell[data-device="tablet"] { width: 780px; }
-		.lp-frame-shell[data-device="mobile"] { width: 396px; }
-		.lp-stage { width: 100%; height: 100%; background: #000; }
-		.lp-stage iframe, .lp-stage video {
-			width: 100%; height: 100%; border: 0; display: block;
-		}
-		.lp-stage video { object-fit: contain; background: #050703; }
+/* Clean Live Preview Modal with Open Site button */
+.lp-modal {
+	position: fixed; inset: 0; z-index: 1200;
+	background: rgba(6, 6, 6, 0.94);
+	backdrop-filter: blur(12px);
+	display: none; flex-direction: column;
+	padding: 16px 20px 20px;
+}
+.lp-modal.open { display: flex; animation: fadeIn 0.22s ease; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.lp-toolbar {
+	display: flex; align-items: center; justify-content: space-between; gap: 14px;
+	padding: 10px 18px; border-radius: 12px;
+	background: #141414; border: 1px solid rgba(255,255,255,0.1);
+	margin-bottom: 14px; flex-wrap: wrap;
+}
+.lp-title { font-family: 'Playfair Display', serif; font-size: 18px; color: #fff; }
+.lp-devices { display: inline-flex; gap: 4px; padding: 3px; border-radius: 999px; background: rgba(0,0,0,0.45); border: 1px solid rgba(255,255,255,0.1); }
+.lp-dev-btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; font-size: 11px; letter-spacing: 0.8px; text-transform: uppercase; color: #aaa; font-weight: 600; transition: background 0.2s, color 0.2s; }
+.lp-dev-btn.active { background: #e6f578; color: #000; }
+.lp-right-actions { display: flex; align-items: center; gap: 10px; }
+.lp-open-site-btn {
+	display: inline-flex; align-items: center; gap: 7px;
+	padding: 8px 16px; border-radius: 999px;
+	background: linear-gradient(135deg, #e6f578, #b4dc64);
+	color: #000; font-size: 12px; font-weight: 700; letter-spacing: 0.5px;
+	transition: transform 0.2s, box-shadow 0.2s;
+}
+.lp-open-site-btn:hover { transform: scale(1.03); box-shadow: 0 2px 12px rgba(230,245,120,0.3); }
+.lp-close { width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.2); color: #fff; font-size: 18px; line-height: 1; display: inline-flex; align-items: center; justify-content: center; }
+.lp-close:hover { border-color: #e6f578; color: #e6f578; }
 
-		@media (max-width: 1024px) {
-			.ws-hero { grid-template-columns: 1fr; gap: 30px; }
-		}
-		@media (max-width: 768px) {
-			.nav-float { padding: 18px 20px; }
-			.nav-links { display: none; }
-			.nav-hamburger { display: flex; }
-			.nav-mobile-overlay { display: flex; }
-			.ws-page { padding: 86px 20px 60px; }
-			.ws-details-grid { grid-template-columns: 1fr; }
-			.ws-panel { padding: 24px 20px; }
-			.ws-more-card { flex: 0 0 272px; }
-		}
-	</style>
+.lp-viewport-wrap { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.lp-frame-shell { width: 100%; height: 100%; max-width: 100%; background: #000; border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; overflow: hidden; transition: width 0.3s ease; }
+.lp-frame-shell[data-device="tablet"] { width: 780px; }
+.lp-frame-shell[data-device="mobile"] { width: 396px; }
+.lp-stage { width: 100%; height: 100%; }
+.lp-stage iframe, .lp-stage video { width: 100%; height: 100%; border: 0; display: block; object-fit: contain; }
+
+@media (max-width: 1024px) {
+	.sidebar { display: none; }
+	.mobile-more-section { display: block; }
+	.main-layout { padding: 0 16px; }
+}
+@media (max-width: 768px) {
+	.nav-float { padding: 14px 16px; }
+	.nav-links { display: none; }
+	.nav-hamburger { display: flex; }
+	.nav-mobile-overlay { display: flex; }
+	.main-layout { padding: 0 12px; margin-top: 66px; }
+	.video-title { font-size: 19px; }
+	.channel-row { flex-direction: column; align-items: flex-start; }
+	.action-buttons { width: 100%; }
+	.preview-btn, .work-btn, .share-btn { justify-content: center; }
+	.tech-features { grid-template-columns: 1fr; }
+}
+</style>
 </head>
 <body>
-	<div class="bg-ambient"></div>
+<a class="skip-link" href="#main">Skip to content</a>
 
-	<nav class="nav-float">
-		<a href="index.html" class="nav-logo">REVOLVYN</a>
-		<div class="nav-links">
-			<a href="index.html#about">About Us</a>
-			<a href="portfolio.html" class="active">Portfolio</a>
-			<a href="brands.html">Brands</a>
-			<a href="services.html">Services</a>
-			<a href="contact.html">Contact Us</a>
-		</div>
-		<button class="nav-hamburger" id="navHamburger" aria-label="Menu">
-			<span></span><span></span><span></span>
-		</button>
-	</nav>
-
-	<div class="nav-mobile-overlay" id="navMobile">
+<nav class="nav-float">
+	<a href="index.html" class="nav-logo">REVOLVYN</a>
+	<div class="nav-links">
 		<a href="index.html#about">About Us</a>
 		<a href="portfolio.html" class="active">Portfolio</a>
 		<a href="brands.html">Brands</a>
 		<a href="services.html">Services</a>
 		<a href="contact.html">Contact Us</a>
 	</div>
+	<button class="nav-hamburger" id="navHamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+<div class="nav-mobile-overlay" id="navMobileOverlay">
+	<a href="index.html#about">About Us</a>
+	<a href="portfolio.html" class="active">Portfolio</a>
+	<a href="brands.html">Brands</a>
+	<a href="services.html">Services</a>
+	<a href="contact.html">Contact Us</a>
+</div>
 
-	<main class="ws-page" id="wsMain">
-		<div class="ws-topbar">
-			<a href="portfolio.html?tab=websites" class="ws-back-link">
-				<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
-				<span>Back to Websites</span>
-			</a>
-			<div class="ws-pager">
-				<span class="ws-index-badge" id="wsCounter">01 / 19</span>
-				<a href="#" class="ws-nav-pill" id="wsPrevLink" aria-label="Previous website showcase">&#8592; Prev</a>
-				<a href="#" class="ws-nav-pill" id="wsNextLink" aria-label="Next website showcase">Next &#8594;</a>
-			</div>
+<div class="main-layout" id="main">
+	<div class="main-content">
+		<div class="back-row">
+			<a href="portfolio.html?tab=websites" class="back-pill">&#8592; All Websites</a>
+			<span style="font-size:12px;color:#888;font-variant-numeric:tabular-nums;" id="wsCounter">01 / 19</span>
 		</div>
 
-		<section class="ws-hero">
-			<div class="ws-summary">
-				<h1 class="ws-title" id="wsTitle">Website Title</h1>
-				<p class="ws-subtitle" id="wsFullTitle"></p>
-				<p class="ws-desc" id="wsDesc"></p>
+		<!-- Clean Autoplay Video Frame (Zero Overlays) -->
+		<div class="video-player-wrapper">
+			<video id="wsHeroVideo" muted loop playsinline autoplay preload="metadata"></video>
+		</div>
 
-				<div class="ws-actions">
-					<button type="button" class="ws-preview-btn" id="livePreviewBtn">
-						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3.6 9h16.8"/><path d="M3.6 15h16.8"/><path d="M12 3a14 14 0 0 1 0 18"/><path d="M12 3a14 14 0 0 0 0 18"/></svg>
+		<div class="video-info">
+			<h1 class="video-title" id="wsTitle">Website Showcase</h1>
+			<div class="channel-row">
+				<a href="index.html" class="channel-info">
+					<div class="channel-avatar"><img src="favicon.png" alt="REVOLVYN"></div>
+					<div>
+						<div class="channel-name">REVOLVYN</div>
+						<div class="channel-subs">Web Engineering</div>
+					</div>
+				</a>
+
+				<div class="action-buttons">
+					<button type="button" class="preview-btn" id="livePreviewBtn">
+						<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3.6 9h16.8"/><path d="M3.6 15h16.8"/><path d="M12 3a14 14 0 0 1 0 18"/><path d="M12 3a14 14 0 0 0 0 18"/></svg>
 						<span>Live Preview</span>
 					</button>
-					<a href="#" target="_blank" rel="noopener" class="ws-ext-btn" id="wsExternalLink" style="display:none;">
-						<span>Open Site</span>
-						<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-					</a>
-					<a href="contact.html" class="ws-cta-link">Build Similar Site &#8594;</a>
-				</div>
-			</div>
-
-			<div class="ws-video-frame">
-				<video id="wsHeroVideo" muted loop playsinline autoplay preload="metadata"></video>
-			</div>
-		</section>
-
-		<section class="ws-details-grid">
-			<article class="ws-panel">
-				<div class="ws-panel-eyebrow">Experience Architecture</div>
-				<h2>What Makes It Convert</h2>
-				<ul class="ws-highlights" id="wsHighlights"></ul>
-			</article>
-
-			<article class="ws-panel">
-				<div class="ws-panel-eyebrow">Engineering &amp; Motion</div>
-				<h2>Technology Stack</h2>
-				<div class="ws-stack-list" id="wsStack"></div>
-				<blockquote class="ws-quote-box" id="wsTagline"></blockquote>
-			</article>
-		</section>
-
-		<section class="ws-more">
-			<div class="ws-more-head">
-				<div>
-					<div class="ws-panel-eyebrow">More From Our Studio</div>
-					<h2>Explore Other Websites</h2>
-				</div>
-				<div class="ws-slider-arrows" aria-label="Slide websites carousel">
-					<button type="button" class="ws-arrow-btn" id="wsSliderPrev" aria-label="Slide left">
-						<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+					<div class="nav-switch-pill">
+						<a href="#" id="wsPrevLink" aria-label="Previous website">&#8592; Prev</a>
+						<a href="#" id="wsNextLink" aria-label="Next website">Next &#8594;</a>
+					</div>
+					<button type="button" class="share-btn" id="shareBtn">
+						<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 9V3L22 12 14 21V15C8.44 15 4.78 17.03 2 21 3.11 15.33 6.67 9.67 14 9Z"/></svg>
+						<span id="shareText">Share</span>
 					</button>
-					<button type="button" class="ws-arrow-btn" id="wsSliderNext" aria-label="Slide right">
-						<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-					</button>
+					<a href="contact.html" class="work-btn">Work With Us</a>
 				</div>
-			</div>
-			<div class="ws-more-track" id="wsMoreTrack"></div>
-		</section>
-	</main>
-
-	<!-- Clean Live Preview Overlay -->
-	<div class="lp-modal" id="lpModal" role="dialog" aria-modal="true" aria-labelledby="lpTitle">
-		<div class="lp-toolbar">
-			<span class="lp-title" id="lpTitle">Live Preview</span>
-
-			<div class="lp-devices" role="group" aria-label="Viewport device size">
-				<button type="button" class="lp-dev-btn active" data-device="desktop">
-					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg>
-					Desktop
-				</button>
-				<button type="button" class="lp-dev-btn" data-device="tablet">
-					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
-					Tablet
-				</button>
-				<button type="button" class="lp-dev-btn" data-device="mobile">
-					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
-					Mobile
-				</button>
-			</div>
-
-			<div class="lp-right-actions">
-				<a href="#" target="_blank" rel="noopener" class="lp-mode-btn" id="lpExternalBtn" style="display:none;">Open Live ↗</a>
-				<button type="button" class="lp-close" id="lpCloseBtn" aria-label="Close live preview">&times;</button>
 			</div>
 		</div>
 
-		<div class="lp-viewport-wrap">
-			<div class="lp-frame-shell" id="lpFrameShell" data-device="desktop">
-				<div class="lp-stage" id="lpStage"></div>
+		<!-- Technology Stack & Engineering Features Only -->
+		<section class="tech-box" aria-labelledby="techHeading">
+			<div class="tech-head" id="techHeading">Technology Stack</div>
+			<p class="tech-summary" id="techSummary"></p>
+			<div class="tech-chips" id="wsStack"></div>
+			<div class="tech-subhead">Architecture &amp; Key Features</div>
+			<ul class="tech-features" id="wsHighlights"></ul>
+		</section>
+
+		<!-- Mobile Interactive Carousel -->
+		<section class="mobile-more-section" id="mobileMoreSection">
+			<div class="mobile-more-head">
+				<div class="mobile-more-title">Explore Other Websites</div>
+				<div class="sidebar-arrows">
+					<button type="button" class="rail-arrow-btn" id="mobPrevBtn" aria-label="Slide left">&#8592;</button>
+					<button type="button" class="rail-arrow-btn" id="mobNextBtn" aria-label="Slide right">&#8594;</button>
+				</div>
 			</div>
+			<div class="mobile-more-scroll" id="mobileMoreContainer"></div>
+		</section>
+	</div>
+
+	<!-- Desktop Sticky Sidebar matching video.html -->
+	<aside class="sidebar" id="desktopSidebar">
+		<div class="sidebar-section">
+			<div class="sidebar-header">
+				<div class="sidebar-title">Explore Other Websites</div>
+				<div class="sidebar-arrows">
+					<button type="button" class="rail-arrow-btn" id="deskUpBtn" aria-label="Scroll websites up">&#8593;</button>
+					<button type="button" class="rail-arrow-btn" id="deskDownBtn" aria-label="Scroll websites down">&#8595;</button>
+				</div>
+			</div>
+			<div class="sidebar-scroll" id="sidebarContainer"></div>
+		</div>
+	</aside>
+</div>
+
+<!-- Live Preview Modal with Open Site Option -->
+<div class="lp-modal" id="lpModal" role="dialog" aria-modal="true" aria-labelledby="lpTitle">
+	<div class="lp-toolbar">
+		<span class="lp-title" id="lpTitle">Live Preview</span>
+
+		<div class="lp-devices" role="group" aria-label="Viewport size">
+			<button type="button" class="lp-dev-btn active" data-device="desktop">Desktop</button>
+			<button type="button" class="lp-dev-btn" data-device="tablet">Tablet</button>
+			<button type="button" class="lp-dev-btn" data-device="mobile">Mobile</button>
+		</div>
+
+		<div class="lp-right-actions">
+			<a href="#" target="_blank" rel="noopener" class="lp-open-site-btn" id="lpOpenSiteBtn">
+				<span>Open Site</span>
+				<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+			</a>
+			<button type="button" class="lp-close" id="lpCloseBtn" aria-label="Close live preview">&times;</button>
 		</div>
 	</div>
 
-	<footer class="site-footer">
-		<div class="site-footer-inner">
-			<div class="sf-brand">
-				<div class="sf-brand-name">REVOLVYN</div>
-				<p class="sf-brand-desc">From bold ideas to meaningful experiences, we turn creativity into impact.</p>
-			</div>
-			<div class="sf-col">
-				<div class="sf-col-title">Explore</div>
-				<a href="index.html">About Us</a>
-				<a href="portfolio.html">Portfolio</a>
-				<a href="brands.html">Brands</a>
-				<a href="services.html">Services</a>
-			</div>
-			<div class="sf-col">
-				<div class="sf-col-title">Resources</div>
-				<a href="privacy.html">Privacy Policy</a>
-				<a href="refund.html">Refund Policy</a>
-				<a href="blog.html">Blog</a>
-				<a href="research.html">Research</a>
-				<a href="community.html">Community</a>
-			</div>
-			<div class="sf-col">
-				<div class="sf-col-title">Connect</div>
-				<a href="contact.html">Contact</a>
-				<a href="newsletter.html">Newsletter</a>
-				<a href="partnerships.html">Partnerships</a>
-				<a href="careers.html">Careers</a>
-			</div>
+	<div class="lp-viewport-wrap">
+		<div class="lp-frame-shell" id="lpFrameShell" data-device="desktop">
+			<div class="lp-stage" id="lpStage"></div>
 		</div>
-		<div class="sf-bottom">
-			<span class="sf-copy">&copy; 2026 REVOLVYN. All futures reserved.</span>
-			<div class="sf-socials">
-				<a href="https://www.instagram.com/revolvynmedia?igsi=bmFlaHFyMG92eDNk" target="_blank" rel="noopener">Instagram</a>
-				<a href="https://www.facebook.com/share/1F5rfL4tPS/?mibextid=LQQJ4d" target="_blank" rel="noopener">Facebook</a>
-				<a href="https://www.youtube.com/@REVOLVYNMEDIA" target="_blank" rel="noopener">YouTube</a>
-			</div>
+	</div>
+</div>
+
+<script src="portfolio/websites/catalog.js"></script>
+<script>
+// Hamburger menu
+const ham = document.getElementById('navHamburger');
+const mobNav = document.getElementById('navMobileOverlay');
+ham.addEventListener('click', () => { ham.classList.toggle('open'); mobNav.classList.toggle('open'); });
+mobNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { ham.classList.remove('open'); mobNav.classList.remove('open'); }));
+
+const sites = window.REVOLVYN_WEBSITES || [];
+const params = new URLSearchParams(window.location.search);
+const reqSlug = params.get('slug') || (sites[0] && sites[0].slug);
+let currentIndex = sites.findIndex(s => s.slug === reqSlug);
+if (currentIndex < 0) currentIndex = 0;
+const site = sites[currentIndex];
+
+function setupSidebarItem(item) {
+	const card = document.createElement('a');
+	card.className = 'sidebar-item';
+	card.href = `website.html?slug=${item.slug}`;
+	card.draggable = false;
+	card.innerHTML = `
+		<div class="sidebar-thumb">
+			<img src="${item.thumb}" alt="${item.title} preview" loading="lazy">
+			<video muted loop playsinline preload="none" data-src="${item.video}"></video>
 		</div>
-	</footer>
+		<div class="sidebar-item-info">
+			<div class="sidebar-item-title"></div>
+			<div class="sidebar-item-sub"></div>
+		</div>
+	`;
+	card.querySelector('.sidebar-item-title').textContent = item.fullTitle;
+	card.querySelector('.sidebar-item-sub').textContent = item.category;
+	const v = card.querySelector('video');
+	window.bindWebsiteSpeed(v, () => 'adaptive');
+	card.addEventListener('mouseenter', () => {
+		if (!v.getAttribute('src') && v.dataset.src) v.setAttribute('src', v.dataset.src);
+		v.play().catch(() => {});
+	});
+	card.addEventListener('mouseleave', () => v.pause());
+	return card;
+}
 
-	<script src="portfolio/websites/catalog.js"></script>
-	<script>
-		// Hamburger mobile nav
-		const ham = document.getElementById('navHamburger');
-		const mob = document.getElementById('navMobile');
-		ham.addEventListener('click', () => {
-			ham.classList.toggle('open');
-			mob.classList.toggle('open');
-		});
-		mob.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
-			ham.classList.remove('open');
-			mob.classList.remove('open');
-		}));
+function makeInteractiveScroller(container, axis) {
+	let isDown = false;
+	let startPos = 0;
+	let startScroll = 0;
+	let moved = false;
 
-		const sites = window.REVOLVYN_WEBSITES || [];
-		const params = new URLSearchParams(window.location.search);
-		const reqSlug = params.get('slug') || (sites[0] && sites[0].slug);
-		let currentIndex = sites.findIndex(s => s.slug === reqSlug);
-		if (currentIndex < 0) currentIndex = 0;
-		const site = sites[currentIndex];
+	container.addEventListener('mousedown', (e) => {
+		if (e.button !== 0) return;
+		isDown = true;
+		moved = false;
+		startPos = axis === 'x' ? e.pageX : e.pageY;
+		startScroll = axis === 'x' ? container.scrollLeft : container.scrollTop;
+		container.classList.add('dragging');
+	});
+	window.addEventListener('mousemove', (e) => {
+		if (!isDown) return;
+		const delta = (axis === 'x' ? e.pageX : e.pageY) - startPos;
+		if (Math.abs(delta) > 6) moved = true;
+		if (axis === 'x') container.scrollLeft = startScroll - delta;
+		else container.scrollTop = startScroll - delta;
+	});
+	window.addEventListener('mouseup', () => {
+		if (!isDown) return;
+		isDown = false;
+		container.classList.remove('dragging');
+		setTimeout(() => { moved = false; }, 40);
+	});
+	container.addEventListener('click', (e) => {
+		if (moved) e.preventDefault();
+	});
+}
 
-		const track = document.getElementById('wsMoreTrack');
-		const prevArrowBtn = document.getElementById('wsSliderPrev');
-		const nextArrowBtn = document.getElementById('wsSliderNext');
+if (site) {
+	document.title = `${site.title} — Website Showcase | REVOLVYN`;
+	document.getElementById('wsCounter').textContent = `${String(currentIndex + 1).padStart(2, '0')} / ${sites.length}`;
+	document.getElementById('wsTitle').textContent = site.fullTitle;
 
-		if (site) {
-			document.title = `${site.title} — Website Showcase | REVOLVYN`;
-			document.getElementById('wsCounter').textContent = `${String(currentIndex + 1).padStart(2, '0')} / ${sites.length}`;
+	const prevIdx = (currentIndex - 1 + sites.length) % sites.length;
+	const nextIdx = (currentIndex + 1) % sites.length;
+	document.getElementById('wsPrevLink').href = `website.html?slug=${sites[prevIdx].slug}`;
+	document.getElementById('wsNextLink').href = `website.html?slug=${sites[nextIdx].slug}`;
 
-			const prevIdx = (currentIndex - 1 + sites.length) % sites.length;
-			const nextIdx = (currentIndex + 1) % sites.length;
-			document.getElementById('wsPrevLink').href = `website.html?slug=${sites[prevIdx].slug}`;
-			document.getElementById('wsNextLink').href = `website.html?slug=${sites[nextIdx].slug}`;
+	document.getElementById('techSummary').textContent = site.techSummary;
 
-			document.getElementById('wsTitle').textContent = site.title;
-			document.getElementById('wsFullTitle').textContent = site.fullTitle;
-			document.getElementById('wsDesc').textContent = site.description;
-			document.getElementById('wsTagline').textContent = `"${site.tagline}"`;
+	const stackEl = document.getElementById('wsStack');
+	(site.stack || []).forEach(tech => {
+		const chip = document.createElement('span');
+		chip.className = 'tech-chip';
+		chip.textContent = tech;
+		stackEl.appendChild(chip);
+	});
 
-			if (site.liveUrl) {
-				const extLink = document.getElementById('wsExternalLink');
-				extLink.href = site.liveUrl;
-				extLink.style.display = 'inline-flex';
-			}
+	const featEl = document.getElementById('wsHighlights');
+	(site.techFeatures || []).forEach(feat => {
+		const li = document.createElement('li');
+		li.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span></span>`;
+		li.querySelector('span').textContent = feat;
+		featEl.appendChild(li);
+	});
 
-			// Highlights list
-			const hlEl = document.getElementById('wsHighlights');
-			(site.highlights || []).forEach(item => {
-				const li = document.createElement('li');
-				li.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span></span>`;
-				li.querySelector('span').textContent = item;
-				hlEl.appendChild(li);
-			});
+	// Pure clean hero video
+	const heroVideo = document.getElementById('wsHeroVideo');
+	heroVideo.poster = site.thumb;
+	heroVideo.src = site.video;
+	window.bindWebsiteSpeed(heroVideo, () => 'adaptive');
+	heroVideo.play().catch(() => {});
 
-			// Stack pills
-			const stackEl = document.getElementById('wsStack');
-			(site.stack || []).forEach(tech => {
-				const span = document.createElement('span');
-				span.className = 'ws-stack-chip';
-				span.textContent = tech;
-				stackEl.appendChild(span);
-			});
+	// Desktop & Mobile sidebars
+	const deskSidebar = document.getElementById('sidebarContainer');
+	const mobContainer = document.getElementById('mobileMoreContainer');
+	for (let offset = 1; offset < sites.length; offset++) {
+		const item = sites[(currentIndex + offset) % sites.length];
+		deskSidebar.appendChild(setupSidebarItem(item));
+		mobContainer.appendChild(setupSidebarItem(item));
+	}
+	makeInteractiveScroller(deskSidebar, 'y');
+	makeInteractiveScroller(mobContainer, 'x');
 
-			// Pure hero video (no overlays, no controls)
-			const heroVideo = document.getElementById('wsHeroVideo');
-			heroVideo.poster = site.thumb;
-			heroVideo.src = site.video;
-			window.bindWebsiteSpeed(heroVideo, () => 'adaptive');
-			heroVideo.play().catch(() => {});
+	document.getElementById('deskUpBtn').addEventListener('click', () => deskSidebar.scrollBy({ top: -320, behavior: 'smooth' }));
+	document.getElementById('deskDownBtn').addEventListener('click', () => deskSidebar.scrollBy({ top: 320, behavior: 'smooth' }));
+	document.getElementById('mobPrevBtn').addEventListener('click', () => mobContainer.scrollBy({ left: -290, behavior: 'smooth' }));
+	document.getElementById('mobNextBtn').addEventListener('click', () => mobContainer.scrollBy({ left: 290, behavior: 'smooth' }));
+}
 
-			// All other websites in mouse-interactive horizontal video carousel
-			for (let offset = 1; offset < sites.length; offset++) {
-				const item = sites[(currentIndex + offset) % sites.length];
-				const card = document.createElement('a');
-				card.className = 'ws-more-card';
-				card.href = `website.html?slug=${item.slug}`;
-				card.draggable = false;
-				card.innerHTML = `
-					<div class="ws-more-media">
-						<video muted loop playsinline preload="none" poster="${item.thumb}" data-src="${item.video}"></video>
-					</div>
-					<div class="ws-more-body">
-						<div class="ws-more-title"></div>
-						<span class="ws-more-arrow" aria-hidden="true">&#8594;</span>
-					</div>
-				`;
-				card.querySelector('.ws-more-title').textContent = item.title;
-				const vid = card.querySelector('video');
-				window.bindWebsiteSpeed(vid, () => 'adaptive');
-				track.appendChild(card);
-			}
+// Share button matching video.html
+document.getElementById('shareBtn').addEventListener('click', () => {
+	const url = window.location.href;
+	if (navigator.share) {
+		navigator.share({ title: document.title, url }).catch(() => {});
+	} else if (navigator.clipboard) {
+		navigator.clipboard.writeText(url).then(() => {
+			document.getElementById('shareText').textContent = 'Copied!';
+			setTimeout(() => { document.getElementById('shareText').textContent = 'Share'; }, 1600);
+		}).catch(() => {});
+	}
+});
 
-			// Lazy load & play visible carousel videos inside horizontal scroll container
-			const railObserver = new IntersectionObserver((entries) => {
-				entries.forEach(entry => {
-					const v = entry.target.querySelector('video');
-					if (!v) return;
-					if (entry.isIntersecting) {
-						if (!v.getAttribute('src') && v.dataset.src) v.setAttribute('src', v.dataset.src);
-						v.play().catch(() => {});
-					} else {
-						v.pause();
-					}
-				});
-			}, { root: track, rootMargin: '0px 240px 0px 240px', threshold: 0.05 });
+// Live Preview Modal + Open Site Option
+const lpModal = document.getElementById('lpModal');
+const lpStage = document.getElementById('lpStage');
+const lpFrameShell = document.getElementById('lpFrameShell');
+const lpOpenSiteBtn = document.getElementById('lpOpenSiteBtn');
+let lpVideo = null;
 
-			track.querySelectorAll('.ws-more-card').forEach(c => railObserver.observe(c));
-		}
+function openLivePreview() {
+	if (!site) return;
+	document.getElementById('lpTitle').textContent = site.fullTitle;
+	lpOpenSiteBtn.href = site.liveUrl ? site.liveUrl : `live.html?slug=${site.slug}`;
+	lpStage.innerHTML = '';
+	lpVideo = null;
 
-		// Mouse drag-to-scroll + wheel-to-horizontal-scroll + arrow slide buttons
-		let isDown = false;
-		let startX = 0;
-		let scrollStart = 0;
-		let didDrag = false;
+	if (site.liveUrl) {
+		const iframe = document.createElement('iframe');
+		iframe.src = site.liveUrl;
+		iframe.title = `${site.title} Live Preview`;
+		iframe.loading = 'eager';
+		iframe.referrerPolicy = 'no-referrer';
+		lpStage.appendChild(iframe);
+	} else {
+		const vid = document.createElement('video');
+		vid.muted = true;
+		vid.loop = true;
+		vid.playsInline = true;
+		vid.autoplay = true;
+		vid.poster = site.thumb;
+		vid.src = site.video;
+		window.bindWebsiteSpeed(vid, () => 'adaptive');
+		vid.play().catch(() => {});
+		lpVideo = vid;
+		lpStage.appendChild(vid);
+	}
+	lpModal.classList.add('open');
+	document.body.style.overflow = 'hidden';
+}
 
-		function updateArrowState() {
-			if (!track) return;
-			prevArrowBtn.disabled = track.scrollLeft <= 4;
-			nextArrowBtn.disabled = track.scrollLeft + track.clientWidth >= track.scrollWidth - 4;
-		}
-		updateArrowState();
-		track.addEventListener('scroll', updateArrowState, { passive: true });
-		window.addEventListener('resize', updateArrowState);
+function closeLivePreview() {
+	if (lpVideo) lpVideo.pause();
+	lpStage.innerHTML = '';
+	lpModal.classList.remove('open');
+	document.body.style.overflow = '';
+}
 
-		track.addEventListener('mousedown', (e) => {
-			if (e.button !== 0) return;
-			isDown = true;
-			didDrag = false;
-			startX = e.pageX;
-			scrollStart = track.scrollLeft;
-			track.classList.add('dragging');
-		});
-		window.addEventListener('mousemove', (e) => {
-			if (!isDown) return;
-			const dx = e.pageX - startX;
-			if (Math.abs(dx) > 6) didDrag = true;
-			track.scrollLeft = scrollStart - dx;
-		});
-		window.addEventListener('mouseup', () => {
-			if (!isDown) return;
-			isDown = false;
-			track.classList.remove('dragging');
-			setTimeout(() => { didDrag = false; }, 40);
-		});
-		track.addEventListener('click', (e) => {
-			if (didDrag) e.preventDefault();
-		});
+document.getElementById('livePreviewBtn').addEventListener('click', openLivePreview);
+document.getElementById('lpCloseBtn').addEventListener('click', closeLivePreview);
+lpModal.addEventListener('click', (e) => { if (e.target === lpModal) closeLivePreview(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && lpModal.classList.contains('open')) closeLivePreview(); });
 
-		track.addEventListener('wheel', (e) => {
-			if (Math.abs(e.deltaY) > Math.abs(e.deltaX) && e.deltaY !== 0) {
-				const atLeft = track.scrollLeft <= 1 && e.deltaY < 0;
-				const atRight = track.scrollLeft + track.clientWidth >= track.scrollWidth - 1 && e.deltaY > 0;
-				if (!atLeft && !atRight) {
-					e.preventDefault();
-					track.scrollLeft += e.deltaY;
-				}
-			}
-		}, { passive: false });
+document.querySelectorAll('.lp-dev-btn').forEach(btn => {
+	btn.addEventListener('click', () => {
+		document.querySelectorAll('.lp-dev-btn').forEach(b => b.classList.remove('active'));
+		btn.classList.add('active');
+		lpFrameShell.setAttribute('data-device', btn.dataset.device);
+	});
+});
 
-		function slideBy(dir) {
-			const step = Math.max(338, Math.round(track.clientWidth * 0.65));
-			track.scrollBy({ left: dir * step, behavior: 'smooth' });
-		}
-		prevArrowBtn.addEventListener('click', () => slideBy(-1));
-		nextArrowBtn.addEventListener('click', () => slideBy(1));
-
-		// Clean Live Preview Modal
-		const lpModal = document.getElementById('lpModal');
-		const lpStage = document.getElementById('lpStage');
-		const lpFrameShell = document.getElementById('lpFrameShell');
-		const lpExternalBtn = document.getElementById('lpExternalBtn');
-		let lpVideo = null;
-
-		function openLivePreview() {
-			if (!site) return;
-			document.getElementById('lpTitle').textContent = site.fullTitle;
-			lpStage.innerHTML = '';
-			lpVideo = null;
-
-			if (site.liveUrl) {
-				lpExternalBtn.href = site.liveUrl;
-				lpExternalBtn.style.display = 'inline-flex';
-				const iframe = document.createElement('iframe');
-				iframe.src = site.liveUrl;
-				iframe.title = `${site.title} Live Website Preview`;
-				iframe.loading = 'eager';
-				iframe.referrerPolicy = 'no-referrer';
-				lpStage.appendChild(iframe);
-			} else {
-				lpExternalBtn.style.display = 'none';
-				const vid = document.createElement('video');
-				vid.muted = true;
-				vid.loop = true;
-				vid.playsInline = true;
-				vid.autoplay = true;
-				vid.poster = site.thumb;
-				vid.src = site.video;
-				window.bindWebsiteSpeed(vid, () => 'adaptive');
-				vid.play().catch(() => {});
-				lpVideo = vid;
-				lpStage.appendChild(vid);
-			}
-			lpModal.classList.add('open');
-			document.body.style.overflow = 'hidden';
-		}
-
-		function closeLivePreview() {
-			if (lpVideo) lpVideo.pause();
-			lpStage.innerHTML = '';
-			lpModal.classList.remove('open');
-			document.body.style.overflow = '';
-		}
-
-		document.getElementById('livePreviewBtn').addEventListener('click', openLivePreview);
-		document.getElementById('lpCloseBtn').addEventListener('click', closeLivePreview);
-		lpModal.addEventListener('click', (e) => { if (e.target === lpModal) closeLivePreview(); });
-		document.addEventListener('keydown', (e) => {
-			if (e.key === 'Escape' && lpModal.classList.contains('open')) closeLivePreview();
-		});
-
-		document.querySelectorAll('.lp-dev-btn').forEach(btn => {
-			btn.addEventListener('click', () => {
-				document.querySelectorAll('.lp-dev-btn').forEach(b => b.classList.remove('active'));
-				btn.classList.add('active');
-				lpFrameShell.setAttribute('data-device', btn.dataset.device);
-			});
-		});
-
-		if (params.get('preview') === '1' && site) {
-			openLivePreview();
-		}
-	</script>
-	<script src="js/cms-content.js" defer></script>
+if (params.get('preview') === '1' && site) {
+	openLivePreview();
+}
+</script>
 </body>
 </html>

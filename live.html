@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Live Site View | REVOLVYN</title>
+	<link rel="icon" href="favicon.png" type="image/png" sizes="any">
+	<meta name="robots" content="noindex, nofollow">
+	<meta name="theme-color" content="#000000">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+	<style>
+		*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+		html, body { height: 100%; background: #000; color: #e8ece4; font-family: 'Inter', sans-serif; overflow: hidden; }
+		.live-shell { display: flex; flex-direction: column; height: 100%; }
+		.live-bar {
+			display: flex; align-items: center; justify-content: space-between; gap: 12px;
+			padding: 10px 20px; background: #0a0c08;
+			border-bottom: 1px solid rgba(180, 220, 100, 0.16);
+		}
+		.live-title { font-family: 'Playfair Display', serif; font-size: 16px; color: #f8fcf0; }
+		.live-back {
+			display: inline-flex; align-items: center; gap: 6px;
+			padding: 7px 14px; border-radius: 999px;
+			border: 1px solid rgba(230, 245, 120, 0.3);
+			color: #e6f578; text-decoration: none;
+			font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 600;
+		}
+		.live-back:hover { background: rgba(230, 245, 120, 0.12); }
+		.live-viewport { flex: 1; min-height: 0; background: #000; display: flex; align-items: center; justify-content: center; }
+		.live-viewport video, .live-viewport iframe { width: 100%; height: 100%; border: 0; display: block; object-fit: contain; }
+	</style>
+</head>
+<body>
+	<div class="live-shell">
+		<div class="live-bar">
+			<span class="live-title" id="liveTitle">REVOLVYN Live Site</span>
+			<a href="portfolio.html?tab=websites" class="live-back" id="liveBack">&#8592; Back to Details</a>
+		</div>
+		<div class="live-viewport" id="liveViewport"></div>
+	</div>
+	<script src="portfolio/websites/catalog.js"></script>
+	<script>
+		const sites = window.REVOLVYN_WEBSITES || [];
+		const slug = new URLSearchParams(window.location.search).get('slug');
+		const site = sites.find(s => s.slug === slug) || sites[0];
+		if (site) {
+			document.title = `${site.title} | REVOLVYN`;
+			document.getElementById('liveTitle').textContent = site.fullTitle;
+			document.getElementById('liveBack').href = `website.html?slug=${site.slug}`;
+			if (site.liveUrl) {
+				window.location.replace(site.liveUrl);
+			} else {
+				const vid = document.createElement('video');
+				vid.muted = true;
+				vid.loop = true;
+				vid.playsInline = true;
+				vid.autoplay = true;
+				vid.poster = site.thumb;
+				vid.src = site.video;
+				if (window.bindWebsiteSpeed) window.bindWebsiteSpeed(vid, () => 'adaptive');
+				vid.play().catch(() => {});
+				document.getElementById('liveViewport').appendChild(vid);
+			}
+		}
+	</script>
+</body>
+</html>
