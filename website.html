@@ -112,14 +112,15 @@ button { border: none; cursor: pointer; font-family: inherit; background: none; 
 .work-btn { background: rgba(255,255,255,0.08); color: #e6f578; padding: 8px 18px; border-radius: 24px; font-size: 13px; font-weight: 600; border: 1px solid rgba(230,245,120,0.28); transition: background 0.2s, border-color 0.2s; display: inline-flex; align-items: center; }
 .work-btn:hover { background: rgba(230,245,120,0.14); border-color: rgba(230,245,120,0.6); }
 
-/* Technology Stack Box (Tech-focused only) */
+/* Website Features Card (First) & Technology Stack Card (Second) */
 .tech-box {
 	background: rgba(255,255,255,0.04);
 	border: 1px solid rgba(255,255,255,0.07);
 	border-radius: 12px;
 	padding: 18px 20px;
-	margin-top: 8px;
+	margin-top: 14px;
 }
+.features-box { margin-top: 8px; }
 .tech-head {
 	font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 10px;
 	display: flex; align-items: center; justify-content: space-between; gap: 12px;
@@ -281,12 +282,18 @@ button { border: none; cursor: pointer; font-family: inherit; background: none; 
 			</div>
 		</div>
 
-		<!-- Technology Stack & Engineering Features Only -->
+		<!-- Plain-Language Website Features Card (First) -->
+		<section class="tech-box features-box" aria-labelledby="featuresHeading">
+			<div class="tech-head" id="featuresHeading">Website Features</div>
+			<ul class="tech-features" id="wsSiteFeatures"></ul>
+		</section>
+
+		<!-- Technology Stack & Engineering Features Card (Second) -->
 		<section class="tech-box" aria-labelledby="techHeading">
 			<div class="tech-head" id="techHeading">Technology Stack</div>
 			<p class="tech-summary" id="techSummary"></p>
 			<div class="tech-chips" id="wsStack"></div>
-			<div class="tech-subhead">Architecture &amp; Key Features</div>
+			<div class="tech-subhead">Architecture &amp; Technical Build</div>
 			<ul class="tech-features" id="wsHighlights"></ul>
 		</section>
 
@@ -429,6 +436,17 @@ if (site) {
 	document.getElementById('wsPrevLink').href = `website.html?slug=${sites[prevIdx].slug}`;
 	document.getElementById('wsNextLink').href = `website.html?slug=${sites[nextIdx].slug}`;
 
+	function renderCheckList(ulEl, items) {
+		(items || []).forEach(text => {
+			const li = document.createElement('li');
+			li.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span></span>`;
+			li.querySelector('span').textContent = text;
+			ulEl.appendChild(li);
+		});
+	}
+
+	renderCheckList(document.getElementById('wsSiteFeatures'), site.siteFeatures);
+
 	document.getElementById('techSummary').textContent = site.techSummary;
 
 	const stackEl = document.getElementById('wsStack');
@@ -439,13 +457,7 @@ if (site) {
 		stackEl.appendChild(chip);
 	});
 
-	const featEl = document.getElementById('wsHighlights');
-	(site.techFeatures || []).forEach(feat => {
-		const li = document.createElement('li');
-		li.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span></span>`;
-		li.querySelector('span').textContent = feat;
-		featEl.appendChild(li);
-	});
+	renderCheckList(document.getElementById('wsHighlights'), site.techFeatures);
 
 	// Pure clean hero video
 	const heroVideo = document.getElementById('wsHeroVideo');

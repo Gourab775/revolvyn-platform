@@ -7,6 +7,12 @@
 			title: 'AMBER',
 			fullTitle: 'AMBER — E-Commerce Storefront',
 			category: 'Next.js · Shopify Storefront',
+			siteFeatures: [
+				'Product catalog with instant add-to-bag, slide-out cart drawer, and live quantity updates',
+				'Dedicated ingredients spotlight, trust badges, and verified customer review sections',
+				'Full-width editorial showcase sections built for skincare product discovery',
+				'Built-in newsletter signup, brand impact story, and smooth mobile navigation'
+			],
 			techSummary: 'Built with Next.js App Router, React 19, TypeScript, Tailwind CSS 4, Radix UI primitives, and Shopify Storefront API integration.',
 			techFeatures: [
 				'Shopify Storefront API data fetching layer with typed catalog & collection queries',
@@ -26,6 +32,12 @@
 			title: "L'\u00c9TOILE",
 			fullTitle: "L'\u00c9TOILE — Interactive Storefront App",
 			category: 'Next.js · Framer Motion',
+			siteFeatures: [
+				'Custom cake builder letting buyers pick flavors, sizes, and see live price updates',
+				'Online storefront menu with category browsing, search, and slide-out shopping cart',
+				'Dedicated custom cake booking, order tracking & store visit pages',
+				'Smooth page animations and mobile-friendly ordering layout'
+			],
 			techSummary: 'Built with Next.js App Router, React, TypeScript, Framer Motion, Tailwind CSS, and accessible Radix UI components.',
 			techFeatures: [
 				'Dynamic multi-step product & flavor configurator with real-time price delta calculation',
@@ -45,6 +57,12 @@
 			title: 'BIOMETIC',
 			fullTitle: 'BIOMETIC — Multi-Page Brand Platform',
 			category: 'Next.js · Framer Motion',
+			siteFeatures: [
+				'Complete multi-page brand site with Science, Story, Blog, and Careers sections',
+				'Clear product explanation layout highlighting formula benefits and clinical proof',
+				'Customer testimonials carousel and company mission breakdown',
+				'Smooth scroll transitions and responsive desktop-to-mobile reading flow'
+			],
 			techSummary: 'Built with Next.js App Router, React, TypeScript, Framer Motion, Tailwind CSS, and Radix UI component primitives.',
 			techFeatures: [
 				'Multi-route Next.js App Router architecture (Home, Science, Blog, Careers & Store)',
@@ -64,6 +82,12 @@
 			title: 'CLOSET STUDIO',
 			fullTitle: 'CLOSET Studio — Editorial Commerce Build',
 			category: 'Next.js 16 · Anime.js',
+			siteFeatures: [
+				'Interactive lookbook product cards that shift smoothly from grayscale to full color on hover',
+				'Collection filtering, garment detail views, and slide-over shopping bag',
+				'Full multi-page store covering Collections, About Us, Contact, and Checkout',
+				'Animated section reveals tailored for high-end fashion browsing on phone & desktop'
+			],
 			techSummary: 'Built with Next.js 16, React 19, TypeScript, Tailwind CSS 4, Anime.js choreography, and Base UI primitives.',
 			techFeatures: [
 				'Anime.js timeline & scroll-driven product entrance choreography',
@@ -83,6 +107,12 @@
 			title: 'SERENE ATELIER',
 			fullTitle: 'SERENE ATELIER — Catalog Web App',
 			category: 'Next.js · Radix UI',
+			siteFeatures: [
+				'Clean online catalog displaying curated apparel cards with quick navigation',
+				'Dedicated brand philosophy and sustainability information sections',
+				'Sticky top menu and easy-to-browse mobile product layout',
+				'Streamlined product detail discovery with direct purchase CTAs'
+			],
 			techSummary: 'Built with Next.js, React, TypeScript, Tailwind CSS, and Radix UI / shadcn-style accessible components.',
 			techFeatures: [
 				'Typed TypeScript catalog module powering reusable product card components',
@@ -102,6 +132,12 @@
 			title: 'EVASION',
 			fullTitle: 'EVASION — Section-Modular Commerce',
 			category: 'Next.js · TypeScript',
+			siteFeatures: [
+				'Full-screen campaign hero backed by featured gear cards and lookbook gallery',
+				'Interactive technology showcase explaining fabric & gear performance specs',
+				'Category collections strip, field journal section, and customer review blocks',
+				'Responsive shopping navigation optimized for deep multi-section scrolling'
+			],
 			techSummary: 'Built with Next.js, React, TypeScript, Tailwind CSS, and modular Radix UI interface components.',
 			techFeatures: [
 				'10-section modular App Router landing architecture with strict component isolation',
@@ -121,6 +157,12 @@
 			title: 'SOBERS',
 			fullTitle: 'SOBERS — GSAP Motion Landing App',
 			category: 'Next.js 16 · GSAP',
+			siteFeatures: [
+				'Motion-driven landing experience that unfolds training highlights as visitors scroll',
+				'Clear program overview, membership flow, and high-visibility sign-up CTAs',
+				'Smooth interactive card reveals without distracting visual clutter',
+				'Responsive layout built for fast viewing on both mobile and desktop'
+			],
 			techSummary: 'Built with Next.js 16, React 19, TypeScript, Tailwind CSS 4, and GSAP timeline animation engine.',
 			techFeatures: [
 				'GSAP scroll-triggered timelines and scrubbed hero element orchestration',
@@ -140,6 +182,12 @@
 			title: 'SWEET CAKES',
 			fullTitle: 'SWEET CAKES — Configurator Commerce App',
 			category: 'Next.js · Radix UI',
+			siteFeatures: [
+				'Interactive Custom Cake Box Builder where visitors mix items into their own box',
+				'Interactive Flavor Picker and One-Click Quick Add buttons on every card',
+				'Animated milestone counters showcasing order volume & kitchen highlights',
+				'Built-in inquiry form for custom event orders and category shortcuts'
+			],
 			techSummary: 'Built with Next.js, React, TypeScript, Tailwind CSS, interactive state builders, and Radix UI.',
 			techFeatures: [
 				'Custom interactive Box Builder & flavor-selection state engine',
@@ -159,6 +207,12 @@
 			title: 'HOMIE',
 			fullTitle: 'HOMIE — Platform Web Application',
 			category: 'Next.js 16 · Framer Motion',
+			siteFeatures: [
+				'Side-by-side platform breakdown for homeowners and renters',
+				'Animated live statistics counters, transparent pricing plans & interactive FAQ dropdowns',
+				'Customer testimonials slider and smooth motion reveals across every band',
+				'Clear lead-capture & booking buttons across hero and footer sections'
+			],
 			techSummary: 'Built with Next.js 16, React, TypeScript, Tailwind CSS 4, Framer Motion, and Radix UI.',
 			techFeatures: [
 				'Framer Motion scroll-triggered staggered entrances & interactive spring states',
@@ -178,6 +232,12 @@
 			title: 'HOUSLY',
 			fullTitle: 'HOUSLY — Architecture Studio Platform',
 			category: 'Next.js 16 · Radix UI',
+			siteFeatures: [
+				'Full-width visual hero paired with studio philosophy & architectural expertise tabs',
+				'Curated portfolio project showcase displaying completed architectural builds',
+				'Expandable client FAQ section answering project timelines and consultation steps',
+				'Direct inquiry call-to-action designed for high-value studio leads'
+			],
 			techSummary: 'Built with Next.js 16, React 19, TypeScript, Tailwind CSS 4, and shadcn/Radix UI primitives.',
 			techFeatures: [
 				'Layered foreground/background parallax hero built with semantic layout containers',
@@ -197,6 +257,12 @@
 			title: 'KATACHI',
 			fullTitle: 'KATACHI — Motion Storefront',
 			category: 'Next.js · Framer Motion',
+			siteFeatures: [
+				'Featured furniture gallery paired with an interactive horizontal collection strip',
+				'Dedicated Materials Showcase explaining wood, fabric, and stone finishes',
+				'Smooth hover transitions and clean full-screen visual presentation',
+				'Built-in newsletter opt-in bar and multi-device storefront layout'
+			],
 			techSummary: 'Built with Next.js, React, TypeScript, Framer Motion, Tailwind CSS, and Radix UI.',
 			techFeatures: [
 				'Framer Motion layout transitions across horizontal strips and featured grids',
@@ -216,6 +282,12 @@
 			title: 'AURELIA',
 			fullTitle: 'AURELIA — High-Resolution Storefront',
 			category: 'Next.js · TypeScript',
+			siteFeatures: [
+				'Multi-collection showroom browsing across Fine Jewelry, High Jewelry, and Bespoke lines',
+				'Dedicated trust highlights (insured courier, craftsmanship proof, certified gems)',
+				'Individual product detail cards with clean pricing and concierge links',
+				'Private clientelist newsletter form and responsive mobile showcase'
+			],
 			techSummary: 'Built with Next.js, React, TypeScript, Tailwind CSS, and Radix UI component architecture.',
 			techFeatures: [
 				'Typed multi-collection product catalog with helper lookup queries (`getProduct`)',
@@ -235,6 +307,12 @@
 			title: 'PETDO',
 			fullTitle: 'PETDO — Context-Driven E-Commerce',
 			category: 'Next.js · Context API',
+			siteFeatures: [
+				'Category filters for Food, Beds, Toys, and Grooming with live shopping cart count',
+				'Instant toast notifications when shoppers add items to their cart',
+				'Trust badges for fast delivery and 100% satisfaction guarantee',
+				'Mobile-friendly store layout with resilient product image handling'
+			],
 			techSummary: 'Built with Next.js, React, TypeScript, React Context state provider, Tailwind CSS, and Radix UI.',
 			techFeatures: [
 				'Global `useStore` React Context provider for live cart, badge counts & filters',
@@ -254,6 +332,12 @@
 			title: 'MONO',
 			fullTitle: 'MONO — Monochrome Storefront System',
 			category: 'Next.js · Radix UI',
+			siteFeatures: [
+				'High-contrast product showcase featuring technical gear specs and galleries',
+				'Multi-page site with Home, Featured Gear, Journal, and Contact pages',
+				'Interactive technology breakdown, testimonials, and sticky navigation header',
+				'Clean mobile and desktop storefront reading flow'
+			],
 			techSummary: 'Built with Next.js, React, TypeScript, Tailwind CSS, and modular Radix UI primitives.',
 			techFeatures: [
 				'High-contrast design system structured across 10 independent section modules',
@@ -273,6 +357,12 @@
 			title: 'OLEA',
 			fullTitle: 'OLEA — Modular Commerce Platform',
 			category: 'Next.js · TypeScript',
+			siteFeatures: [
+				'Bestselling skincare product cards with clear benefit highlights and star ratings',
+				'Purity & botanical safety guarantee strip (clean formula, fast dispatch)',
+				'Newsletter subscription box and smooth navigation between shop & story sections',
+				'Clean mobile-responsive browsing experience'
+			],
 			techSummary: 'Built with Next.js, React, TypeScript, Tailwind CSS, and Radix UI component primitives.',
 			techFeatures: [
 				'Structured TypeScript product data driving reusable `ProductCard` grids',
@@ -292,6 +382,12 @@
 			title: 'PIXELFORGE',
 			fullTitle: 'PIXELFORGE — Scroll-Expansion Media App',
 			category: 'Next.js 16 · Framer Motion',
+			siteFeatures: [
+				'Interactive video hero that smoothly expands to full screen as you scroll down',
+				'Service showcase cards for Video Production, Photography, Direction & Post',
+				'Glowing gradient highlight cards with staggered reveal animations',
+				'Multi-page agency navigation with direct project inquiry paths'
+			],
 			techSummary: 'Built with Next.js 16, React, TypeScript, Tailwind CSS 4, and Framer Motion.',
 			techFeatures: [
 				'Custom `ScrollExpandMedia` hero scaling inline video card to full viewport on scroll',
@@ -311,6 +407,12 @@
 			title: 'MAISON',
 			fullTitle: 'MAISON — Lenis Smooth-Scroll Commerce',
 			category: 'Next.js · Lenis + Motion',
+			siteFeatures: [
+				'Ultra-smooth silk scrolling paired with editorial fashion collection grids',
+				'Dedicated Brand Heritage chapter highlighting craftsmanship and materials',
+				'Subtle hover zoom effects across luxury product previews',
+				'Responsive layout tailored for calm desktop & mobile browsing'
+			],
 			techSummary: 'Built with Next.js, React, TypeScript, Lenis smooth scroll, Framer Motion, Tailwind CSS, and Radix UI.',
 			techFeatures: [
 				'Lenis smooth-scroll physics synchronized with Framer Motion section reveals',
@@ -330,6 +432,12 @@
 			title: 'THUDARUM',
 			fullTitle: 'THUDARUM — Fashion Storefront App',
 			category: 'Next.js · TypeScript',
+			siteFeatures: [
+				'Clean contemporary apparel grid with quick item browsing and cart drawer',
+				'Working promo & coupon code checker that calculates order discounts live',
+				'Streamlined navigation bar and minimal checkout summary',
+				'Responsive sizing and layout across phones, tablets, and desktops'
+			],
 			techSummary: 'Built with Next.js, React, TypeScript, Tailwind CSS, and Radix UI / Recharts UI primitives.',
 			techFeatures: [
 				'Client-side promo/coupon discount validation logic inside checkout flow',
@@ -349,6 +457,12 @@
 			title: 'WEBRENEW',
 			fullTitle: 'WEBRENEW — Agency Web Platform',
 			category: 'Next.js 16 · Motion + Lenis',
+			siteFeatures: [
+				'Interactive service tabs switching between Web Apps, Mobile, AI & Automation',
+				'Cursor-responsive luminous highlight cards for agency capabilities',
+				'Butter-smooth scrolling experience with partnership values breakdown',
+				'Clear consultation booking and project inquiry flows'
+			],
 			techSummary: 'Built with Next.js 16, React, TypeScript, Tailwind CSS 4, Lenis, and Motion.',
 			techFeatures: [
 				'Interactive capability `Tabs` system switching dynamically across service pillars',
