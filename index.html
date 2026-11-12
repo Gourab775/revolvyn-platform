@@ -141,7 +141,12 @@ p,h1,h2,h3,h4,li,blockquote,.stat-number,.brand-card-name{-webkit-user-select:te
 	<!-- Loading Screen -->
 	<style>
 		#loadingScreen{position:fixed;inset:0;z-index:99999;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center}
-		#loadingScreen .loading-brand{opacity:1!important;transform:none!important;animation:none!important}
+		#loadingScreen .loading-inner{text-align:center}
+		#loadingScreen .loading-brand{opacity:1!important;transform:none!important;animation:none!important;color:#fff}
+		#loadingScreen .loading-percent{color:#fff}
+		#loadingScreen .loading-bar-track{width:180px;height:2px;background:rgba(255,255,255,.18);border-radius:2px;margin:0 auto 18px;position:relative;overflow:hidden}
+		#loadingScreen .loading-bar-fill{position:absolute;top:0;left:0;bottom:0;width:0%;background:#fff}
+		#loadingScreen .loading-label{color:rgba(255,255,255,.65);font-size:10px;letter-spacing:4px;text-transform:uppercase}
 	</style>
 	<div id="loadingScreen" aria-live="polite" style="background:#000">
 		<div class="loading-inner">
