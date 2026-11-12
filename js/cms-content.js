@@ -163,10 +163,11 @@
 
   var previewToken = null; // short-lived draft token (robust flow)
   var previewLegacy = false; // ?cms_preview=draft + session token (older flow)
-  // Edit-pill overlay stays OFF: preview shows content plus ONE small badge.
-  // Flip to true to re-enable floating Edit buttons + top bar (all machinery
-  // below is kept intact and tested).
-  var EDIT_UI = false;
+  var clerkToken = null; // live Clerk session token when signed in on same origin
+  var activeData = null; // current rendered draft or published data snapshot
+  var activeRawDraft = null; // raw /api/cms/draft response (with section UUIDs)
+  var cmsManageBase = ''; // empty on same origin, or CONTENT_SOURCE host if mirror
+  var EDIT_UI = true;
 
   // Canonical home of the CMS backend. Mirror deployments without database
   // access fall back to reading published content from here (plain public
@@ -205,7 +206,9 @@
             : 'Preview unavailable right now (server error ' + r.status + '). Open it again from the Website Manager.');
           return;
         }
-        data = normalizeDraft(await r.json());
+        var rawD = await r.json();
+        activeRawDraft = rawD;
+        data = normalizeDraft(rawD);
         badge();
         enterEditMode();
       } else if (param === 'draft') {
@@ -213,9 +216,12 @@
         var t = null;
         try { t = sessionStorage.getItem('revolvyn_preview_token'); } catch (e) {}
         if (!t) { failBadge('Preview unavailable. Open it again from the Website Manager.'); return; }
+        clerkToken = t;
         var r2 = await fetch('/api/cms/draft', { headers: { Authorization: 'Bearer ' + t } });
         if (!r2.ok) { failBadge('Preview unavailable. Open it again from the Website Manager.'); return; }
-        data = normalizeDraft(await r2.json());
+        var rawD2 = await r2.json();
+        activeRawDraft = rawD2;
+        data = normalizeDraft(rawD2);
         badge();
         enterEditMode();
       } else if (param) {
@@ -223,6 +229,10 @@
         return;
       } else {
         data = await fetchPublished();
+        try { injectGuiTrigger(); } catch (e) {}
+        if (/([?&]edit=1|#edit\b)/.test(window.location.href)) {
+          try { activateSiteEditor(); } catch (e) {}
+        }
         if (!data) return;
       }
     } catch (e) {
@@ -230,6 +240,10 @@
       return;
     }
     try { apply(data); } catch (e) { /* never break the public page */ }
+    try { injectGuiTrigger(); } catch (e) {}
+    if (/([?&]edit=1|#edit\b)/.test(window.location.href)) {
+      try { activateSiteEditor(); } catch (e) {}
+    }
     try { if (param && (previewToken || previewLegacy)) positionPills(); } catch (e) {}
   }
 
@@ -244,7 +258,7 @@
   function normalizeDraft(d) {
     return {
       sections: (d.sections || []).map(function (s) {
-        return { page: s.page_slug, key: s.section_key, data: s.data || {}, visible: s.is_visible, order: s.sort_order };
+        return { id: s.id, page: s.page_slug, key: s.section_key, data: s.data || {}, visible: s.is_visible, order: s.sort_order };
       }),
       portfolio: (d.portfolio || []).map(function (p) {
         return { title: p.title, description: p.description, thumbnail: p.thumbnail, video: p.video_url, url: p.external_url, client: p.client_name, category: p.category, layout: p.layout || 'landscape', featured: !!p.featured, visible: p.is_visible, order: p.sort_order };
@@ -285,32 +299,74 @@
   }
 
   function apply(data) {
+    activeData = data;
     var s = data.settings || {};
     var path = window.location.pathname;
     var page = 'index';
-    if (/portfolio\.html/.test(path)) page = 'portfolio';
-    else if (/brands\.html/.test(path)) page = 'brands';
-    else if (/services\.html/.test(path)) page = 'services';
-    else if (/contact\.html/.test(path)) page = 'contact';
-    else if (/careers\.html/.test(path)) page = 'careers';
-    else if (/partnerships\.html/.test(path)) page = 'partnerships';
-    else if (/blog\.html/.test(path)) page = 'blog';
-    else if (/research\.html/.test(path)) page = 'research';
-    else if (/newsletter\.html/.test(path)) page = 'newsletter';
-    else if (/community\.html/.test(path)) page = 'community';
-    else if (/privacy\.html/.test(path)) page = 'privacy';
-    else if (/refund\.html/.test(path)) page = 'refund';
-    else if (/video\.html/.test(path)) page = 'video';
+    if (/portfolio(\.html)?$/i.test(path)) page = 'portfolio';
+    else if (/brands(\.html)?$/i.test(path)) page = 'brands';
+    else if (/services(\.html)?$/i.test(path)) page = 'services';
+    else if (/contact(\.html)?$/i.test(path)) page = 'contact';
+    else if (/careers(\.html)?$/i.test(path)) page = 'careers';
+    else if (/partnerships(\.html)?$/i.test(path)) page = 'partnerships';
+    else if (/blog(\.html)?$/i.test(path)) page = 'blog';
+    else if (/research(\.html)?$/i.test(path)) page = 'research';
+    else if (/newsletter(\.html)?$/i.test(path)) page = 'newsletter';
+    else if (/community(\.html)?$/i.test(path)) page = 'community';
+    else if (/privacy(\.html)?$/i.test(path)) page = 'privacy';
+    else if (/refund(\.html)?$/i.test(path)) page = 'refund';
+    else if (/video(\.html)?$/i.test(path)) page = 'video';
+    else if (/website(\.html)?$/i.test(path)) page = 'website';
     var isHome = page === 'index' && !!document.getElementById('scroll-container');
 
+    applyNav(s);
+    applyPreloader(s);
     if (isHome) applyHome(data);
-    else if (page === 'portfolio') applyPortfolio(data);
+    else if (page === 'portfolio') applyPortfolio(data, s);
+    else if (page === 'website') applyWebsite(data, s);
     else if (page === 'brands') applyBrands(data);
     else if (page === 'services') applyServices(data);
     else if (page === 'contact') applyContact(data, s);
     else if (page === 'video') applyVideo(data);
     else if (page !== 'index') applySecondary(data, page);
     applyFooter(s);
+  }
+
+  function applyNav(s) {
+    var navCfg = settingObj(s, 'nav.config');
+    if (!navCfg) return;
+    if (navCfg.brandName) {
+      document.querySelectorAll('.nav-logo').forEach(function (el) { el.textContent = navCfg.brandName; });
+    }
+    if (Array.isArray(navCfg.links) && navCfg.links.length) {
+      ['.nav-links', '.nav-mobile-overlay'].forEach(function (sel) {
+        var box = document.querySelector(sel);
+        if (!box) return;
+        var cur = window.location.pathname.split('/').pop() || 'index.html';
+        box.innerHTML = '';
+        navCfg.links.forEach(function (lnk) {
+          if (!lnk || !lnk.label) return;
+          var a = document.createElement('a');
+          a.href = lnk.url || '#';
+          a.textContent = lnk.label;
+          if (lnk.url && (lnk.url === cur || (cur === 'website.html' && lnk.url === 'portfolio.html'))) a.className = 'active';
+          box.appendChild(a);
+        });
+      });
+    }
+  }
+
+  function applyPreloader(s) {
+    var pre = settingObj(s, 'site.preloader');
+    if (pre && pre.label) setText(document.getElementById('loadingLabel'), pre.label);
+  }
+
+  function applyWebsite(data, s) {
+    var wsList = settingObj(s || (data && data.settings), 'websites.catalog');
+    var wsLabels = settingObj(s || (data && data.settings), 'website.labels');
+    if (typeof window.renderWebsiteShowcase === 'function') {
+      window.renderWebsiteShowcase(Array.isArray(wsList) ? wsList : null, wsLabels || null);
+    }
   }
 
   /* ── Home ─────────────────────────────────────────────────────── */
@@ -403,7 +459,12 @@
       '&orient=' + encodeURIComponent(p.layout === 'portrait' ? 'portrait' : 'landscape') +
       '&index=' + i;
   }
-  function applyPortfolio(data) {
+  function applyPortfolio(data, s) {
+    var wsList = settingObj(s || (data && data.settings), 'websites.catalog');
+    var pUi = settingObj(s || (data && data.settings), 'portfolio.ui');
+    if (typeof window.renderPortfolioWebsites === 'function') {
+      window.renderPortfolioWebsites(Array.isArray(wsList) ? wsList : null, pUi || null);
+    }
     applyVisibility(data, [['portfolio', 'hero', '.portfolio-hero'], ['portfolio', 'cta', '.portfolio-cta']]);
     var hero = secData(data, 'portfolio', 'hero');
     if (hero) {
@@ -904,60 +965,226 @@
     });
   }
 
-  /* ── Visual edit mode (preview tabs opened from /manage only) ──────────
-   * Shows the real page with small Edit pills. Clicking one asks the
-   * Website Manager tab to open the matching editor. Normal visitors never
-   * see any of this: it only activates after an authenticated draft fetch. */
+  /* ── Visual On-Page GUI Editor ───────────────────────────────────────
+   * Active in /manage preview tabs (?cms_preview=...) OR whenever the owner
+   * opens Site Editor (footer "Edit Site", bottom-left pill, ?edit=1, Shift+E).
+   * Direct writes go strictly through authenticated /api/cms/* routes. */
   var EDIT_PILLS = [];
+  var editModeActive = false;
+  var clerkLoadingPromise = null;
+
   var EDIT_TARGETS = [
     // home
-    { match: function () { return !!document.getElementById('scroll-container'); }, sel: '.hero', page: 'home', key: 'hero', label: 'Edit hero' },
-    { match: function () { return !!document.getElementById('scroll-container'); }, sel: '.manifesto', page: 'home', key: 'manifesto', label: 'Edit intro' },
-    { match: function () { return !!document.getElementById('scroll-container'); }, sel: '.pillars', tab: 'portfolio', label: 'Manage videos' },
-    { match: function () { return !!document.getElementById('scroll-container'); }, sel: '.stats-section', tab: 'brands', label: 'Manage logos' },
-    { match: function () { return !!document.getElementById('scroll-container'); }, sel: '.quote-section', page: 'home', key: 'quote', label: 'Edit quote' },
-    { match: function () { return !!document.getElementById('scroll-container'); }, sel: '.cta-section', page: 'home', key: 'cta', label: 'Edit banner' },
+    { match: function () { return !!document.getElementById('scroll-container'); }, sel: '.hero', page: 'home', key: 'hero', label: 'Edit Hero' },
+    { match: function () { return !!document.getElementById('scroll-container'); }, sel: '.manifesto', page: 'home', key: 'manifesto', label: 'Edit Intro' },
+    { match: function () { return !!document.getElementById('scroll-container'); }, sel: '.pillars', page: 'home', key: 'portfolio_preview', tab: 'portfolio', label: 'Edit Strip / Videos' },
+    { match: function () { return !!document.getElementById('scroll-container'); }, sel: '.stats-section', page: 'home', key: 'brands_preview', tab: 'brands', label: 'Edit Logos Strip' },
+    { match: function () { return !!document.getElementById('scroll-container'); }, sel: '.quote-section', page: 'home', key: 'quote', label: 'Edit Quote' },
+    { match: function () { return !!document.getElementById('scroll-container'); }, sel: '.cta-section', page: 'home', key: 'cta', label: 'Edit Banner' },
     // portfolio page
-    { match: function () { return /portfolio\.html/.test(window.location.pathname); }, sel: '.portfolio-hero', page: 'portfolio', key: 'hero', label: 'Edit heading' },
-    { match: function () { return /portfolio\.html/.test(window.location.pathname); }, sel: '.collage-section', tab: 'portfolio', label: 'Manage projects' },
-    { match: function () { return /portfolio\.html/.test(window.location.pathname); }, sel: '.portfolio-cta', page: 'portfolio', key: 'cta', label: 'Edit button' },
+    { match: function () { return /portfolio(\.html)?$/i.test(window.location.pathname); }, sel: '.portfolio-hero', page: 'portfolio', key: 'hero', label: 'Edit Heading' },
+    { match: function () { return /portfolio(\.html)?$/i.test(window.location.pathname); }, sel: '#workSwitch', settingKey: 'portfolio.ui', label: 'Edit Toggle Labels' },
+    { match: function () { return /portfolio(\.html)?$/i.test(window.location.pathname); }, sel: '#collageGrid', tab: 'portfolio', label: 'Manage Videos' },
+    { match: function () { return /portfolio(\.html)?$/i.test(window.location.pathname); }, sel: '#websitesGrid', tab: 'websites', label: 'Manage Websites' },
+    { match: function () { return /portfolio(\.html)?$/i.test(window.location.pathname); }, sel: '.portfolio-cta', page: 'portfolio', key: 'cta', label: 'Edit Button' },
+    // website showcase detail page
+    { match: function () { return /website(\.html)?$/i.test(window.location.pathname); }, sel: '.video-player-wrapper', activeWebsite: 'media', label: 'Edit Video & Thumb' },
+    { match: function () { return /website(\.html)?$/i.test(window.location.pathname); }, sel: '.video-info', activeWebsite: 'basic', label: 'Edit Title & Live URL' },
+    { match: function () { return /website(\.html)?$/i.test(window.location.pathname); }, sel: '.features-box', activeWebsite: 'features', label: 'Edit Website Features' },
+    { match: function () { return /website(\.html)?$/i.test(window.location.pathname); }, sel: '.tech-box:not(.features-box)', activeWebsite: 'tech', label: 'Edit Tech Stack' },
+    { match: function () { return /website(\.html)?$/i.test(window.location.pathname); }, sel: '#desktopSidebar, #mobileMoreSection', settingKey: 'website.labels', tab: 'websites', label: 'Edit Labels / Manage Sites' },
     // brands page
-    { match: function () { return /brands\.html/.test(window.location.pathname); }, sel: '.page-hero', page: 'brands', key: 'hero', label: 'Edit heading' },
-    { match: function () { return /brands\.html/.test(window.location.pathname); }, sel: '.brands-stats', page: 'brands', key: 'stats', label: 'Edit numbers' },
-    { match: function () { return /brands\.html/.test(window.location.pathname); }, sel: '.brands-grid', tab: 'brands', label: 'Manage brands' },
-    { match: function () { return /brands\.html/.test(window.location.pathname); }, sel: '.page-cta', page: 'brands', key: 'cta', label: 'Edit banner' },
+    { match: function () { return /brands(\.html)?$/i.test(window.location.pathname); }, sel: '.page-hero', page: 'brands', key: 'hero', label: 'Edit Heading' },
+    { match: function () { return /brands(\.html)?$/i.test(window.location.pathname); }, sel: '.brands-stats', page: 'brands', key: 'stats', label: 'Edit Numbers' },
+    { match: function () { return /brands(\.html)?$/i.test(window.location.pathname); }, sel: '.brands-grid', tab: 'brands', label: 'Manage Brands' },
+    { match: function () { return /brands(\.html)?$/i.test(window.location.pathname); }, sel: '.page-cta', page: 'brands', key: 'cta', label: 'Edit Banner' },
     // services page
-    { match: function () { return /services\.html/.test(window.location.pathname); }, sel: '.page-hero', page: 'services', key: 'hero', label: 'Edit heading' },
-    { match: function () { return /services\.html/.test(window.location.pathname); }, sel: '.services-full-grid', tab: 'services', label: 'Manage services' },
-    { match: function () { return /services\.html/.test(window.location.pathname); }, sel: '.process-section', page: 'services', key: 'process', label: 'Edit steps' },
-    { match: function () { return /services\.html/.test(window.location.pathname); }, sel: '.page-cta', page: 'services', key: 'cta', label: 'Edit banner' },
+    { match: function () { return /services(\.html)?$/i.test(window.location.pathname); }, sel: '.page-hero', page: 'services', key: 'hero', label: 'Edit Heading' },
+    { match: function () { return /services(\.html)?$/i.test(window.location.pathname); }, sel: '.services-full-grid', tab: 'services', label: 'Manage Services' },
+    { match: function () { return /services(\.html)?$/i.test(window.location.pathname); }, sel: '.process-section', page: 'services', key: 'process', label: 'Edit Steps' },
+    { match: function () { return /services(\.html)?$/i.test(window.location.pathname); }, sel: '.page-cta', page: 'services', key: 'cta', label: 'Edit Banner' },
     // contact page
-    { match: function () { return /contact\.html/.test(window.location.pathname); }, sel: '.page-hero', page: 'contact', key: 'hero', label: 'Edit heading' },
-    { match: function () { return /contact\.html/.test(window.location.pathname); }, sel: '.contact-info', page: 'contact', key: 'info', label: 'Edit text' },
-    { match: function () { return /contact\.html/.test(window.location.pathname); }, sel: '.contact-form-wrap', page: 'contact', key: 'form', label: 'Edit button' },
-    { match: function () { return /contact\.html/.test(window.location.pathname); }, sel: '.map-placeholder', page: 'contact', key: 'map', label: 'Edit line' },
+    { match: function () { return /contact(\.html)?$/i.test(window.location.pathname); }, sel: '.page-hero', page: 'contact', key: 'hero', label: 'Edit Heading' },
+    { match: function () { return /contact(\.html)?$/i.test(window.location.pathname); }, sel: '.contact-info', page: 'contact', key: 'info', label: 'Edit Info' },
+    { match: function () { return /contact(\.html)?$/i.test(window.location.pathname); }, sel: '.contact-form-wrap', page: 'contact', key: 'form', label: 'Edit Form' },
+    { match: function () { return /contact(\.html)?$/i.test(window.location.pathname); }, sel: '.map-placeholder', page: 'contact', key: 'map', label: 'Edit Line' },
     // secondary pages
-    { match: function () { return /(careers|partnerships|blog|research|newsletter|community|privacy|refund)\.html/.test(window.location.pathname); }, sel: '.page-hero', page: null, key: 'hero', label: 'Edit heading' },
-    { match: function () { return /(careers|partnerships|blog|research|newsletter|community|privacy|refund)\.html/.test(window.location.pathname); }, sel: '.page-content', page: null, key: 'main', label: 'Edit text' },
+    { match: function () { return /(careers|partnerships|blog|research|newsletter|community|privacy|refund)(\.html)?$/i.test(window.location.pathname); }, sel: '.page-hero', page: null, key: 'hero', label: 'Edit Heading' },
+    { match: function () { return /(careers|partnerships|blog|research|newsletter|community|privacy|refund)(\.html)?$/i.test(window.location.pathname); }, sel: '.page-content', page: null, key: 'main', label: 'Edit Text' },
     // footer everywhere
-    { match: function () { return !!document.querySelector('.site-footer'); }, sel: '.site-footer', tab: 'footer', label: 'Edit footer' }
+    { match: function () { return !!document.querySelector('.site-footer'); }, sel: '.site-footer', settingKey: 'footer', tab: 'footer', label: 'Edit Footer' }
   ];
+
+  function canonicalManageUrl(tabOrSlug) {
+    var base = '';
+    try {
+      var origin = CONTENT_SOURCE.replace(/\/api\/public\/content$/, '');
+      if (cmsManageBase) base = cmsManageBase;
+      else base = (window.location.origin === origin ? '' : origin);
+    } catch (e) {}
+    return base + '/manage' + (tabOrSlug ? '#/manage/' + tabOrSlug : '');
+  }
+
+  function injectGuiTrigger() {
+    if (document.getElementById('cmsQuickEditBtn') || document.querySelector('.sf-edit-site-btn')) return;
+    var footerBottom = document.querySelector('.site-footer .sf-bottom');
+    if (footerBottom) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'sf-edit-site-btn';
+      btn.textContent = 'Edit Site';
+      btn.style.cssText = 'background:none;border:none;color:rgba(215,230,190,0.48);font:500 12px Inter,sans-serif;cursor:pointer;text-decoration:underline;text-underline-offset:3px;padding:2px 4px;';
+      btn.onclick = function () { activateSiteEditor(); };
+      footerBottom.insertBefore(btn, footerBottom.children[1] || null);
+    } else if (/\/(website|video)(\.html)?$/i.test(window.location.pathname)) {
+      var corner = document.createElement('button');
+      corner.type = 'button';
+      corner.id = 'cmsQuickEditBtn';
+      corner.textContent = 'Edit Site';
+      corner.style.cssText = 'position:fixed;bottom:14px;left:18px;z-index:900;background:rgba(15,18,12,0.86);color:#e6f578;border:1px solid rgba(230,245,120,0.28);border-radius:999px;padding:6px 13px;font:600 11px Inter,sans-serif;letter-spacing:0.6px;cursor:pointer;opacity:0.55;transition:opacity 0.2s,transform 0.2s;backdrop-filter:blur(8px);';
+      corner.onmouseenter = function () { corner.style.opacity = '1'; };
+      corner.onmouseleave = function () { corner.style.opacity = '0.55'; };
+      corner.onclick = function () { activateSiteEditor(); };
+      document.body.appendChild(corner);
+    }
+    if (!window.__cmsShortcutBound) {
+      window.__cmsShortcutBound = true;
+      window.addEventListener('keydown', function (e) {
+        if (e.shiftKey && (e.key === 'E' || e.key === 'e') && !/INPUT|TEXTAREA/.test((e.target && e.target.tagName) || '')) {
+          e.preventDefault();
+          activateSiteEditor();
+        }
+      });
+    }
+  }
+
+  async function resolveClerkAuth() {
+    if (clerkToken) return clerkToken;
+    try {
+      var cfgRes = await fetch('/api/public/config', { cache: 'no-store' });
+      if (!cfgRes.ok) return null;
+      var cfg = await cfgRes.json();
+      if (!cfg || !cfg.clerkPublishableKey || !cfg.manageEnabled) return null;
+      if (!window.Clerk && !clerkLoadingPromise) {
+        clerkLoadingPromise = new Promise(function (resolve) {
+          var settled = false;
+          var done = function () { if (!settled) { settled = true; resolve(); } };
+          var timer = setTimeout(done, 2500);
+          var s = document.createElement('script');
+          s.src = 'https://cdn.jsdelivr.net/npm/@clerk/clerk-js@5/dist/clerk.browser.js';
+          s.crossOrigin = 'anonymous';
+          s.setAttribute('data-clerk-publishable-key', cfg.clerkPublishableKey);
+          s.onload = function () { clearTimeout(timer); done(); };
+          s.onerror = function () { clearTimeout(timer); done(); };
+          document.head.appendChild(s);
+        });
+      }
+      if (clerkLoadingPromise) await clerkLoadingPromise;
+      if (window.Clerk) {
+        if (!window.Clerk.loaded) {
+          await Promise.race([
+            window.Clerk.load(),
+            new Promise(function (resolve) { setTimeout(resolve, 2500); })
+          ]);
+        }
+        if (window.Clerk.session) {
+          clerkToken = await window.Clerk.session.getToken();
+          return clerkToken;
+        }
+      }
+    } catch (e) {}
+    return null;
+  }
+
+  async function cmsApiFetch(path, opts) {
+    var tk = await resolveClerkAuth();
+    if (!tk) {
+      var err = new Error('Please sign in at /manage to save live CMS changes.');
+      err.needAuth = true;
+      throw err;
+    }
+    opts = opts || {};
+    var res = await fetch(path, {
+      method: opts.method || 'GET',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + tk },
+      body: opts.body ? JSON.stringify(opts.body) : undefined
+    });
+    var jd = null;
+    try { jd = await res.json(); } catch (e) {}
+    if (!res.ok) throw new Error((jd && jd.error) || 'Request failed (' + res.status + ')');
+    return jd || {};
+  }
+
+  async function ensureEditableData() {
+    if (activeRawDraft) return normalizeDraft(activeRawDraft);
+    try {
+      var tk = await resolveClerkAuth();
+      if (tk) {
+        var r = await fetch('/api/cms/draft', { headers: { Authorization: 'Bearer ' + tk } });
+        if (r.ok) {
+          activeRawDraft = await r.json();
+          activeData = normalizeDraft(activeRawDraft);
+          apply(activeData);
+          return activeData;
+        }
+      }
+    } catch (e) {}
+    if (!activeData) {
+      activeData = { sections: [], portfolio: [], brands: [], services: [], settings: {} };
+    }
+    return activeData;
+  }
+
+  function activateSiteEditor() {
+    if (editModeActive) return;
+    enterEditMode();
+    previewToast('Visual Edit Mode active — click any Edit pill on the page');
+    ensureEditableData().then(function () {
+      if (editModeActive) positionPills();
+    }).catch(function () {});
+  }
+
+  function exitEditMode() {
+    editModeActive = false;
+    var bar = document.querySelector('.cmsedit-bar');
+    if (bar) bar.remove();
+    var dr = document.getElementById('cmsInPageDrawer');
+    if (dr) dr.remove();
+    document.querySelectorAll('.cmsedit-pill').forEach(function (p) { p.remove(); });
+    EDIT_PILLS = [];
+    document.body.style.paddingTop = '';
+  }
 
   function enterEditMode() {
     try {
-      var css = document.createElement('style');
-      css.textContent = '.cmsedit-bar{position:fixed;top:0;left:0;right:0;z-index:99990;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 16px;background:rgba(10,13,7,.94);border-bottom:1px solid rgba(150,190,120,.25);font:500 13px Inter,system-ui,sans-serif;color:#eef2e4;backdrop-filter:blur(8px)}' +
-        '.cmsedit-bar .l{display:flex;align-items:center;gap:9px;min-width:0}.cmsedit-dot{width:8px;height:8px;border-radius:50%;background:#d9ec7a;flex-shrink:0}' +
-        '.cmsedit-bar button{font:600 12px Inter,system-ui,sans-serif;border-radius:8px;padding:7px 13px;cursor:pointer;border:1px solid rgba(150,190,120,.35);background:none;color:#d7e6be;white-space:nowrap}' +
-        '.cmsedit-bar button.solid{background:#d9ec7a;border-color:#d9ec7a;color:#1a220c}' +
-        '.cmsedit-pill{position:fixed;z-index:99990;font:600 12px Inter,system-ui,sans-serif;color:#1a220c;background:#d9ec7a;border:none;border-radius:999px;padding:7px 14px;cursor:pointer;box-shadow:0 6px 22px rgba(0,0,0,.5);white-space:nowrap}' +
-        '.cmsedit-pill:hover{filter:brightness(1.07)}' +
-        '.cmsedit-toast{position:fixed;bottom:56px;left:50%;transform:translateX(-50%);z-index:99999;background:rgba(26,33,17,.97);border:1px solid rgba(217,236,122,.4);color:#eef2e4;font:500 13.5px Inter,system-ui,sans-serif;padding:11px 20px;border-radius:12px;box-shadow:0 10px 34px rgba(0,0,0,.55);max-width:92vw;text-align:center}';
-      document.head.appendChild(css);
-      if (!EDIT_UI) {
-        // Single-badge preview: no banner, no pills. Only the message
-        // listener below stays active (harmless, enables future UI).
-      } else {
+      if (editModeActive) { positionPills(); return; }
+      editModeActive = true;
+      if (!document.getElementById('cmsedit-styles')) {
+        var css = document.createElement('style');
+        css.id = 'cmsedit-styles';
+        css.textContent = '.cmsedit-bar{position:fixed;top:0;left:0;right:0;z-index:99990;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 16px;background:rgba(10,13,7,.95);border-bottom:1px solid rgba(150,190,120,.28);font:500 13px Inter,system-ui,sans-serif;color:#eef2e4;backdrop-filter:blur(10px);flex-wrap:wrap}' +
+          '.cmsedit-bar .l{display:flex;align-items:center;gap:9px;min-width:0}.cmsedit-dot{width:8px;height:8px;border-radius:50%;background:#d9ec7a;flex-shrink:0}' +
+          '.cmsedit-bar button,.cmsedit-bar a{font:600 12px Inter,system-ui,sans-serif;border-radius:8px;padding:7px 13px;cursor:pointer;border:1px solid rgba(150,190,120,.35);background:none;color:#d7e6be;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center}' +
+          '.cmsedit-bar button.solid{background:#d9ec7a;border-color:#d9ec7a;color:#1a220c}' +
+          '.cmsedit-pill{position:fixed;z-index:99990;font:600 12px Inter,system-ui,sans-serif;color:#1a220c;background:#d9ec7a;border:none;border-radius:999px;padding:7px 14px;cursor:pointer;box-shadow:0 6px 22px rgba(0,0,0,.55);white-space:nowrap;transition:transform .15s,filter .15s}' +
+          '.cmsedit-pill:hover{filter:brightness(1.07);transform:scale(1.03)}' +
+          '.cmsedit-toast{position:fixed;bottom:56px;left:50%;transform:translateX(-50%);z-index:99999;background:rgba(26,33,17,.97);border:1px solid rgba(217,236,122,.4);color:#eef2e4;font:500 13.5px Inter,system-ui,sans-serif;padding:11px 20px;border-radius:12px;box-shadow:0 10px 34px rgba(0,0,0,.55);max-width:92vw;text-align:center}' +
+          '.cms-ip-drawer{position:fixed;inset:0;z-index:99995;display:flex;justify-content:flex-end;font-family:Inter,system-ui,sans-serif}' +
+          '.cms-ip-scrim{position:absolute;inset:0;background:rgba(0,0,0,.68);backdrop-filter:blur(4px)}' +
+          '.cms-ip-panel{position:relative;width:min(520px,100vw);height:100%;background:#11150e;color:#f0f4e6;border-left:1px solid rgba(150,190,120,.25);display:flex;flex-direction:column;box-shadow:-12px 0 40px rgba(0,0,0,.6)}' +
+          '.cms-ip-head{padding:18px 20px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between;align-items:center;gap:12px}' +
+          '.cms-ip-head h3{font-size:17px;font-weight:600;margin:0}.cms-ip-close{background:none;border:1px solid rgba(255,255,255,.2);color:#fff;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:18px}' +
+          '.cms-ip-body{flex:1;overflow-y:auto;padding:18px 20px;display:flex;flex-direction:column;gap:14px}' +
+          '.cms-ip-field{display:flex;flex-direction:column;gap:6px}.cms-ip-field label{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#b8c89e;font-weight:600}' +
+          '.cms-ip-field input,.cms-ip-field textarea{width:100%;background:#090c06;border:1px solid rgba(150,190,120,.25);border-radius:8px;padding:10px 12px;color:#f4f7ec;font:400 14px Inter,sans-serif}' +
+          '.cms-ip-field textarea{min-height:92px;resize:vertical}' +
+          '.cms-ip-foot{padding:14px 20px;border-top:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}' +
+          '.cms-ip-btn{padding:9px 16px;border-radius:8px;font:600 13px Inter,sans-serif;cursor:pointer;border:1px solid rgba(255,255,255,.18);background:none;color:#eef2e4}' +
+          '.cms-ip-btn.primary{background:#d9ec7a;border-color:#d9ec7a;color:#1a220c}';
+        document.head.appendChild(css);
+      }
+      if (!EDIT_UI) return;
+
       var bar = document.createElement('div');
       bar.className = 'cmsedit-bar';
       var left = document.createElement('div');
@@ -965,32 +1192,80 @@
       var dot = document.createElement('span');
       dot.className = 'cmsedit-dot';
       var txt = document.createElement('span');
-      txt.textContent = 'Editing preview — your drafts, not live yet';
+      txt.textContent = 'Visual Site Editor — click any green Edit pill to modify text, features & media';
       left.appendChild(dot); left.appendChild(txt);
+
       var right = document.createElement('div');
-      right.style.display = 'flex'; right.style.gap = '8px';
-      var rf = document.createElement('button');
-      rf.textContent = 'Refresh';
-      rf.onclick = function () { refreshDraft(); };
-      var bk = document.createElement('button');
-      bk.className = 'solid';
-      bk.textContent = 'Back to manager';
-      bk.onclick = function () {
-        try {
-          if (window.opener && !window.opener.closed) { window.opener.focus(); return; }
-        } catch (e) {}
-        window.location.href = '/manage';
-      };
-      right.appendChild(rf); right.appendChild(bk);
-      bar.appendChild(left); bar.appendChild(right);
-      document.body.appendChild(bar);
-      document.body.style.paddingTop = '46px';
+      right.style.display = 'flex'; right.style.gap = '8px'; right.style.flexWrap = 'wrap';
+
+      var jumpSel = document.createElement('select');
+      jumpSel.id = 'cmsBarSectionSelect';
+      jumpSel.style.cssText = 'padding:5px 10px;border-radius:999px;border:1px solid rgba(255,255,255,0.22);background:rgba(17,22,19,0.92);color:#f3f5ef;font:600 11.5px/1 Inter,sans-serif;cursor:pointer;max-width:210px;';
+      var defOpt = document.createElement('option');
+      defOpt.value = '';
+      defOpt.textContent = 'Jump & Edit Section…';
+      jumpSel.appendChild(defOpt);
+
+      var matchedTargets = [];
       EDIT_TARGETS.forEach(function (t) {
         var on = false;
         try { on = t.match(); } catch (e) {}
         if (!on) return;
         var target = document.querySelector(t.sel);
         if (!target) return;
+        matchedTargets.push(t);
+        var opt = document.createElement('option');
+        opt.value = String(matchedTargets.length - 1);
+        opt.textContent = t.label;
+        jumpSel.appendChild(opt);
+      });
+      jumpSel.onchange = function () {
+        if (!jumpSel.value) return;
+        var chosen = matchedTargets[Number(jumpSel.value)];
+        jumpSel.value = '';
+        if (!chosen) return;
+        var el = document.querySelector(chosen.sel);
+        if (el && el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        requestEdit(chosen);
+      };
+
+      var navBtn = document.createElement('button');
+      navBtn.textContent = 'Edit Navigation';
+      navBtn.onclick = function () { openSettingsInlineEditor({ settingKey: 'nav.config' }); };
+
+      var fullBtn = document.createElement('button');
+      fullBtn.textContent = 'Full Manager (/manage)';
+      fullBtn.onclick = function () {
+        try { if (window.opener && !window.opener.closed) { window.opener.focus(); return; } } catch (e) {}
+        window.open(canonicalManageUrl(currentTabForPage()), '_blank');
+      };
+
+      var pubBtn = document.createElement('button');
+      pubBtn.className = 'solid';
+      pubBtn.textContent = 'Publish Live';
+      pubBtn.onclick = async function () {
+        if (!window.confirm('Publish all saved draft changes to the live website?')) return;
+        pubBtn.disabled = true; pubBtn.textContent = 'Publishing…';
+        try {
+          await cmsApiFetch('/api/cms/publish', { method: 'POST' });
+          previewToast('Published live ✓');
+        } catch (e) {
+          if (e.needAuth) window.open(canonicalManageUrl(currentTabForPage()), '_blank');
+          else previewToast(e.message);
+        }
+        pubBtn.disabled = false; pubBtn.textContent = 'Publish Live';
+      };
+
+      var exitBtn = document.createElement('button');
+      exitBtn.textContent = 'Exit Editor';
+      exitBtn.onclick = exitEditMode;
+
+      right.appendChild(jumpSel); right.appendChild(navBtn); right.appendChild(fullBtn); right.appendChild(pubBtn); right.appendChild(exitBtn);
+      bar.appendChild(left); bar.appendChild(right);
+      document.body.appendChild(bar);
+      document.body.style.paddingTop = '50px';
+
+      matchedTargets.forEach(function (t) {
         var pill = document.createElement('button');
         pill.className = 'cmsedit-pill';
         pill.textContent = t.label;
@@ -999,6 +1274,7 @@
         document.body.appendChild(pill);
         EDIT_PILLS.push({ sel: t.sel, pill: pill, def: t });
       });
+
       var tick = false;
       var schedule = function () {
         if (tick) return;
@@ -1007,7 +1283,6 @@
       };
       window.addEventListener('scroll', schedule, { passive: true });
       window.addEventListener('resize', schedule);
-      } // end EDIT_UI visuals (banner + pills)
       window.addEventListener('message', function (e) {
         try {
           if (e.origin !== window.location.origin) return;
@@ -1020,6 +1295,323 @@
     } catch (e) { /* preview extras must never break the page */ }
   }
 
+  function currentTabForPage() {
+    var p = currentPageSlug();
+    if (p === 'website') return 'websites';
+    if (p === 'video') return 'portfolio';
+    if (['home', 'portfolio', 'brands', 'services', 'contact'].indexOf(p) >= 0) return p;
+    return 'more';
+  }
+
+  function openInPageDrawer(opts) {
+    var old = document.getElementById('cmsInPageDrawer');
+    if (old) old.remove();
+    var wrap = document.createElement('div');
+    wrap.id = 'cmsInPageDrawer';
+    wrap.className = 'cms-ip-drawer';
+
+    var scrim = document.createElement('div');
+    scrim.className = 'cms-ip-scrim';
+    scrim.onclick = function () { wrap.remove(); };
+
+    var panel = document.createElement('div');
+    panel.className = 'cms-ip-panel';
+
+    var head = document.createElement('div');
+    head.className = 'cms-ip-head';
+    var h3 = document.createElement('h3');
+    h3.textContent = opts.title || 'Edit Section';
+    var cls = document.createElement('button');
+    cls.type = 'button'; cls.className = 'cms-ip-close'; cls.innerHTML = '&times;';
+    cls.onclick = function () { wrap.remove(); };
+    head.appendChild(h3); head.appendChild(cls);
+
+    var body = document.createElement('div');
+    body.className = 'cms-ip-body';
+    var inputs = {};
+    (opts.fields || []).forEach(function (f) {
+      var fld = document.createElement('div');
+      fld.className = 'cms-ip-field';
+      var lbl = document.createElement('label');
+      lbl.textContent = f.label;
+      var inp = f.type === 'textarea' ? document.createElement('textarea') : document.createElement('input');
+      if (f.type !== 'textarea') inp.type = 'text';
+      inp.value = f.value == null ? '' : String(f.value);
+      inputs[f.key] = inp;
+      fld.appendChild(lbl); fld.appendChild(inp);
+      body.appendChild(fld);
+    });
+
+    var foot = document.createElement('div');
+    foot.className = 'cms-ip-foot';
+    var mgr = document.createElement('button');
+    mgr.type = 'button'; mgr.className = 'cms-ip-btn';
+    mgr.textContent = 'Open in Full Manager';
+    mgr.onclick = function () {
+      try {
+        if (window.opener && !window.opener.closed && opts.openerMsg) {
+          window.opener.postMessage(opts.openerMsg, window.location.origin);
+          window.opener.focus();
+          return;
+        }
+      } catch (e) {}
+      window.open(canonicalManageUrl(opts.manageTab || currentTabForPage()), '_blank');
+    };
+
+    var rightGrp = document.createElement('div');
+    rightGrp.style.display = 'flex'; rightGrp.style.gap = '8px';
+    var cancelBtn = document.createElement('button');
+    cancelBtn.type = 'button'; cancelBtn.className = 'cms-ip-btn'; cancelBtn.textContent = 'Cancel';
+    cancelBtn.onclick = function () { wrap.remove(); };
+
+    var saveBtn = document.createElement('button');
+    saveBtn.type = 'button'; saveBtn.className = 'cms-ip-btn primary'; saveBtn.textContent = 'Save Draft';
+    saveBtn.onclick = async function () {
+      var values = {};
+      Object.keys(inputs).forEach(function (k) { values[k] = inputs[k].value; });
+      saveBtn.disabled = true; saveBtn.textContent = 'Saving…';
+      try {
+        await opts.onSave(values);
+        wrap.remove();
+        positionPills();
+        previewToast('Saved ✓ (Click Publish Live in top bar to go live)');
+      } catch (err) {
+        if (err && err.needAuth) {
+          previewToast('Please sign in at /manage to save live CMS changes — opening Manager…');
+          window.open(canonicalManageUrl(opts.manageTab || currentTabForPage()), '_blank');
+        } else {
+          previewToast((err && err.message) || 'Could not save changes.');
+        }
+      }
+      saveBtn.disabled = false; saveBtn.textContent = 'Save Draft';
+    };
+
+    rightGrp.appendChild(cancelBtn); rightGrp.appendChild(saveBtn);
+    foot.appendChild(mgr); foot.appendChild(rightGrp);
+    panel.appendChild(head); panel.appendChild(body); panel.appendChild(foot);
+    wrap.appendChild(scrim); wrap.appendChild(panel);
+    document.body.appendChild(wrap);
+  }
+
+  function getActiveCatalogForEdit() {
+    var s = (activeData && activeData.settings) || {};
+    var custom = settingObj(s, 'websites.catalog');
+    if (Array.isArray(custom) && custom.length) return JSON.parse(JSON.stringify(custom));
+    return (window.REVOLVYN_WEBSITES || []).map(function (w, i) {
+      return Object.assign({ visible: true, order: i }, JSON.parse(JSON.stringify(w)));
+    });
+  }
+
+  function openWebsiteInlineEditor(def) {
+    var active = window.__ACTIVE_WEBSITE_SITE || (window.REVOLVYN_WEBSITES || [])[0];
+    if (!active) return;
+    var mode = def.activeWebsite || 'basic';
+    var openerMsg = { ns: 'revolvyn-cms', kind: 'edit', tab: 'websites', slug: active.slug };
+
+    var fieldsByMode = {
+      media: [
+        { key: 'video', label: 'Showcase Video URL', value: active.video || '' },
+        { key: 'thumb', label: 'Poster Thumbnail URL', value: active.thumb || '' }
+      ],
+      basic: [
+        { key: 'title', label: 'Short Title', value: active.title || '' },
+        { key: 'fullTitle', label: 'Full Display Title', value: active.fullTitle || '' },
+        { key: 'category', label: 'Category', value: active.category || '' },
+        { key: 'liveUrl', label: 'Live Site URL', value: active.liveUrl || '' }
+      ],
+      features: [
+        { key: 'userSummary', label: 'Plain-Language Summary', type: 'textarea', value: active.userSummary || '' },
+        { key: 'bestFor', label: 'Best For', value: active.bestFor || '' },
+        { key: 'userActions', label: 'Key User Actions', value: active.userActions || '' },
+        { key: 'usability', label: 'Experience & Access', value: active.usability || '' },
+        { key: 'siteFeaturesText', label: 'What Visitors Can Do (one per line)', type: 'textarea', value: (active.siteFeatures || []).join('\n') }
+      ],
+      tech: [
+        { key: 'techSummary', label: 'Technical Summary', type: 'textarea', value: active.techSummary || '' },
+        { key: 'stackText', label: 'Tech Stack Chips (one per line)', type: 'textarea', value: (active.stack || []).join('\n') },
+        { key: 'techFeaturesText', label: 'Architecture & Technical Build (one per line)', type: 'textarea', value: (active.techFeatures || []).join('\n') }
+      ]
+    };
+
+    openInPageDrawer({
+      title: def.label + ' — ' + (active.title || active.slug),
+      fields: fieldsByMode[mode] || fieldsByMode.basic,
+      manageTab: 'websites',
+      openerMsg: openerMsg,
+      onSave: async function (v) {
+        var list = getActiveCatalogForEdit();
+        var i = list.findIndex(function (x) { return x.slug === active.slug; });
+        if (i < 0) return;
+        if (mode === 'media') {
+          list[i].video = v.video.trim();
+          list[i].thumb = v.thumb.trim();
+        } else if (mode === 'basic') {
+          list[i].title = v.title.trim();
+          list[i].fullTitle = v.fullTitle.trim();
+          list[i].category = v.category.trim();
+          list[i].liveUrl = v.liveUrl.trim() || null;
+        } else if (mode === 'features') {
+          list[i].userSummary = v.userSummary.trim();
+          list[i].bestFor = v.bestFor.trim();
+          list[i].userActions = v.userActions.trim();
+          list[i].usability = v.usability.trim();
+          list[i].siteFeatures = v.siteFeaturesText.split('\n').map(function (x) { return x.trim(); }).filter(Boolean);
+        } else if (mode === 'tech') {
+          list[i].techSummary = v.techSummary.trim();
+          list[i].stack = v.stackText.split('\n').map(function (x) { return x.trim(); }).filter(Boolean);
+          list[i].techFeatures = v.techFeaturesText.split('\n').map(function (x) { return x.trim(); }).filter(Boolean);
+        }
+        await cmsApiFetch('/api/cms/settings', { method: 'PATCH', body: { settings: { 'websites.catalog': list } } });
+        activeData.settings['websites.catalog'] = list;
+        apply(activeData);
+      }
+    });
+  }
+
+  function openSettingsInlineEditor(def) {
+    var s = (activeData && activeData.settings) || {};
+    var key = def.settingKey;
+    if (key === 'nav.config') {
+      var nav = settingObj(s, 'nav.config') || {
+        brandName: (document.querySelector('.nav-logo') || {}).textContent || 'REVOLVYN',
+        links: Array.prototype.slice.call(document.querySelectorAll('.nav-links a')).map(function (a) {
+          return { label: a.textContent.trim(), url: a.getAttribute('href') };
+        })
+      };
+      openInPageDrawer({
+        title: 'Edit Top Navigation Bar',
+        manageTab: 'home',
+        fields: [
+          { key: 'brandName', label: 'Brand Logo Text', value: nav.brandName || 'REVOLVYN' },
+          { key: 'linksLines', label: 'Menu Links (Label | url per line)', type: 'textarea', value: (nav.links || []).map(function (l) { return l.label + ' | ' + l.url; }).join('\n') }
+        ],
+        onSave: async function (v) {
+          var links = v.linksLines.split('\n').map(function (row) {
+            var parts = row.split('|');
+            return { label: (parts[0] || '').trim(), url: (parts[1] || '#').trim() };
+          }).filter(function (x) { return x.label; });
+          var next = { brandName: v.brandName.trim() || 'REVOLVYN', links: links };
+          await cmsApiFetch('/api/cms/settings', { method: 'PATCH', body: { settings: { 'nav.config': next } } });
+          activeData.settings['nav.config'] = next;
+          apply(activeData);
+        }
+      });
+    } else if (key === 'portfolio.ui') {
+      var pui = settingObj(s, 'portfolio.ui') || {
+        videosLabel: (document.querySelector('#tabVideos span') || {}).textContent || 'Videos',
+        websitesLabel: (document.querySelector('#tabWebsites span') || {}).textContent || 'Websites'
+      };
+      openInPageDrawer({
+        title: 'Edit Portfolio Toggle Labels',
+        manageTab: 'portfolio',
+        fields: [
+          { key: 'videosLabel', label: 'Videos Switch Label', value: pui.videosLabel || 'Videos' },
+          { key: 'websitesLabel', label: 'Websites Switch Label', value: pui.websitesLabel || 'Websites' }
+        ],
+        onSave: async function (v) {
+          var next = { videosLabel: v.videosLabel.trim() || 'Videos', websitesLabel: v.websitesLabel.trim() || 'Websites' };
+          await cmsApiFetch('/api/cms/settings', { method: 'PATCH', body: { settings: { 'portfolio.ui': next } } });
+          activeData.settings['portfolio.ui'] = next;
+          apply(activeData);
+        }
+      });
+    } else if (key === 'website.labels') {
+      var lbl = settingObj(s, 'website.labels') || {
+        featuresHeading: (document.getElementById('featuresHeading') || {}).textContent || 'Website Features',
+        techHeading: (document.getElementById('techHeading') || {}).textContent || 'Technology Stack',
+        exploreHeading: (document.querySelector('.sidebar-title') || {}).textContent || 'Explore Other Websites',
+        livePreviewText: (document.querySelector('#livePreviewBtn span') || {}).textContent || 'Live Preview',
+        workText: (document.querySelector('.work-btn') || {}).textContent || 'Work With Us',
+        workUrl: (document.querySelector('.work-btn') || { getAttribute: function () { return 'contact.html'; } }).getAttribute('href')
+      };
+      openInPageDrawer({
+        title: 'Edit Website Showcase Labels',
+        manageTab: 'websites',
+        openerMsg: { ns: 'revolvyn-cms', kind: 'edit', tab: 'websites' },
+        fields: [
+          { key: 'featuresHeading', label: 'Features Heading', value: lbl.featuresHeading },
+          { key: 'techHeading', label: 'Tech Stack Heading', value: lbl.techHeading },
+          { key: 'exploreHeading', label: 'Sidebar Heading', value: lbl.exploreHeading },
+          { key: 'livePreviewText', label: 'Live Preview Button Text', value: lbl.livePreviewText },
+          { key: 'workText', label: 'Work CTA Text', value: lbl.workText },
+          { key: 'workUrl', label: 'Work CTA URL', value: lbl.workUrl }
+        ],
+        onSave: async function (v) {
+          await cmsApiFetch('/api/cms/settings', { method: 'PATCH', body: { settings: { 'website.labels': v } } });
+          activeData.settings['website.labels'] = v;
+          apply(activeData);
+        }
+      });
+    } else if (key === 'footer') {
+      var tg = setting(s, 'footer.tagline') || (document.querySelector('.sf-brand-desc') || {}).textContent || '';
+      var cp = setting(s, 'footer.copyright') || (document.querySelector('.sf-copy') || {}).textContent || '';
+      openInPageDrawer({
+        title: 'Edit Footer',
+        manageTab: 'footer',
+        openerMsg: { ns: 'revolvyn-cms', kind: 'edit', tab: 'footer' },
+        fields: [
+          { key: 'tagline', label: 'Tagline', type: 'textarea', value: tg },
+          { key: 'copyright', label: 'Copyright Line', value: cp }
+        ],
+        onSave: async function (v) {
+          var patch = { 'footer.tagline': v.tagline.trim(), 'footer.copyright': v.copyright.trim() };
+          await cmsApiFetch('/api/cms/settings', { method: 'PATCH', body: { settings: patch } });
+          activeData.settings['footer.tagline'] = patch['footer.tagline'];
+          activeData.settings['footer.copyright'] = patch['footer.copyright'];
+          apply(activeData);
+        }
+      });
+    }
+  }
+
+  function openSectionInlineEditor(def) {
+    var page = def.page || currentPageSlug();
+    var sec = section(activeData, page, def.key);
+    var openerMsg = { ns: 'revolvyn-cms', kind: 'edit', page: page, key: def.key, tab: def.tab || null };
+    if (!sec || !sec.id) {
+      // No section row ID in current snapshot — hand off or open /manage
+      try {
+        if (window.opener && !window.opener.closed) {
+          window.opener.postMessage(openerMsg, window.location.origin);
+          window.opener.focus();
+          previewToast('Opening editor in Website Manager…');
+          return;
+        }
+      } catch (e) {}
+      openInPageDrawer({
+        title: def.label,
+        manageTab: def.tab || currentTabForPage(),
+        openerMsg: openerMsg,
+        fields: [{ key: '_info', label: 'Sign in required to load editable fields', value: 'Click Open in Full Manager below to sign in and edit.' }],
+        onSave: async function () { window.open(canonicalManageUrl(def.tab || currentTabForPage()), '_blank'); }
+      });
+      return;
+    }
+    var d = sec.data || {};
+    var fields = Object.keys(d).filter(function (k) {
+      return typeof d[k] === 'string' || typeof d[k] === 'number';
+    }).map(function (k) {
+      var val = String(d[k]);
+      return { key: k, label: k.replace(/([A-Z])/g, ' $1'), type: val.length > 70 ? 'textarea' : 'text', value: val };
+    });
+    if (!fields.length) {
+      window.open(canonicalManageUrl(def.tab || currentTabForPage()), '_blank');
+      return;
+    }
+    openInPageDrawer({
+      title: def.label,
+      manageTab: def.tab || currentTabForPage(),
+      openerMsg: openerMsg,
+      fields: fields,
+      onSave: async function (vals) {
+        var nextData = Object.assign({}, d, vals);
+        await cmsApiFetch('/api/cms/sections', { method: 'PATCH', body: { sections: [{ id: sec.id, data: nextData }] } });
+        sec.data = nextData;
+        apply(activeData);
+      }
+    });
+  }
+
   function positionPills() {
     var vh = window.innerHeight || 800;
     var vw = window.innerWidth || 1200;
@@ -1028,10 +1620,10 @@
       try { target = document.querySelector(p.sel); } catch (e) {}
       var r = null;
       try { r = target ? target.getBoundingClientRect() : null; } catch (e) {}
-      if (!r || r.bottom < 60 || r.top > vh) { p.pill.style.display = 'none'; return; }
+      if (!r || r.width < 10 || r.height < 10 || r.bottom < 60 || r.top > vh) { p.pill.style.display = 'none'; return; }
       p.pill.style.display = '';
       var w = p.pill.offsetWidth || 120;
-      var top = Math.max(r.top + 10, 56);
+      var top = Math.max(r.top + 10, 58);
       var left = Math.min(Math.max(r.right - w - 10, 8), vw - w - 8);
       p.pill.style.top = top + 'px';
       p.pill.style.left = left + 'px';
@@ -1051,20 +1643,24 @@
   }
 
   function requestEdit(def) {
-    var msg = { ns: 'revolvyn-cms', kind: 'edit', page: def.page || currentPageSlug(), key: def.key || null, tab: def.tab || null };
+    if (def.activeWebsite) { openWebsiteInlineEditor(def); return; }
+    if (def.settingKey) { openSettingsInlineEditor(def); return; }
+    if (def.key) { openSectionInlineEditor(def); return; }
+    var msg = { ns: 'revolvyn-cms', kind: 'edit', page: def.page || currentPageSlug(), key: null, tab: def.tab || null };
     try {
       if (window.opener && !window.opener.closed) {
         window.opener.postMessage(msg, window.location.origin);
+        window.opener.focus();
         previewToast('Opening in Website Manager…');
         return;
       }
     } catch (e) {}
-    previewToast('Keep the Website Manager tab open, then click again.');
+    window.open(canonicalManageUrl(def.tab || currentTabForPage()), '_blank');
   }
 
   function currentPageSlug() {
     var path = window.location.pathname;
-    var m = path.match(/([a-z]+)\.html$/);
+    var m = path.match(/([a-z]+)(?:\.html)?$/i);
     return m ? m[1] : 'home';
   }
 
@@ -1074,14 +1670,18 @@
       if (previewToken) {
         var r = await fetch('/api/cms/draft?preview=' + encodeURIComponent(previewToken));
         if (!r.ok) { failBadge('This preview has expired. Open a new preview from the Website Manager.'); return; }
-        data = normalizeDraft(await r.json());
-      } else if (previewLegacy) {
-        var t = null;
-        try { t = sessionStorage.getItem('revolvyn_preview_token'); } catch (e) {}
+        var rawR = await r.json();
+        activeRawDraft = rawR;
+        data = normalizeDraft(rawR);
+      } else if (previewLegacy || clerkToken) {
+        var t = clerkToken;
+        if (!t) { try { t = sessionStorage.getItem('revolvyn_preview_token'); } catch (e) {} }
         if (!t) return;
         var r2 = await fetch('/api/cms/draft', { headers: { Authorization: 'Bearer ' + t } });
         if (!r2.ok) return;
-        data = normalizeDraft(await r2.json());
+        var rawR2 = await r2.json();
+        activeRawDraft = rawR2;
+        data = normalizeDraft(rawR2);
       } else return;
       apply(data);
       positionPills();
@@ -1089,6 +1689,11 @@
       else previewToast('Preview updated ✓');
     } catch (e) {}
   }
+
+  window.REVOLVYN_GUI_EDITOR = {
+    activate: activateSiteEditor,
+    exit: exitEditMode
+  };
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', load);
   else load();

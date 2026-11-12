@@ -9,6 +9,8 @@ const ALLOWED_KEYS = new Set([
   'social.instagram', 'social.facebook', 'social.youtube',
   'footer.tagline', 'footer.copyright', 'footer.titles', 'footer.links',
   'contact.form.services',
+  'websites.catalog', 'website.labels', 'portfolio.ui',
+  'nav.config', 'site.preloader',
 ]);
 
 export default async function handler(req, res) {

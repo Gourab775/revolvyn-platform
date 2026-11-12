@@ -795,53 +795,11 @@ p,h1,h2,h3,h4,li,blockquote,.stat-number,.brand-card-name{-webkit-user-select:te
 		document.querySelectorAll('.collage-item').forEach(item => pauseObserver.observe(item));
 
 		// Website showcases (C:\E-Com landing page smooth-scroll recordings)
-		const websiteShowcases = window.REVOLVYN_WEBSITES || [];
-
 		const websitesGrid = document.getElementById('websitesGrid');
 		const workSwitch = document.getElementById('workSwitch');
 		const tabVideos = document.getElementById('tabVideos');
 		const tabWebsites = document.getElementById('tabWebsites');
 		let activeWorkTab = 'videos';
-
-		websiteShowcases.forEach((site) => {
-			const detailUrl = `website.html?slug=${site.slug}`;
-			const previewUrl = `website.html?slug=${site.slug}&preview=1`;
-			const card = document.createElement('div');
-			card.className = 'website-card';
-			card.tabIndex = 0;
-			card.setAttribute('role', 'link');
-			card.setAttribute('aria-label', `Explore ${site.title} website showcase details`);
-			card.innerHTML = `
-				<video muted loop playsinline preload="none" poster="${site.thumb}" data-src="${site.video}"></video>
-				<div class="website-overlay">
-					<div class="website-meta">
-						<div class="website-title">${site.title}</div>
-						<div class="website-cat">${site.category}</div>
-					</div>
-					<div class="website-actions">
-						<a href="${previewUrl}" class="website-live-icon" title="Live Preview ${site.title}" aria-label="Live Preview ${site.title}">
-							<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg>
-						</a>
-						<span class="website-hint">View Details</span>
-					</div>
-				</div>
-			`;
-			const vid = card.querySelector('video');
-			if (window.bindWebsiteSpeed) window.bindWebsiteSpeed(vid);
-			const liveBtn = card.querySelector('.website-live-icon');
-			liveBtn.addEventListener('click', (e) => {
-				e.stopPropagation();
-				smoothNavigate(e, previewUrl);
-			});
-			card.addEventListener('click', () => smoothNavigate(null, detailUrl));
-			card.addEventListener('keydown', (e) => {
-				if (e.key === 'Enter' || e.key === ' ') {
-					e.preventDefault();
-					smoothNavigate(e, detailUrl);
-				}
-			});
-			websitesGrid.appendChild(card);
-		});
 
 		const wsObserver = new IntersectionObserver((entries) => {
 			entries.forEach(entry => {
@@ -860,7 +818,69 @@ p,h1,h2,h3,h4,li,blockquote,.stat-number,.brand-card-name{-webkit-user-select:te
 			});
 		}, { rootMargin: '300px 0px', threshold: 0.05 });
 
-		document.querySelectorAll('.website-card').forEach(card => wsObserver.observe(card));
+		window.renderPortfolioWebsites = function (customSites, uiLabels) {
+			if (uiLabels && typeof uiLabels === 'object') {
+				if (uiLabels.videosLabel) {
+					const s1 = tabVideos.querySelector('span') || tabVideos;
+					s1.textContent = uiLabels.videosLabel;
+				}
+				if (uiLabels.websitesLabel) {
+					const s2 = tabWebsites.querySelector('span') || tabWebsites;
+					s2.textContent = uiLabels.websitesLabel;
+				}
+			}
+			const raw = Array.isArray(customSites) && customSites.length
+				? customSites.filter(s => s.visible !== false)
+				: (window.REVOLVYN_WEBSITES || []);
+			const websiteShowcases = raw.length ? raw : (window.REVOLVYN_WEBSITES || []);
+
+			websitesGrid.innerHTML = '';
+			websiteShowcases.forEach((site) => {
+				const detailUrl = `website.html?slug=${site.slug}`;
+				const previewUrl = `website.html?slug=${site.slug}&preview=1`;
+				const card = document.createElement('div');
+				card.className = 'website-card' + (activeWorkTab === 'websites' ? ' revealed' : '');
+				card.tabIndex = 0;
+				card.setAttribute('role', 'link');
+				card.setAttribute('aria-label', `Explore ${site.title} website showcase details`);
+				card.innerHTML = `
+					<video muted loop playsinline preload="none" poster="${site.thumb || ''}" data-src="${site.video || ''}"></video>
+					<div class="website-overlay">
+						<div class="website-meta">
+							<div class="website-title"></div>
+							<div class="website-cat"></div>
+						</div>
+						<div class="website-actions">
+							<a href="${previewUrl}" class="website-live-icon" title="Live Preview" aria-label="Live Preview">
+								<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg>
+							</a>
+							<span class="website-hint">View Details</span>
+						</div>
+					</div>
+				`;
+				card.querySelector('.website-title').textContent = site.title || '';
+				card.querySelector('.website-cat').textContent = site.category || '';
+				const vid = card.querySelector('video');
+				if (window.bindWebsiteSpeed) window.bindWebsiteSpeed(vid);
+				const liveBtn = card.querySelector('.website-live-icon');
+				liveBtn.addEventListener('click', (e) => {
+					e.stopPropagation();
+					smoothNavigate(e, previewUrl);
+				});
+				card.addEventListener('click', () => smoothNavigate(null, detailUrl));
+				card.addEventListener('keydown', (e) => {
+					if (e.key === 'Enter' || e.key === ' ') {
+						e.preventDefault();
+						smoothNavigate(e, detailUrl);
+					}
+				});
+				websitesGrid.appendChild(card);
+				wsObserver.observe(card);
+			});
+			if (activeWorkTab === 'websites') activatePanelMedia('websites');
+		};
+
+		window.renderPortfolioWebsites(window.REVOLVYN_WEBSITES || [], null);
 
 		let switchSeq = 0;
 		let switchTimer = null;

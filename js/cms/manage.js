@@ -9,7 +9,7 @@
   var ui = { search: '', filter: 'all', morePage: null };
   var previewWin = null;
   function previewForTab() {
-    var map = { portfolio: 'portfolio.html', brands: 'brands.html', services: 'services.html', contact: 'contact.html', footer: 'index.html', more: (ui.morePage || 'index') + '.html' };
+    var map = { portfolio: 'portfolio.html', websites: 'website.html', brands: 'brands.html', services: 'services.html', contact: 'contact.html', footer: 'index.html', more: (ui.morePage || 'index') + '.html' };
     return map[tab] || 'index.html';
   }
   function liveForTab() { return previewForTab(); }
@@ -178,7 +178,12 @@
     'social.youtube': ['YouTube link', 'contact'],
     'footer.tagline': ['Footer tagline', 'footer'], 'footer.copyright': ['Copyright line', 'footer'],
     'footer.titles': ['Footer column titles', 'footer'], 'footer.links': ['Footer links', 'footer'],
-    'contact.form.services': ['Form options', 'contact']
+    'contact.form.services': ['Form options', 'contact'],
+    'websites.catalog': ['Websites showcase catalog', 'websites'],
+    'website.labels': ['Website detail labels', 'websites'],
+    'portfolio.ui': ['Portfolio toggle labels', 'portfolio'],
+    'nav.config': ['Top navigation bar', 'home'],
+    'site.preloader': ['Preloader screen label', 'home']
   };
   var PAGE_NAMES = { home: 'Home', portfolio: 'Portfolio', brands: 'Brands', services: 'Services', contact: 'Contact', video: 'Video player', careers: 'Careers', partnerships: 'Partnerships', blog: 'Blog', research: 'Research', newsletter: 'Newsletter', community: 'Community', privacy: 'Privacy', refund: 'Refund' };
 
@@ -1173,8 +1178,8 @@
     document.querySelectorAll('.side-link').forEach(function (b) {
       b.classList.toggle('active', b.dataset.tab === tab);
     });
-    var counts = { portfolio: 0, brands: 0, services: 0 };
-    Object.keys(counts).forEach(function (k) { counts[k] = (draft[k] || []).length; });
+    var counts = { portfolio: 0, brands: 0, services: 0, websites: getWebsitesCatalog().length };
+    ['portfolio', 'brands', 'services'].forEach(function (k) { counts[k] = (draft[k] || []).length; });
     document.querySelectorAll('[data-count]').forEach(function (n) {
       n.textContent = counts[n.dataset.count] || '';
       n.classList.toggle('hidden', !counts[n.dataset.count]);
@@ -1185,6 +1190,7 @@
     $('sidebar').classList.remove('open');
     if (tab === 'home') renderHome(c);
     else if (tab === 'portfolio') renderPortfolio(c);
+    else if (tab === 'websites') renderWebsites(c);
     else if (tab === 'brands') renderBrands(c);
     else if (tab === 'services') renderServices(c);
     else if (tab === 'team') renderTeam(c);
@@ -1383,16 +1389,412 @@
     });
   }
 
+  function defaultWebsitesCatalog() {
+    return (window.REVOLVYN_WEBSITES || []).map(function (w, i) {
+      return Object.assign({ visible: true, order: i }, JSON.parse(JSON.stringify(w)));
+    });
+  }
+  function getWebsitesCatalog() {
+    var saved = settingObj('websites.catalog');
+    if (Array.isArray(saved) && saved.length) return saved;
+    return defaultWebsitesCatalog();
+  }
+  function saveWebsitesCatalog(list, doneMsg) {
+    return saveSettings({ 'websites.catalog': list }, doneMsg || 'Website showcase updated ✓ — Publish to go live');
+  }
+
+  function renderNavCard(c) {
+    var navCfg = settingObj('nav.config') || {
+      brandName: 'REVOLVYN',
+      links: [
+        { label: 'About Us', url: 'index.html#about' },
+        { label: 'Portfolio', url: 'portfolio.html' },
+        { label: 'Brands', url: 'brands.html' },
+        { label: 'Services', url: 'services.html' },
+        { label: 'Contact Us', url: 'contact.html' }
+      ]
+    };
+    var card = el('div', 'sec-card');
+    var info = el('div', 'sec-info');
+    info.appendChild(el('div', 'sec-title', 'Top navigation bar'));
+    info.appendChild(el('div', 'sec-desc', 'Brand wordmark and top menu links displayed across every page.'));
+    var box = el('div');
+    box.style.marginTop = '12px';
+
+    var brandField = el('div', 'field');
+    brandField.appendChild(el('label', null, 'Logo text'));
+    var brandInput = document.createElement('input');
+    brandInput.type = 'text';
+    brandInput.value = navCfg.brandName || 'REVOLVYN';
+    brandInput.oninput = function () { unsavedForm = true; };
+    brandField.appendChild(brandInput);
+    box.appendChild(brandField);
+
+    var linksHost = el('div', 'd-group');
+    var links = Array.isArray(navCfg.links) ? navCfg.links.map(function (l) { return { label: l.label || '', url: l.url || '' }; }) : [];
+    function drawLinks() {
+      linksHost.innerHTML = '';
+      linksHost.appendChild(el('h4', null, 'Menu links'));
+      links.forEach(function (link, li) {
+        var row = el('div', 'link-row');
+        var l = document.createElement('input');
+        l.type = 'text'; l.value = link.label; l.placeholder = 'Label';
+        var u = document.createElement('input');
+        u.type = 'text'; u.value = link.url; u.placeholder = 'Page or URL';
+        [l, u].forEach(function (inp) {
+          inp.style.cssText = 'flex:1;padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:rgba(9,12,6,.7);color:var(--ink);font-size:14px;font-family:inherit;';
+        });
+        l.oninput = function () { link.label = l.value; unsavedForm = true; };
+        u.oninput = function () { link.url = u.value; unsavedForm = true; };
+        var x = el('button', 'mini-btn', '×');
+        x.type = 'button'; x.title = 'Remove link';
+        x.onclick = function () { links.splice(li, 1); drawLinks(); unsavedForm = true; };
+        row.appendChild(l); row.appendChild(u); row.appendChild(x);
+        linksHost.appendChild(row);
+      });
+      var add = el('button', 'btn small ghost add-row-btn', '+ Add menu link');
+      add.type = 'button';
+      add.onclick = function () { links.push({ label: '', url: '' }); drawLinks(); unsavedForm = true; };
+      linksHost.appendChild(add);
+    }
+    drawLinks();
+    box.appendChild(linksHost);
+    info.appendChild(box);
+    card.appendChild(info);
+
+    var acts = el('div', 'sec-actions');
+    var save = el('button', 'btn small primary', 'Save nav');
+    save.onclick = async function () {
+      setBusy(true, save, 'Saving…');
+      try {
+        await saveSettings({
+          'nav.config': {
+            brandName: brandInput.value.trim() || 'REVOLVYN',
+            links: links.filter(function (x) { return x.label || x.url; })
+          }
+        }, 'Navigation saved ✓ — not live until you Publish');
+        clearUnsaved();
+      } catch (e) { toast(e.message, true); }
+      setBusy(false, save);
+    };
+    acts.appendChild(save);
+    card.appendChild(acts);
+    c.appendChild(card);
+  }
+
   function renderHome(c) {
-    pageHead(c, 'Home', 'Every text block on the homepage. Nothing goes live until you Publish.', [refreshBtn()]);
+    pageHead(c, 'Home', 'Every text block, navigation bar, and preloader label on the site. Nothing goes live until you Publish.', [refreshBtn()]);
     HOME_DEFS.forEach(function (d) { sectionRow(c, d.page, d.key, d); });
+    var h = el('h3', null, 'Global navigation & loading');
+    c.appendChild(h);
+    renderNavCard(c);
+    var preVal = settingObj('site.preloader') || { label: 'Loading Experience' };
+    var cardPre = el('div', 'sec-card');
+    var infoPre = el('div', 'sec-info');
+    infoPre.appendChild(el('div', 'sec-title', 'Initial Loading Screen'));
+    infoPre.appendChild(el('div', 'sec-desc', 'Caption shown under the 0%–100% percentage counter when opening the homepage.'));
+    var pf = el('div', 'field'); pf.style.marginTop = '12px';
+    pf.appendChild(el('label', null, 'Loading label'));
+    var pi = document.createElement('input');
+    pi.type = 'text'; pi.value = preVal.label || 'Loading Experience';
+    pi.oninput = function () { unsavedForm = true; };
+    pf.appendChild(pi);
+    infoPre.appendChild(pf);
+    cardPre.appendChild(infoPre);
+    var actsPre = el('div', 'sec-actions');
+    var savePre = el('button', 'btn small primary', 'Save');
+    savePre.onclick = async function () {
+      setBusy(true, savePre, 'Saving…');
+      try {
+        await saveSettings({ 'site.preloader': { label: pi.value.trim() || 'Loading Experience' } });
+        clearUnsaved();
+      } catch (e) { toast(e.message, true); }
+      setBusy(false, savePre);
+    };
+    actsPre.appendChild(savePre);
+    cardPre.appendChild(actsPre);
+    c.appendChild(cardPre);
   }
 
   function renderPortfolio(c) {
-    pageHead(c, 'Portfolio', 'Projects, page heading and the bottom button.', [refreshBtn()]);
+    pageHead(c, 'Portfolio', 'Video projects, headings, toggle labels, and the bottom button.', [refreshBtn()]);
     PORTFOLIO_SECS.forEach(function (d) { sectionRow(c, d.page, d.key, d); });
     VIDEO_SECS.forEach(function (d) { sectionRow(c, d.page, d.key, d); });
+    var pui = settingObj('portfolio.ui') || { videosLabel: 'Videos', websitesLabel: 'Websites' };
+    var cardUi = el('div', 'sec-card');
+    var infoUi = el('div', 'sec-info');
+    infoUi.appendChild(el('div', 'sec-title', 'Videos / Websites Toggle'));
+    infoUi.appendChild(el('div', 'sec-desc', 'Labels for the two switch tabs below “Brand Films & Ads That Convert”.'));
+    var boxUi = el('div'); boxUi.style.marginTop = '12px';
+    var f1 = el('div', 'field'); f1.appendChild(el('label', null, 'Left switch label'));
+    var i1 = document.createElement('input'); i1.type = 'text'; i1.value = pui.videosLabel || 'Videos';
+    i1.oninput = function () { unsavedForm = true; };
+    f1.appendChild(i1); boxUi.appendChild(f1);
+    var f2 = el('div', 'field'); f2.appendChild(el('label', null, 'Right switch label'));
+    var i2 = document.createElement('input'); i2.type = 'text'; i2.value = pui.websitesLabel || 'Websites';
+    i2.oninput = function () { unsavedForm = true; };
+    f2.appendChild(i2); boxUi.appendChild(f2);
+    infoUi.appendChild(boxUi); cardUi.appendChild(infoUi);
+    var actsUi = el('div', 'sec-actions');
+    var saveUi = el('button', 'btn small primary', 'Save toggle');
+    saveUi.onclick = async function () {
+      setBusy(true, saveUi, 'Saving…');
+      try {
+        await saveSettings({ 'portfolio.ui': { videosLabel: i1.value.trim() || 'Videos', websitesLabel: i2.value.trim() || 'Websites' } });
+        clearUnsaved();
+      } catch (e) { toast(e.message, true); }
+      setBusy(false, saveUi);
+    };
+    actsUi.appendChild(saveUi); cardUi.appendChild(actsUi);
+    c.appendChild(cardUi);
     renderCollection(c, 'portfolio');
+  }
+
+  function openWebsiteDrawer(indexOrSlug) {
+    var list = getWebsitesCatalog().slice();
+    var isNew = indexOrSlug == null;
+    var idx = -1;
+    if (!isNew) {
+      idx = typeof indexOrSlug === 'number'
+        ? indexOrSlug
+        : list.findIndex(function (w) { return w.slug === indexOrSlug; });
+      if (idx < 0) isNew = true;
+    }
+    var w = isNew ? {
+      slug: '', title: '', fullTitle: '', category: 'Next.js · TypeScript',
+      userSummary: '', bestFor: '', userActions: '', usability: '',
+      siteFeatures: [], techSummary: '', stack: [], techFeatures: [],
+      video: '', thumb: '', liveUrl: '', visible: true
+    } : list[idx];
+
+    var vals = {
+      title: w.title || '',
+      fullTitle: w.fullTitle || '',
+      category: w.category || '',
+      slug: w.slug || '',
+      liveUrl: w.liveUrl || '',
+      visible: w.visible !== false,
+      userSummary: w.userSummary || '',
+      bestFor: w.bestFor || '',
+      userActions: w.userActions || '',
+      usability: w.usability || '',
+      siteFeaturesText: Array.isArray(w.siteFeatures) ? w.siteFeatures.join('\n') : '',
+      techSummary: w.techSummary || '',
+      stackText: Array.isArray(w.stack) ? w.stack.join('\n') : '',
+      techFeaturesText: Array.isArray(w.techFeatures) ? w.techFeatures.join('\n') : '',
+      video: w.video || '',
+      thumb: w.thumb || ''
+    };
+
+    openDrawer({
+      title: isNew ? 'Add website showcase' : 'Edit — ' + (w.title || w.slug),
+      sub: 'Edit everything visitors see on Portfolio and the Website Showcase page.',
+      values: vals,
+      groups: [
+        { title: 'Basic Info & URLs', fields: [
+          { key: 'title', label: 'Short Title (e.g. AMBER)', required: true },
+          { key: 'fullTitle', label: 'Full Page Title (e.g. AMBER — E-Commerce Storefront)', required: true },
+          { key: 'category', label: 'Category Tag (e.g. Next.js 16 · Framer Motion)' },
+          { key: 'slug', label: 'URL Slug (e.g. amber-skincare)' },
+          { key: 'liveUrl', label: 'Live Site URL (optional, opened by Open Site)' },
+          { key: 'visible', label: 'Show on website', type: 'toggle' }
+        ]},
+        { title: 'Website Features Card (Normal Audience)', fields: [
+          { key: 'userSummary', label: 'Plain-Language Summary', type: 'textarea' },
+          { key: 'bestFor', label: 'Best For' },
+          { key: 'userActions', label: 'Key User Actions' },
+          { key: 'usability', label: 'Experience & Access' },
+          { key: 'siteFeaturesText', label: 'What Visitors Can Do (one point per line)', type: 'textarea' }
+        ]},
+        { title: 'Technology Stack Card', fields: [
+          { key: 'techSummary', label: 'Technical Summary', type: 'textarea' },
+          { key: 'stackText', label: 'Tech Stack Chips (one item per line)', type: 'textarea' },
+          { key: 'techFeaturesText', label: 'Architecture & Technical Build (one point per line)', type: 'textarea' }
+        ]},
+        { title: 'Showcase Video & Thumbnail', fields: [
+          { key: 'video', label: 'Scroll Recording Video', type: 'video' },
+          { key: 'thumb', label: 'Thumbnail Poster Image', type: 'image' }
+        ]}
+      ],
+      onSave: async function (out) {
+        var cleanSlug = (out.slug || out.title || 'site').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || ('site-' + Date.now().toString(36));
+        var updated = {
+          slug: cleanSlug,
+          title: out.title || cleanSlug.toUpperCase(),
+          fullTitle: out.fullTitle || out.title || cleanSlug,
+          category: out.category || 'Web Platform',
+          userSummary: out.userSummary || '',
+          bestFor: out.bestFor || '',
+          userActions: out.userActions || '',
+          usability: out.usability || '',
+          siteFeatures: String(out.siteFeaturesText || '').split('\n').map(function (x) { return x.trim(); }).filter(Boolean),
+          techSummary: out.techSummary || '',
+          stack: String(out.stackText || '').split('\n').map(function (x) { return x.trim(); }).filter(Boolean),
+          techFeatures: String(out.techFeaturesText || '').split('\n').map(function (x) { return x.trim(); }).filter(Boolean),
+          video: out.video || '',
+          thumb: out.thumb || '',
+          liveUrl: out.liveUrl ? out.liveUrl.trim() : null,
+          visible: out.visible !== false
+        };
+        if (isNew) list.push(updated);
+        else list[idx] = Object.assign({}, list[idx], updated);
+        await saveWebsitesCatalog(list, 'Website saved ✓ — Publish to go live');
+      }
+    });
+  }
+
+  function renderWebsites(c) {
+    var list = getWebsitesCatalog();
+    var addBtn = el('button', 'btn primary', '+ Add website');
+    addBtn.onclick = function () { openWebsiteDrawer(null); };
+    pageHead(c, 'Websites Showcase', 'Edit website cards, Website Features, Technology Stack, videos, and live URLs.', [refreshBtn(), addBtn]);
+
+    var lbl = settingObj('website.labels') || {
+      featuresHeading: 'Website Features',
+      actionsSubhead: 'What Visitors Can Do',
+      techHeading: 'Technology Stack',
+      archSubhead: 'Architecture & Technical Build',
+      exploreHeading: 'Explore Other Websites',
+      livePreviewText: 'Live Preview',
+      workText: 'Work With Us',
+      workUrl: 'contact.html'
+    };
+    var cardLbl = el('div', 'sec-card');
+    var infoLbl = el('div', 'sec-info');
+    infoLbl.appendChild(el('div', 'sec-title', 'Website Showcase Page Labels'));
+    infoLbl.appendChild(el('div', 'sec-desc', 'Headings and button labels shared across every website detail page.'));
+    var boxLbl = el('div'); boxLbl.style.marginTop = '12px';
+    var lblInputs = {};
+    [
+      ['featuresHeading', 'Features Card Heading'],
+      ['actionsSubhead', 'Visitor Actions Subheading'],
+      ['techHeading', 'Tech Stack Card Heading'],
+      ['archSubhead', 'Architecture Subheading'],
+      ['exploreHeading', 'Sidebar Heading'],
+      ['livePreviewText', 'Live Preview Button Text'],
+      ['workText', 'CTA Button Text'],
+      ['workUrl', 'CTA Button URL']
+    ].forEach(function (pair) {
+      var fld = el('div', 'field');
+      fld.appendChild(el('label', null, pair[1]));
+      var inp = document.createElement('input');
+      inp.type = 'text';
+      inp.value = lbl[pair[0]] || '';
+      inp.oninput = function () { unsavedForm = true; };
+      lblInputs[pair[0]] = inp;
+      fld.appendChild(inp);
+      boxLbl.appendChild(fld);
+    });
+    infoLbl.appendChild(boxLbl);
+    cardLbl.appendChild(infoLbl);
+    var actsLbl = el('div', 'sec-actions');
+    var saveLbl = el('button', 'btn small primary', 'Save labels');
+    saveLbl.onclick = async function () {
+      setBusy(true, saveLbl, 'Saving…');
+      try {
+        var out = {};
+        Object.keys(lblInputs).forEach(function (k) { out[k] = lblInputs[k].value.trim(); });
+        await saveSettings({ 'website.labels': out });
+        clearUnsaved();
+      } catch (e) { toast(e.message, true); }
+      setBusy(false, saveLbl);
+    };
+    actsLbl.appendChild(saveLbl);
+    cardLbl.appendChild(actsLbl);
+    c.appendChild(cardLbl);
+
+    var searchWrap = el('div', 'search-wrap');
+    searchWrap.innerHTML = SEARCH_SVG;
+    var sInput = document.createElement('input');
+    sInput.type = 'search'; sInput.placeholder = 'Filter websites…'; sInput.value = ui.search || '';
+    sInput.oninput = function () { ui.search = sInput.value; drawList(); };
+    searchWrap.appendChild(sInput);
+    var tb = el('div', 'toolbar'); tb.appendChild(searchWrap);
+    c.appendChild(tb);
+
+    var host = el('div');
+    c.appendChild(host);
+
+    function drawList() {
+      host.innerHTML = '';
+      var q = (ui.search || '').toLowerCase().trim();
+      var shown = list.filter(function (w) {
+        if (!q) return true;
+        return ((w.title || '') + ' ' + (w.fullTitle || '') + ' ' + (w.category || '') + ' ' + (w.slug || '')).toLowerCase().indexOf(q) >= 0;
+      });
+      if (!shown.length) {
+        host.appendChild(el('div', 'empty', 'No websites match that search.'));
+        return;
+      }
+      shown.forEach(function (w) {
+        var realIdx = list.indexOf(w);
+        var card = el('div', 'item-card');
+        if (w.thumb) {
+          var img = document.createElement('img');
+          img.className = 'thumb'; img.src = w.thumb; img.alt = '';
+          card.appendChild(img);
+        } else {
+          var blank = el('div', 'thumb-empty');
+          blank.innerHTML = FILM_SVG;
+          card.appendChild(blank);
+        }
+        var info = el('div', 'item-info');
+        info.appendChild(el('div', 'item-title', w.fullTitle || w.title || w.slug));
+        info.appendChild(el('div', 'item-sub', (w.category || '') + (w.liveUrl ? ' · Live URL ready' : '')));
+        var b = el('div', 'item-badges');
+        b.appendChild(el('span', 'badge' + (w.visible !== false ? '' : ' off'), w.visible !== false ? 'Visible' : 'Hidden'));
+        info.appendChild(b);
+        card.appendChild(info);
+
+        var acts = el('div', 'item-actions');
+        var ed = el('button', 'btn small primary', 'Edit');
+        ed.onclick = function () { openWebsiteDrawer(realIdx); };
+        acts.appendChild(ed);
+
+        if (realIdx > 0) {
+          var up = el('button', 'btn small ghost', '↑');
+          up.title = 'Move up';
+          up.onclick = async function () {
+            var next = list.slice();
+            var t = next[realIdx - 1]; next[realIdx - 1] = next[realIdx]; next[realIdx] = t;
+            await saveWebsitesCatalog(next, 'Reordered ✓ — Publish to go live');
+          };
+          acts.appendChild(up);
+        }
+        if (realIdx < list.length - 1) {
+          var dn = el('button', 'btn small ghost', '↓');
+          dn.title = 'Move down';
+          dn.onclick = async function () {
+            var next = list.slice();
+            var t = next[realIdx + 1]; next[realIdx + 1] = next[realIdx]; next[realIdx] = t;
+            await saveWebsitesCatalog(next, 'Reordered ✓ — Publish to go live');
+          };
+          acts.appendChild(dn);
+        }
+
+        var vis = el('button', 'btn small ghost', w.visible !== false ? 'Hide' : 'Show');
+        vis.onclick = async function () {
+          var next = list.slice();
+          next[realIdx] = Object.assign({}, next[realIdx], { visible: w.visible === false });
+          await saveWebsitesCatalog(next, next[realIdx].visible ? 'Visible ✓' : 'Hidden ✓');
+        };
+        acts.appendChild(vis);
+
+        var del = el('button', 'btn small danger', 'Delete');
+        del.onclick = async function () {
+          var ok = await confirmDialog('Delete website?', 'Remove “' + (w.title || w.slug) + '” from the showcase?', 'Delete');
+          if (!ok) return;
+          var next = list.slice();
+          next.splice(realIdx, 1);
+          await saveWebsitesCatalog(next, 'Deleted ✓ — Publish to go live');
+        };
+        acts.appendChild(del);
+
+        card.appendChild(acts);
+        host.appendChild(card);
+      });
+    }
+    drawList();
   }
 
   function renderBrands(c) {
@@ -1905,7 +2307,12 @@
         if (!draft) { toast('Please wait — still loading.', true); return; }
         try { if (e.source) previewWin = e.source; } catch (err) {}
         if (m.tab && !m.key) {
-          if (['portfolio', 'brands', 'services', 'footer'].indexOf(m.tab) >= 0) {
+          if (m.tab === 'websites' && m.slug) {
+            tab = 'websites'; render();
+            openWebsiteDrawer(m.slug);
+            return;
+          }
+          if (['portfolio', 'websites', 'brands', 'services', 'footer'].indexOf(m.tab) >= 0) {
             tab = m.tab; render();
             toast('Opened from preview — make your changes here.');
           }
@@ -1933,7 +2340,7 @@
       if (dirty || unsavedForm) { e.preventDefault(); e.returnValue = ''; }
     });
     var h = (window.location.hash || '').replace('#/manage/', '');
-    if (h && ['home', 'portfolio', 'brands', 'services', 'contact', 'footer', 'more', 'history', 'activity', 'team'].indexOf(h) >= 0) tab = h;
+    if (h && ['home', 'portfolio', 'websites', 'brands', 'services', 'contact', 'footer', 'more', 'history', 'activity', 'team'].indexOf(h) >= 0) tab = h;
   }
 
   document.addEventListener('DOMContentLoaded', function () { bind(); boot(); });

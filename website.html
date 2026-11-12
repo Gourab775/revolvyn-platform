@@ -378,12 +378,155 @@ const mobNav = document.getElementById('navMobileOverlay');
 ham.addEventListener('click', () => { ham.classList.toggle('open'); mobNav.classList.toggle('open'); });
 mobNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { ham.classList.remove('open'); mobNav.classList.remove('open'); }));
 
-const sites = window.REVOLVYN_WEBSITES || [];
+const deskSidebar = document.getElementById('sidebarContainer');
+const mobContainer = document.getElementById('mobileMoreContainer');
 const params = new URLSearchParams(window.location.search);
-const reqSlug = params.get('slug') || (sites[0] && sites[0].slug);
-let currentIndex = sites.findIndex(s => s.slug === reqSlug);
-if (currentIndex < 0) currentIndex = 0;
-const site = sites[currentIndex];
+let site = null;
+let orderedOtherSites = [];
+
+function setupInfiniteScrollTrigger(container, axis) {
+	if (!container || container.dataset.loopBound) return;
+	container.dataset.loopBound = '1';
+	let appending = false;
+	container.addEventListener('scroll', () => {
+		if (appending || !orderedOtherSites.length) return;
+		const remaining = axis === 'x'
+			? container.scrollWidth - container.clientWidth - container.scrollLeft
+			: container.scrollHeight - container.clientHeight - container.scrollTop;
+		if (remaining < 600) {
+			appending = true;
+			const frag = document.createDocumentFragment();
+			orderedOtherSites.forEach(item => frag.appendChild(setupSidebarItem(item)));
+			container.appendChild(frag);
+			appending = false;
+		}
+	}, { passive: true });
+}
+
+function renderCheckList(ulEl, items) {
+	ulEl.innerHTML = '';
+	(items || []).forEach(text => {
+		const li = document.createElement('li');
+		li.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span></span>`;
+		li.querySelector('span').textContent = text;
+		ulEl.appendChild(li);
+	});
+}
+
+setupInfiniteScrollTrigger(deskSidebar, 'y');
+setupInfiniteScrollTrigger(mobContainer, 'x');
+makeInteractiveScroller(deskSidebar, 'y');
+makeInteractiveScroller(mobContainer, 'x');
+
+document.getElementById('deskUpBtn').addEventListener('click', () => deskSidebar.scrollBy({ top: -320, behavior: 'smooth' }));
+document.getElementById('deskDownBtn').addEventListener('click', () => deskSidebar.scrollBy({ top: 320, behavior: 'smooth' }));
+document.getElementById('mobPrevBtn').addEventListener('click', () => mobContainer.scrollBy({ left: -290, behavior: 'smooth' }));
+document.getElementById('mobNextBtn').addEventListener('click', () => mobContainer.scrollBy({ left: 290, behavior: 'smooth' }));
+
+window.renderWebsiteShowcase = function (customSites, customLabels) {
+	const rawSites = Array.isArray(customSites) && customSites.length
+		? customSites.filter(s => s.visible !== false)
+		: (window.REVOLVYN_WEBSITES || []);
+	const sites = rawSites.length ? rawSites : (window.REVOLVYN_WEBSITES || []);
+	const reqSlug = params.get('slug') || (sites[0] && sites[0].slug);
+	let currentIndex = sites.findIndex(s => s.slug === reqSlug);
+	if (currentIndex < 0) currentIndex = 0;
+	site = sites[currentIndex] || null;
+	window.__ACTIVE_WEBSITE_SITE = site;
+
+	if (customLabels && typeof customLabels === 'object') {
+		if (customLabels.featuresHeading) document.getElementById('featuresHeading').textContent = customLabels.featuresHeading;
+		if (customLabels.actionsSubhead) {
+			const sub = document.querySelector('.features-box .tech-subhead');
+			if (sub) sub.textContent = customLabels.actionsSubhead;
+		}
+		if (customLabels.techHeading) document.getElementById('techHeading').textContent = customLabels.techHeading;
+		if (customLabels.archSubhead) {
+			const arch = document.querySelector('.tech-box:not(.features-box) .tech-subhead');
+			if (arch) arch.textContent = customLabels.archSubhead;
+		}
+		if (customLabels.exploreHeading) {
+			document.querySelectorAll('.sidebar-title, .mobile-more-title').forEach(el => { el.textContent = customLabels.exploreHeading; });
+		}
+		if (customLabels.livePreviewText) {
+			const span = document.querySelector('#livePreviewBtn span');
+			if (span) span.textContent = customLabels.livePreviewText;
+		}
+		const wk = document.querySelector('.work-btn');
+		if (wk) {
+			if (customLabels.workText) wk.textContent = customLabels.workText;
+			if (customLabels.workUrl) wk.setAttribute('href', customLabels.workUrl);
+		}
+	}
+
+	if (!site) return;
+
+	document.title = `${site.title} — Website Showcase | REVOLVYN`;
+	document.getElementById('wsTitle').textContent = site.fullTitle || site.title;
+
+	const prevIdx = (currentIndex - 1 + sites.length) % sites.length;
+	const nextIdx = (currentIndex + 1) % sites.length;
+	document.getElementById('wsPrevLink').href = `website.html?slug=${sites[prevIdx].slug}`;
+	document.getElementById('wsNextLink').href = `website.html?slug=${sites[nextIdx].slug}`;
+
+	document.getElementById('wsUserSummary').textContent = site.userSummary || '';
+
+	const valueGrid = document.getElementById('wsValueGrid');
+	valueGrid.innerHTML = '';
+	[
+		{ label: 'Best For', value: site.bestFor },
+		{ label: 'Key User Actions', value: site.userActions },
+		{ label: 'Experience & Access', value: site.usability }
+	].forEach(entry => {
+		if (!entry.value) return;
+		const card = document.createElement('div');
+		card.className = 'value-item';
+		card.innerHTML = `<div class="value-label"></div><div class="value-text"></div>`;
+		card.querySelector('.value-label').textContent = entry.label;
+		card.querySelector('.value-text').textContent = entry.value;
+		valueGrid.appendChild(card);
+	});
+
+	renderCheckList(document.getElementById('wsSiteFeatures'), site.siteFeatures);
+
+	document.getElementById('techSummary').textContent = site.techSummary || '';
+
+	const stackEl = document.getElementById('wsStack');
+	stackEl.innerHTML = '';
+	(site.stack || []).forEach(tech => {
+		const chip = document.createElement('span');
+		chip.className = 'tech-chip';
+		chip.textContent = tech;
+		stackEl.appendChild(chip);
+	});
+
+	renderCheckList(document.getElementById('wsHighlights'), site.techFeatures);
+
+	const heroVideo = document.getElementById('wsHeroVideo');
+	if (site.thumb) heroVideo.poster = site.thumb;
+	if (site.video && heroVideo.getAttribute('src') !== site.video) {
+		heroVideo.setAttribute('src', site.video);
+		window.bindWebsiteSpeed(heroVideo, () => 'adaptive');
+		heroVideo.play().catch(() => {});
+	}
+
+	orderedOtherSites = [];
+	for (let offset = 1; offset < sites.length; offset++) {
+		orderedOtherSites.push(sites[(currentIndex + offset) % sites.length]);
+	}
+
+	[deskSidebar, mobContainer].forEach(container => {
+		container.innerHTML = '';
+		if (!orderedOtherSites.length) return;
+		for (let c = 0; c < 2; c++) {
+			const frag = document.createDocumentFragment();
+			orderedOtherSites.forEach(item => frag.appendChild(setupSidebarItem(item)));
+			container.appendChild(frag);
+		}
+	});
+};
+
+window.renderWebsiteShowcase(window.REVOLVYN_WEBSITES || [], null);
 
 function setupSidebarItem(item) {
 	const card = document.createElement('a');
@@ -444,103 +587,7 @@ function makeInteractiveScroller(container, axis) {
 	});
 }
 
-if (site) {
-	document.title = `${site.title} — Website Showcase | REVOLVYN`;
-	document.getElementById('wsTitle').textContent = site.fullTitle;
-
-	const prevIdx = (currentIndex - 1 + sites.length) % sites.length;
-	const nextIdx = (currentIndex + 1) % sites.length;
-	document.getElementById('wsPrevLink').href = `website.html?slug=${sites[prevIdx].slug}`;
-	document.getElementById('wsNextLink').href = `website.html?slug=${sites[nextIdx].slug}`;
-
-	function renderCheckList(ulEl, items) {
-		(items || []).forEach(text => {
-			const li = document.createElement('li');
-			li.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span></span>`;
-			li.querySelector('span').textContent = text;
-			ulEl.appendChild(li);
-		});
-	}
-
-	document.getElementById('wsUserSummary').textContent = site.userSummary || '';
-
-	const valueGrid = document.getElementById('wsValueGrid');
-	[
-		{ label: 'Best For', value: site.bestFor },
-		{ label: 'Key User Actions', value: site.userActions },
-		{ label: 'Experience & Access', value: site.usability }
-	].forEach(entry => {
-		if (!entry.value) return;
-		const card = document.createElement('div');
-		card.className = 'value-item';
-		card.innerHTML = `<div class="value-label"></div><div class="value-text"></div>`;
-		card.querySelector('.value-label').textContent = entry.label;
-		card.querySelector('.value-text').textContent = entry.value;
-		valueGrid.appendChild(card);
-	});
-
-	renderCheckList(document.getElementById('wsSiteFeatures'), site.siteFeatures);
-
-	document.getElementById('techSummary').textContent = site.techSummary;
-
-	const stackEl = document.getElementById('wsStack');
-	(site.stack || []).forEach(tech => {
-		const chip = document.createElement('span');
-		chip.className = 'tech-chip';
-		chip.textContent = tech;
-		stackEl.appendChild(chip);
-	});
-
-	renderCheckList(document.getElementById('wsHighlights'), site.techFeatures);
-
-	// Pure clean hero video
-	const heroVideo = document.getElementById('wsHeroVideo');
-	heroVideo.poster = site.thumb;
-	heroVideo.src = site.video;
-	window.bindWebsiteSpeed(heroVideo, () => 'adaptive');
-	heroVideo.play().catch(() => {});
-
-	// Desktop & Mobile sidebars (unlimited seamless repeat on scroll)
-	const deskSidebar = document.getElementById('sidebarContainer');
-	const mobContainer = document.getElementById('mobileMoreContainer');
-	const orderedOtherSites = [];
-	for (let offset = 1; offset < sites.length; offset++) {
-		orderedOtherSites.push(sites[(currentIndex + offset) % sites.length]);
-	}
-
-	function initInfiniteRail(container, axis) {
-		if (!container || !orderedOtherSites.length) return;
-		let appending = false;
-		function appendCycle() {
-			const frag = document.createDocumentFragment();
-			orderedOtherSites.forEach(item => frag.appendChild(setupSidebarItem(item)));
-			container.appendChild(frag);
-		}
-		appendCycle();
-		appendCycle();
-		container.addEventListener('scroll', () => {
-			if (appending) return;
-			const remaining = axis === 'x'
-				? container.scrollWidth - container.clientWidth - container.scrollLeft
-				: container.scrollHeight - container.clientHeight - container.scrollTop;
-			if (remaining < 600) {
-				appending = true;
-				appendCycle();
-				appending = false;
-			}
-		}, { passive: true });
-	}
-
-	initInfiniteRail(deskSidebar, 'y');
-	initInfiniteRail(mobContainer, 'x');
-	makeInteractiveScroller(deskSidebar, 'y');
-	makeInteractiveScroller(mobContainer, 'x');
-
-	document.getElementById('deskUpBtn').addEventListener('click', () => deskSidebar.scrollBy({ top: -320, behavior: 'smooth' }));
-	document.getElementById('deskDownBtn').addEventListener('click', () => deskSidebar.scrollBy({ top: 320, behavior: 'smooth' }));
-	document.getElementById('mobPrevBtn').addEventListener('click', () => mobContainer.scrollBy({ left: -290, behavior: 'smooth' }));
-	document.getElementById('mobNextBtn').addEventListener('click', () => mobContainer.scrollBy({ left: 290, behavior: 'smooth' }));
-}
+// Setup helper only; main rendering runs via window.renderWebsiteShowcase above
 
 // Share button matching video.html
 document.getElementById('shareBtn').addEventListener('click', () => {
@@ -617,5 +664,6 @@ if (params.get('preview') === '1' && site) {
 	openLivePreview();
 }
 </script>
+<script src="js/cms-content.js" defer></script>
 </body>
 </html>
