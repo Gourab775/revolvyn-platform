@@ -229,10 +229,6 @@
         return;
       } else {
         data = await fetchPublished();
-        try { injectGuiTrigger(); } catch (e) {}
-        if (/([?&]edit=1|#edit\b)/.test(window.location.href)) {
-          try { activateSiteEditor(); } catch (e) {}
-        }
         if (!data) return;
       }
     } catch (e) {
@@ -240,10 +236,6 @@
       return;
     }
     try { apply(data); } catch (e) { /* never break the public page */ }
-    try { injectGuiTrigger(); } catch (e) {}
-    if (/([?&]edit=1|#edit\b)/.test(window.location.href)) {
-      try { activateSiteEditor(); } catch (e) {}
-    }
     try { if (param && (previewToken || previewLegacy)) positionPills(); } catch (e) {}
   }
 
@@ -966,9 +958,8 @@
   }
 
   /* ── Visual On-Page GUI Editor ───────────────────────────────────────
-   * Active in /manage preview tabs (?cms_preview=...) OR whenever the owner
-   * opens Site Editor (footer "Edit Site", bottom-left pill, ?edit=1, Shift+E).
-   * Direct writes go strictly through authenticated /api/cms/* routes. */
+   * Active ONLY when opened via /manage preview (?cms_preview=...) so the
+   * public frontend never renders any CMS buttons, pills, or editor UI. */
   var EDIT_PILLS = [];
   var editModeActive = false;
   var clerkLoadingPromise = null;
@@ -1023,39 +1014,6 @@
       else base = (window.location.origin === origin ? '' : origin);
     } catch (e) {}
     return base + '/manage' + (tabOrSlug ? '#/manage/' + tabOrSlug : '');
-  }
-
-  function injectGuiTrigger() {
-    if (document.getElementById('cmsQuickEditBtn') || document.querySelector('.sf-edit-site-btn')) return;
-    var footerBottom = document.querySelector('.site-footer .sf-bottom');
-    if (footerBottom) {
-      var btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'sf-edit-site-btn';
-      btn.textContent = 'Edit Site';
-      btn.style.cssText = 'background:none;border:none;color:rgba(215,230,190,0.48);font:500 12px Inter,sans-serif;cursor:pointer;text-decoration:underline;text-underline-offset:3px;padding:2px 4px;';
-      btn.onclick = function () { activateSiteEditor(); };
-      footerBottom.insertBefore(btn, footerBottom.children[1] || null);
-    } else if (/\/(website|video)(\.html)?$/i.test(window.location.pathname)) {
-      var corner = document.createElement('button');
-      corner.type = 'button';
-      corner.id = 'cmsQuickEditBtn';
-      corner.textContent = 'Edit Site';
-      corner.style.cssText = 'position:fixed;bottom:14px;left:18px;z-index:900;background:rgba(15,18,12,0.86);color:#e6f578;border:1px solid rgba(230,245,120,0.28);border-radius:999px;padding:6px 13px;font:600 11px Inter,sans-serif;letter-spacing:0.6px;cursor:pointer;opacity:0.55;transition:opacity 0.2s,transform 0.2s;backdrop-filter:blur(8px);';
-      corner.onmouseenter = function () { corner.style.opacity = '1'; };
-      corner.onmouseleave = function () { corner.style.opacity = '0.55'; };
-      corner.onclick = function () { activateSiteEditor(); };
-      document.body.appendChild(corner);
-    }
-    if (!window.__cmsShortcutBound) {
-      window.__cmsShortcutBound = true;
-      window.addEventListener('keydown', function (e) {
-        if (e.shiftKey && (e.key === 'E' || e.key === 'e') && !/INPUT|TEXTAREA/.test((e.target && e.target.tagName) || '')) {
-          e.preventDefault();
-          activateSiteEditor();
-        }
-      });
-    }
   }
 
   async function resolveClerkAuth() {
@@ -1115,35 +1073,6 @@
     return jd || {};
   }
 
-  async function ensureEditableData() {
-    if (activeRawDraft) return normalizeDraft(activeRawDraft);
-    try {
-      var tk = await resolveClerkAuth();
-      if (tk) {
-        var r = await fetch('/api/cms/draft', { headers: { Authorization: 'Bearer ' + tk } });
-        if (r.ok) {
-          activeRawDraft = await r.json();
-          activeData = normalizeDraft(activeRawDraft);
-          apply(activeData);
-          return activeData;
-        }
-      }
-    } catch (e) {}
-    if (!activeData) {
-      activeData = { sections: [], portfolio: [], brands: [], services: [], settings: {} };
-    }
-    return activeData;
-  }
-
-  function activateSiteEditor() {
-    if (editModeActive) return;
-    enterEditMode();
-    previewToast('Visual Edit Mode active — click any Edit pill on the page');
-    ensureEditableData().then(function () {
-      if (editModeActive) positionPills();
-    }).catch(function () {});
-  }
-
   function exitEditMode() {
     editModeActive = false;
     var bar = document.querySelector('.cmsedit-bar');
@@ -1157,6 +1086,7 @@
 
   function enterEditMode() {
     try {
+      if (!(previewToken || previewLegacy)) return;
       if (editModeActive) { positionPills(); return; }
       editModeActive = true;
       if (!document.getElementById('cmsedit-styles')) {
@@ -1689,11 +1619,6 @@
       else previewToast('Preview updated ✓');
     } catch (e) {}
   }
-
-  window.REVOLVYN_GUI_EDITOR = {
-    activate: activateSiteEditor,
-    exit: exitEditMode
-  };
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', load);
   else load();
