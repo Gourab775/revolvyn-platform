@@ -14,9 +14,10 @@ function hideLoader() {
 	}
 	const loadingScreen = document.getElementById('loadingScreen');
 	if (loadingScreen) {
+		loadingScreen.classList.add('is-fading');
+		loadingScreen.style.pointerEvents = 'none';
 		loadingScreen.style.opacity = '0';
-		loadingScreen.style.visibility = 'hidden';
-		setTimeout(() => loadingScreen.remove(), 600);
+		setTimeout(() => loadingScreen.remove(), 1000);
 	}
 }
 if (window.__rvLoader && typeof window.__rvLoader.setTarget === 'function') {
