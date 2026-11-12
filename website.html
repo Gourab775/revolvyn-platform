@@ -78,13 +78,6 @@ button { border: none; cursor: pointer; font-family: inherit; background: none; 
 
 /* Info & Channel Row matching video.html */
 .video-info { padding: 16px 0 12px; }
-.back-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
-.back-pill {
-	display: inline-flex; align-items: center; gap: 6px;
-	font-size: 12px; color: rgba(215, 230, 190, 0.7);
-	transition: color 0.2s;
-}
-.back-pill:hover { color: #e6f578; }
 .video-title { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 600; line-height: 1.35; color: #fff; }
 .channel-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-top: 14px; }
 .channel-info { display: flex; align-items: center; gap: 12px; }
@@ -270,11 +263,6 @@ button { border: none; cursor: pointer; font-family: inherit; background: none; 
 
 <div class="main-layout" id="main">
 	<div class="main-content">
-		<div class="back-row">
-			<a href="portfolio.html?tab=websites" class="back-pill">&#8592; All Websites</a>
-			<span style="font-size:12px;color:#888;font-variant-numeric:tabular-nums;" id="wsCounter">01 / 19</span>
-		</div>
-
 		<!-- Clean Autoplay Video Frame (Zero Overlays) -->
 		<div class="video-player-wrapper">
 			<video id="wsHeroVideo" muted loop playsinline autoplay preload="metadata"></video>
@@ -458,7 +446,6 @@ function makeInteractiveScroller(container, axis) {
 
 if (site) {
 	document.title = `${site.title} — Website Showcase | REVOLVYN`;
-	document.getElementById('wsCounter').textContent = `${String(currentIndex + 1).padStart(2, '0')} / ${sites.length}`;
 	document.getElementById('wsTitle').textContent = site.fullTitle;
 
 	const prevIdx = (currentIndex - 1 + sites.length) % sites.length;
@@ -513,14 +500,39 @@ if (site) {
 	window.bindWebsiteSpeed(heroVideo, () => 'adaptive');
 	heroVideo.play().catch(() => {});
 
-	// Desktop & Mobile sidebars
+	// Desktop & Mobile sidebars (unlimited seamless repeat on scroll)
 	const deskSidebar = document.getElementById('sidebarContainer');
 	const mobContainer = document.getElementById('mobileMoreContainer');
+	const orderedOtherSites = [];
 	for (let offset = 1; offset < sites.length; offset++) {
-		const item = sites[(currentIndex + offset) % sites.length];
-		deskSidebar.appendChild(setupSidebarItem(item));
-		mobContainer.appendChild(setupSidebarItem(item));
+		orderedOtherSites.push(sites[(currentIndex + offset) % sites.length]);
 	}
+
+	function initInfiniteRail(container, axis) {
+		if (!container || !orderedOtherSites.length) return;
+		let appending = false;
+		function appendCycle() {
+			const frag = document.createDocumentFragment();
+			orderedOtherSites.forEach(item => frag.appendChild(setupSidebarItem(item)));
+			container.appendChild(frag);
+		}
+		appendCycle();
+		appendCycle();
+		container.addEventListener('scroll', () => {
+			if (appending) return;
+			const remaining = axis === 'x'
+				? container.scrollWidth - container.clientWidth - container.scrollLeft
+				: container.scrollHeight - container.clientHeight - container.scrollTop;
+			if (remaining < 600) {
+				appending = true;
+				appendCycle();
+				appending = false;
+			}
+		}, { passive: true });
+	}
+
+	initInfiniteRail(deskSidebar, 'y');
+	initInfiniteRail(mobContainer, 'x');
 	makeInteractiveScroller(deskSidebar, 'y');
 	makeInteractiveScroller(mobContainer, 'x');
 
