@@ -472,7 +472,13 @@
           h1.textContent = hero.titleA + (hero.titleAccent ? ' ' + hero.titleAccent : '');
         }
       }
-      setText(document.querySelector('.portfolio-hero p'), hero.subtitle);
+      var heroP = document.querySelector('.portfolio-hero p');
+      if (heroP) {
+        if (hero.subtitle) heroP.dataset.videosSubtitle = hero.subtitle;
+        if (pUi && pUi.websitesSubtitle) heroP.dataset.websitesSubtitle = pUi.websitesSubtitle;
+        setText(heroP, hero.subtitle);
+        if (typeof window.syncPortfolioHeroSubtitle === 'function') window.syncPortfolioHeroSubtitle(null, true);
+      }
     }
     var cta = secData(data, 'portfolio', 'cta');
     if (cta) {
@@ -1429,17 +1435,23 @@
     } else if (key === 'portfolio.ui') {
       var pui = settingObj(s, 'portfolio.ui') || {
         videosLabel: (document.querySelector('#tabVideos span') || {}).textContent || 'Videos',
-        websitesLabel: (document.querySelector('#tabWebsites span') || {}).textContent || 'Websites'
+        websitesLabel: (document.querySelector('#tabWebsites span') || {}).textContent || 'Websites',
+        websitesSubtitle: ((document.querySelector('.portfolio-hero p') || {}).dataset || {}).websitesSubtitle || 'Custom websites built to convert'
       };
       openInPageDrawer({
         title: 'Edit Portfolio Toggle Labels',
         manageTab: 'portfolio',
         fields: [
           { key: 'videosLabel', label: 'Videos Switch Label', value: pui.videosLabel || 'Videos' },
-          { key: 'websitesLabel', label: 'Websites Switch Label', value: pui.websitesLabel || 'Websites' }
+          { key: 'websitesLabel', label: 'Websites Switch Label', value: pui.websitesLabel || 'Websites' },
+          { key: 'websitesSubtitle', label: 'Websites Tab Subtitle', value: pui.websitesSubtitle || 'Custom websites built to convert' }
         ],
         onSave: async function (v) {
-          var next = { videosLabel: v.videosLabel.trim() || 'Videos', websitesLabel: v.websitesLabel.trim() || 'Websites' };
+          var next = {
+            videosLabel: v.videosLabel.trim() || 'Videos',
+            websitesLabel: v.websitesLabel.trim() || 'Websites',
+            websitesSubtitle: v.websitesSubtitle.trim() || 'Custom websites built to convert'
+          };
           await cmsApiFetch('/api/cms/settings', { method: 'PATCH', body: { settings: { 'portfolio.ui': next } } });
           activeData.settings['portfolio.ui'] = next;
           apply(activeData);

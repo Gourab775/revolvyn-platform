@@ -1520,11 +1520,11 @@
     pageHead(c, 'Portfolio', 'Video projects, headings, toggle labels, and the bottom button.', [refreshBtn()]);
     PORTFOLIO_SECS.forEach(function (d) { sectionRow(c, d.page, d.key, d); });
     VIDEO_SECS.forEach(function (d) { sectionRow(c, d.page, d.key, d); });
-    var pui = settingObj('portfolio.ui') || { videosLabel: 'Videos', websitesLabel: 'Websites' };
+    var pui = settingObj('portfolio.ui') || { videosLabel: 'Videos', websitesLabel: 'Websites', websitesSubtitle: 'Custom websites built to convert' };
     var cardUi = el('div', 'sec-card');
     var infoUi = el('div', 'sec-info');
     infoUi.appendChild(el('div', 'sec-title', 'Videos / Websites Toggle'));
-    infoUi.appendChild(el('div', 'sec-desc', 'Labels for the two switch tabs below “Brand Films & Ads That Convert”.'));
+    infoUi.appendChild(el('div', 'sec-desc', 'Labels and Websites tab subtitle shown under the Portfolio heading.'));
     var boxUi = el('div'); boxUi.style.marginTop = '12px';
     var f1 = el('div', 'field'); f1.appendChild(el('label', null, 'Left switch label'));
     var i1 = document.createElement('input'); i1.type = 'text'; i1.value = pui.videosLabel || 'Videos';
@@ -1534,13 +1534,21 @@
     var i2 = document.createElement('input'); i2.type = 'text'; i2.value = pui.websitesLabel || 'Websites';
     i2.oninput = function () { unsavedForm = true; };
     f2.appendChild(i2); boxUi.appendChild(f2);
+    var f3 = el('div', 'field'); f3.appendChild(el('label', null, 'Websites tab subtitle'));
+    var i3 = document.createElement('input'); i3.type = 'text'; i3.value = pui.websitesSubtitle || 'Custom websites built to convert';
+    i3.oninput = function () { unsavedForm = true; };
+    f3.appendChild(i3); boxUi.appendChild(f3);
     infoUi.appendChild(boxUi); cardUi.appendChild(infoUi);
     var actsUi = el('div', 'sec-actions');
     var saveUi = el('button', 'btn small primary', 'Save toggle');
     saveUi.onclick = async function () {
       setBusy(true, saveUi, 'Saving…');
       try {
-        await saveSettings({ 'portfolio.ui': { videosLabel: i1.value.trim() || 'Videos', websitesLabel: i2.value.trim() || 'Websites' } });
+        await saveSettings({ 'portfolio.ui': {
+          videosLabel: i1.value.trim() || 'Videos',
+          websitesLabel: i2.value.trim() || 'Websites',
+          websitesSubtitle: i3.value.trim() || 'Custom websites built to convert'
+        } });
         clearUnsaved();
       } catch (e) { toast(e.message, true); }
       setBusy(false, saveUi);

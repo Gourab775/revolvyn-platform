@@ -818,6 +818,34 @@ p,h1,h2,h3,h4,li,blockquote,.stat-number,.brand-card-name{-webkit-user-select:te
 			});
 		}, { rootMargin: '300px 0px', threshold: 0.05 });
 
+		const heroSubtitleEl = document.querySelector('.portfolio-hero p');
+		const DEFAULT_WEBSITES_SUBTITLE = 'Custom websites built to convert';
+		if (heroSubtitleEl) {
+			heroSubtitleEl.dataset.videosSubtitle = heroSubtitleEl.textContent.trim();
+			if (!heroSubtitleEl.dataset.websitesSubtitle) {
+				heroSubtitleEl.dataset.websitesSubtitle = DEFAULT_WEBSITES_SUBTITLE;
+			}
+			heroSubtitleEl.style.transition = 'opacity 0.2s ease';
+		}
+
+		window.syncPortfolioHeroSubtitle = function (tab, immediate) {
+			if (!heroSubtitleEl) return;
+			const mode = tab === 'websites' || tab === 'videos' ? tab : activeWorkTab;
+			const targetText = mode === 'websites'
+				? (heroSubtitleEl.dataset.websitesSubtitle || DEFAULT_WEBSITES_SUBTITLE)
+				: (heroSubtitleEl.dataset.videosSubtitle || heroSubtitleEl.textContent);
+			if (heroSubtitleEl.textContent.trim() === targetText) return;
+			if (immediate) {
+				heroSubtitleEl.textContent = targetText;
+				return;
+			}
+			heroSubtitleEl.style.opacity = '0';
+			setTimeout(() => {
+				if (activeWorkTab === mode) heroSubtitleEl.textContent = targetText;
+				heroSubtitleEl.style.opacity = '1';
+			}, 140);
+		};
+
 		window.renderPortfolioWebsites = function (customSites, uiLabels) {
 			if (uiLabels && typeof uiLabels === 'object') {
 				if (uiLabels.videosLabel) {
@@ -827,6 +855,10 @@ p,h1,h2,h3,h4,li,blockquote,.stat-number,.brand-card-name{-webkit-user-select:te
 				if (uiLabels.websitesLabel) {
 					const s2 = tabWebsites.querySelector('span') || tabWebsites;
 					s2.textContent = uiLabels.websitesLabel;
+				}
+				if (heroSubtitleEl && uiLabels.websitesSubtitle) {
+					heroSubtitleEl.dataset.websitesSubtitle = uiLabels.websitesSubtitle;
+					window.syncPortfolioHeroSubtitle(activeWorkTab, true);
 				}
 			}
 			const raw = Array.isArray(customSites) && customSites.length
@@ -919,6 +951,7 @@ p,h1,h2,h3,h4,li,blockquote,.stat-number,.brand-card-name{-webkit-user-select:te
 
 			if (nextTab === activeWorkTab && !immediate) return;
 			activeWorkTab = nextTab;
+			window.syncPortfolioHeroSubtitle(nextTab, immediate);
 
 			if (switchTimer) { clearTimeout(switchTimer); switchTimer = null; }
 			const mySeq = ++switchSeq;
