@@ -732,8 +732,6 @@ export async function initRenderer() {
 export async function bootScene() {
 	await renderer.computeAsync(computeInit);
 
-	renderer.domElement.style.opacity = '0';
-	renderer.domElement.style.transition = 'opacity 0.4s ease';
 	for (let i = 0; i < 3; i++) {
 		renderer.compute(computeUpdate);
 		postProcessing.render();

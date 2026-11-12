@@ -25,7 +25,6 @@ canvas {
 	z-index: 1;
 	pointer-events: none;
 	contain: layout style;
-	will-change: transform;
 }
 
 .section {
@@ -73,17 +72,23 @@ canvas {
 #loadingScreen {
 	position: fixed;
 	inset: 0;
+	width: 100%;
+	height: 100vh;
+	height: 100dvh;
 	z-index: 99999;
 	background: #000;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
+	will-change: transform;
+	backface-visibility: hidden;
+	-webkit-backface-visibility: hidden;
 	transform: translate3d(0, 0, 0);
 	transition: transform 0.85s cubic-bezier(0.76, 0, 0.24, 1);
 }
 #loadingScreen.is-sliding {
-	transform: translate3d(0, 100%, 0);
+	transform: translate3d(0, 105%, 0);
 	pointer-events: none;
 }
 #loadingScreen .loading-inner {
@@ -123,7 +128,6 @@ canvas {
 	bottom: 0;
 	width: 0%;
 	background: #ffffff;
-	transition: width 0.14s linear;
 }
 #loadingScreen .loading-label {
 	font-size: 10px;

@@ -14,14 +14,20 @@ function hideLoader() {
 	}
 	const loadingScreen = document.getElementById('loadingScreen');
 	if (loadingScreen) {
+		void loadingScreen.offsetHeight;
+		loadingScreen.addEventListener('transitionend', (e) => {
+			if (e.target === loadingScreen && (!e.propertyName || e.propertyName === 'transform')) {
+				loadingScreen.remove();
+			}
+		});
 		loadingScreen.classList.add('is-sliding');
-		setTimeout(() => loadingScreen.remove(), 950);
+		setTimeout(() => { if (loadingScreen.parentNode) loadingScreen.remove(); }, 1300);
 	}
 }
 if (window.__rvLoader && typeof window.__rvLoader.setTarget === 'function') {
 	window.__rvLoader.setTarget(68);
 }
-const LOADER_TIMEOUT_MS = 6500;
+const LOADER_TIMEOUT_MS = 3500;
 setTimeout(hideLoader, LOADER_TIMEOUT_MS);
 
 // --- Independent UI (works with or without 3D) ---

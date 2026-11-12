@@ -140,13 +140,13 @@ p,h1,h2,h3,h4,li,blockquote,.stat-number,.brand-card-name{-webkit-user-select:te
 	<a class="skip-link" href="#scroll-container">Skip to content</a>
 	<!-- Loading Screen -->
 	<style>
-		#loadingScreen{position:fixed;inset:0;z-index:99999;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;transform:translate3d(0,0,0);transition:transform .85s cubic-bezier(.76,0,.24,1)}
-		#loadingScreen.is-sliding{transform:translate3d(0,100%,0);pointer-events:none}
+		#loadingScreen{position:fixed;inset:0;width:100%;height:100vh;height:100dvh;z-index:99999;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;will-change:transform;backface-visibility:hidden;-webkit-backface-visibility:hidden;transform:translate3d(0,0,0);transition:transform .85s cubic-bezier(.76,0,.24,1)}
+		#loadingScreen.is-sliding{transform:translate3d(0,105%,0);pointer-events:none}
 		#loadingScreen .loading-inner{text-align:center}
 		#loadingScreen .loading-brand{opacity:1!important;transform:none!important;animation:none!important;color:#fff}
 		#loadingScreen .loading-percent{color:#fff}
 		#loadingScreen .loading-bar-track{width:180px;height:2px;background:rgba(255,255,255,.18);border-radius:2px;margin:0 auto 18px;position:relative;overflow:hidden}
-		#loadingScreen .loading-bar-fill{position:absolute;top:0;left:0;bottom:0;width:0%;background:#fff}
+		#loadingScreen .loading-bar-fill{position:absolute;top:0;left:0;bottom:0;width:0%;background:#fff;transition:none}
 		#loadingScreen .loading-label{color:rgba(255,255,255,.65);font-size:10px;letter-spacing:4px;text-transform:uppercase}
 	</style>
 	<div id="loadingScreen" aria-live="polite" style="background:#000">
@@ -166,11 +166,22 @@ p,h1,h2,h3,h4,li,blockquote,.stat-number,.brand-card-name{-webkit-user-select:te
 		var barEl = document.getElementById('loadingBarFill');
 		if (!screenEl || !pctEl || !barEl) return;
 
+		var nowFn = function () {
+			return (window.performance && typeof window.performance.now === 'function')
+				? window.performance.now()
+				: Date.now();
+		};
+		var startTime = nowFn();
+		var MIN_LOADER_MS = 1000;
+		var MAX_WAIT_MS = 3800;
+
 		var shown = 0;
-		var target = 24;
-		var pageLoaded = document.readyState === 'complete';
+		var target = 18;
+		var domReady = document.readyState !== 'loading';
 		var sceneDone = false;
 		var finishing = false;
+		var finishStartAt = 0;
+		var finishStartVal = 0;
 		var dismissed = false;
 
 		function render(val) {
@@ -183,79 +194,137 @@ p,h1,h2,h3,h4,li,blockquote,.stat-number,.brand-card-name{-webkit-user-select:te
 			if (next > target) target = Math.min(100, next);
 		}
 
+		function ensureHeroVisible() {
+			var hero = document.getElementById('heroSection');
+			if (!hero) return;
+			var els = hero.querySelectorAll('[data-reveal]');
+			for (var i = 0; i < els.length; i++) {
+				els[i].classList.add('revealed');
+			}
+		}
+
 		function dismiss() {
 			if (dismissed) return;
 			dismissed = true;
 			render(100);
+			ensureHeroVisible();
+
+			var removed = false;
+			function cleanup() {
+				if (removed) return;
+				removed = true;
+				if (screenEl.parentNode) screenEl.remove();
+			}
+
+			var slideStarted = false;
+			function beginSlide() {
+				if (slideStarted) return;
+				slideStarted = true;
+				ensureHeroVisible();
+
+				screenEl.addEventListener('transitionend', function (e) {
+					if (e.target === screenEl && (!e.propertyName || e.propertyName === 'transform')) {
+						cleanup();
+					}
+				});
+
+				// Commit initial translate3d(0,0,0) frame cleanly before applying .is-sliding
+				void screenEl.offsetHeight;
+				screenEl.classList.add('is-sliding');
+				// Start cleanup fallback strictly AFTER slide starts so transition always plays
+				setTimeout(cleanup, 1250);
+			}
+
+			var safetyBegin = setTimeout(beginSlide, 140);
 			requestAnimationFrame(function () {
 				requestAnimationFrame(function () {
-					screenEl.classList.add('is-sliding');
+					clearTimeout(safetyBegin);
+					beginSlide();
 				});
 			});
-			setTimeout(function () {
-				if (screenEl.parentNode) screenEl.remove();
-			}, 950);
 		}
 
-		function tryComplete() {
+		function startFinishing(now) {
 			if (finishing) return;
-			if (pageLoaded && sceneDone) {
-				finishing = true;
-				setTarget(100);
-			}
+			finishing = true;
+			finishStartAt = now;
+			finishStartVal = shown;
+			target = 100;
 		}
 
 		function tick() {
 			if (dismissed) return;
-			if (!pageLoaded && target < 84) {
-				setTarget(Math.min(84, target + 0.35));
+			var now = nowFn();
+			var elapsed = now - startTime;
+
+			if (!finishing) {
+				var readyToComplete = (domReady && sceneDone && elapsed >= MIN_LOADER_MS) || elapsed >= MAX_WAIT_MS;
+				if (readyToComplete) {
+					startFinishing(now);
+				} else {
+					// Smooth wall-clock progression independent of 30/60/120Hz frame rate
+					var curve = sceneDone
+						? Math.min(96, 18 + (elapsed / MIN_LOADER_MS) * 78)
+						: 90 * (1 - Math.exp(-elapsed / 1100));
+					setTarget(curve);
+				}
 			}
-			var step = finishing ? Math.max(1.8, (target - shown) * 0.24) : Math.max(0.45, (target - shown) * 0.12);
-			if (shown < target) {
-				shown = Math.min(target, shown + step);
+
+			if (finishing) {
+				var finishT = Math.min(1, (now - finishStartAt) / 220);
+				var eased = 1 - Math.pow(1 - finishT, 3);
+				shown = Math.max(shown, finishStartVal + (100 - finishStartVal) * eased);
 				render(shown);
+				if (finishT >= 1 || Math.round(shown) >= 100) {
+					render(100);
+					setTimeout(dismiss, 100);
+					return;
+				}
+			} else {
+				var nextShown = shown + (target - shown) * 0.16;
+				if (nextShown > shown) {
+					shown = Math.min(target, nextShown);
+					render(shown);
+				}
 			}
-			if (finishing && Math.round(shown) >= 100) {
-				setTimeout(dismiss, 140);
-				return;
-			}
+
 			requestAnimationFrame(tick);
 		}
 		requestAnimationFrame(tick);
 
-		document.addEventListener('DOMContentLoaded', function () {
+		if (!domReady) {
+			document.addEventListener('DOMContentLoaded', function () {
+				domReady = true;
+				setTarget(58);
+			});
+		} else {
 			setTarget(58);
-			try {
-				if (document.fonts && document.fonts.ready) {
-					document.fonts.ready.then(function () { setTarget(78); });
-				}
-			} catch (e) {}
-		});
+		}
+
+		try {
+			if (document.fonts && document.fonts.ready) {
+				document.fonts.ready.then(function () { setTarget(78); });
+			}
+		} catch (e) {}
 
 		window.addEventListener('load', function () {
-			pageLoaded = true;
-			setTarget(sceneDone ? 100 : 94);
-			tryComplete();
-			setTimeout(function () {
-				sceneDone = true;
-				tryComplete();
-			}, 2400);
+			domReady = true;
+			setTarget(sceneDone ? 98 : 88);
 		});
 
+		// Hard wall-clock failsafe even if rAF pauses under heavy background GPU load
 		setTimeout(function () {
-			pageLoaded = true;
+			domReady = true;
 			sceneDone = true;
-			finishing = true;
-			setTarget(100);
-			setTimeout(dismiss, 900);
-		}, 8000);
+			if (!finishing) startFinishing(nowFn());
+			setTimeout(dismiss, 260);
+		}, MAX_WAIT_MS + 400);
 
 		window.__rvLoader = {
 			setTarget: setTarget,
 			done: function () {
 				sceneDone = true;
-				setTarget(pageLoaded ? 100 : 90);
-				tryComplete();
+				setTarget(domReady ? 98 : 88);
 			}
 		};
 	})();

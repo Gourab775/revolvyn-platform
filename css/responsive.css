@@ -53,7 +53,7 @@
 	.wind-btn { padding: 8px 18px; font-size: 10px; }
 }
 @media (prefers-reduced-motion: reduce) {
-	*:not(.brands-track), *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+	*:not(.brands-track):not(#loadingScreen):not(#loadingScreen *), *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 	.brands-track { animation: marqueeScroll 24s linear infinite !important; }
 	.scroll-hint { display: none; }
 }
