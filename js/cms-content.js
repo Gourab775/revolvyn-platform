@@ -1724,6 +1724,21 @@
         e.preventDefault();
       }
     });
+
+    // Glassmorphic header state on scroll across all pages
+    function updateNavScrolled() {
+      var nav = document.querySelector('.nav-float');
+      if (!nav) return;
+      var sy = window.pageYOffset || document.documentElement.scrollTop || 0;
+      if (sy > 15) {
+        if (!nav.classList.contains('is-scrolled')) nav.classList.add('is-scrolled');
+      } else {
+        if (nav.classList.contains('is-scrolled')) nav.classList.remove('is-scrolled');
+      }
+    }
+    window.addEventListener('scroll', updateNavScrolled, { passive: true });
+    window.addEventListener('touchmove', updateNavScrolled, { passive: true });
+    updateNavScrolled();
   } catch (err) {}
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', load);

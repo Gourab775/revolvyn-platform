@@ -50,7 +50,22 @@ button { border: none; cursor: pointer; font-family: inherit; background: none; 
 .skip-link:focus { left: 8px; }
 
 /* Navigation matching video.html */
-.nav-float { position: fixed; top: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; z-index: 100; pointer-events: none; background: linear-gradient(to bottom, rgba(0,0,0,0.82) 0%, transparent 100%); }
+.nav-float {
+	position: fixed; top: 0; left: 0; right: 0;
+	display: flex; justify-content: space-between; align-items: center;
+	padding: 20px 40px; z-index: 1000; pointer-events: none;
+	background: linear-gradient(to bottom, rgba(0,0,0,0.85) 0%, transparent 100%);
+	border-bottom: 1px solid transparent;
+	transition: background 0.35s ease, border-color 0.35s ease, backdrop-filter 0.35s ease, -webkit-backdrop-filter 0.35s ease, box-shadow 0.35s ease, padding 0.35s ease;
+}
+.nav-float.is-scrolled {
+	background: rgba(22, 38, 22, 0.55) !important;
+	-webkit-backdrop-filter: blur(14px) !important;
+	backdrop-filter: blur(14px) !important;
+	border-bottom: 1px solid rgba(180, 210, 140, 0.28) !important;
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.38) !important;
+	padding: 15px 40px !important;
+}
 .nav-logo { font-family: 'Playfair Display', serif; font-size: 18px; color: rgba(245, 250, 230, 0.9); letter-spacing: 1px; pointer-events: auto; }
 .nav-links { display: flex; gap: 28px; pointer-events: auto; }
 .nav-links a { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: rgba(215, 230, 190, 0.6); transition: color 0.3s; font-weight: 500; }
@@ -64,10 +79,10 @@ button { border: none; cursor: pointer; font-family: inherit; background: none; 
 .nav-mobile-overlay.open { opacity: 1; pointer-events: auto; }
 .nav-mobile-overlay a { font-size: 14px; letter-spacing: 3px; text-transform: uppercase; color: rgba(215, 230, 190, 0.7); font-weight: 500; }
 
-/* Main Layout matching video.html — comfortable top clearance for video player */
-.main-layout { display: flex; align-items: flex-start; max-width: 1800px; margin: 108px auto 32px; min-height: calc(100vh - 140px); padding: 0 24px; gap: 24px; }
+/* Main Layout with comfortable Back button & video player clearance */
+.main-layout { display: flex; align-items: flex-start; max-width: 1800px; margin: 94px auto 32px; min-height: calc(100vh - 140px); padding: 0 24px; gap: 24px; }
 .main-content { flex: 1; min-width: 0; }
-.sidebar { width: 402px; flex-shrink: 0; align-self: flex-start; position: sticky; top: 108px; height: calc(100vh - 140px); display: flex; flex-direction: column; }
+.sidebar { width: 402px; flex-shrink: 0; align-self: flex-start; position: sticky; top: 104px; height: calc(100vh - 140px); display: flex; flex-direction: column; }
 .sidebar-section { flex: 1; min-height: 0; display: flex; flex-direction: column; }
 
 .sidebar-header { position: sticky; top: 0; z-index: 4; background: #0f0f0f; display: flex; align-items: center; justify-content: space-between; padding: 2px 0 12px; flex-shrink: 0; border-bottom: 1px solid rgba(255,255,255,0.06); margin-bottom: 10px; }
@@ -86,8 +101,8 @@ button { border: none; cursor: pointer; font-family: inherit; background: none; 
 .sidebar-scroll { flex: 1; overflow-y: auto; padding-right: 4px; cursor: grab; scroll-behavior: smooth; }
 .sidebar-scroll.dragging { cursor: grabbing; scroll-behavior: auto; }
 
-/* Video Info Top Bar with Back Button */
-.video-info-top { display: flex; align-items: center; gap: 14px; margin-bottom: 6px; flex-wrap: wrap; }
+/* Dedicated Top Bar with Back Button between Header & Video Player */
+.video-top-bar { display: flex; align-items: center; margin-bottom: 14px; }
 .video-back-btn {
 	display: inline-flex; align-items: center; gap: 6px;
 	padding: 6px 14px; border-radius: 999px;
@@ -336,10 +351,11 @@ button { border: none; cursor: pointer; font-family: inherit; background: none; 
 }
 @media (max-width: 768px) {
 	.nav-float { padding: 14px 16px; }
+	.nav-float.is-scrolled { padding: 12px 16px !important; }
 	.nav-links { display: none; }
 	.nav-hamburger { display: flex; }
 	.nav-mobile-overlay { display: flex; }
-	.main-layout { padding: 0 12px; margin-top: 86px; }
+	.main-layout { padding: 0 12px; margin-top: 78px; }
 	.video-title { font-size: 19px; }
 	.channel-row { flex-direction: column; align-items: flex-start; }
 	.action-buttons { width: 100%; }
@@ -373,6 +389,12 @@ button { border: none; cursor: pointer; font-family: inherit; background: none; 
 
 <div class="main-layout" id="main">
 	<div class="main-content">
+		<div class="video-top-bar">
+			<a href="portfolio.html?tab=websites" class="video-back-btn" id="videoBackBtn" onclick="if(window.history.length>1){window.history.back();return false;}" aria-label="Back to Portfolio">
+				<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+				<span>Back</span>
+			</a>
+		</div>
 		<!-- Clean Autoplay Video Frame with Hover Preview Arrow -->
 		<div class="video-player-wrapper" id="wsVideoWrapper">
 			<video id="wsHeroVideo" muted loop playsinline autoplay preload="metadata" controlsList="nodownload noplaybackrate nofullscreen" oncontextmenu="return false;"></video>
@@ -382,13 +404,7 @@ button { border: none; cursor: pointer; font-family: inherit; background: none; 
 		</div>
 
 		<div class="video-info">
-			<div class="video-info-top">
-				<a href="portfolio.html?tab=websites" class="video-back-btn" id="videoBackBtn" aria-label="Back to Portfolio">
-					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-					<span>Back</span>
-				</a>
-				<h1 class="video-title" id="wsTitle">Website Showcase</h1>
-			</div>
+			<h1 class="video-title" id="wsTitle">Website Showcase</h1>
 			<div class="channel-row">
 				<a href="index.html" class="channel-info">
 					<div class="channel-avatar"><img src="favicon.png" alt="REVOLVYN"></div>
@@ -822,6 +838,21 @@ document.addEventListener('keydown', (e) => {
 		e.preventDefault();
 	}
 });
+
+// Navbar Glassmorphic on Scroll
+function updateNavScrolled() {
+	var nav = document.querySelector('.nav-float');
+	if (!nav) return;
+	var sy = window.pageYOffset || document.documentElement.scrollTop || 0;
+	if (sy > 15) {
+		if (!nav.classList.contains('is-scrolled')) nav.classList.add('is-scrolled');
+	} else {
+		if (nav.classList.contains('is-scrolled')) nav.classList.remove('is-scrolled');
+	}
+}
+window.addEventListener('scroll', updateNavScrolled, { passive: true });
+window.addEventListener('touchmove', updateNavScrolled, { passive: true });
+updateNavScrolled();
 
 document.querySelectorAll('.lp-dev-btn').forEach(btn => {
 	btn.addEventListener('click', () => {

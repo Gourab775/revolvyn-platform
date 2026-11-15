@@ -5,7 +5,8 @@
 	.site-footer-inner { gap: 32px; }
 }
 @media (max-width: 768px) {
-	.nav-float { padding: 0 16px; top: 14px; }
+	.nav-float { padding: 14px 16px; top: 0; }
+	.nav-float.is-scrolled { padding: 12px 16px; }
 	.nav-links { display: none; }
 	.nav-hamburger { display: flex; }
 	.nav-mobile-overlay { display: flex; }

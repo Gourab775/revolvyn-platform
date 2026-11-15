@@ -29,9 +29,19 @@ setTimeout(() => {
 	}
 }, 800);
 
-// Scroll event listeners
-window.addEventListener('scroll', () => { _scrollDirty = true; }, { passive: true });
-window.addEventListener('touchmove', () => { _scrollDirty = true; }, { passive: true });
+// Scroll event listeners & Glassmorphic nav state
+function updateNavScrolled() {
+	if (!navFloat) return;
+	const sy = window.pageYOffset || document.documentElement.scrollTop || 0;
+	if (sy > 15) {
+		if (!navFloat.classList.contains('is-scrolled')) navFloat.classList.add('is-scrolled');
+	} else {
+		if (navFloat.classList.contains('is-scrolled')) navFloat.classList.remove('is-scrolled');
+	}
+}
+window.addEventListener('scroll', () => { _scrollDirty = true; updateNavScrolled(); }, { passive: true });
+window.addEventListener('touchmove', () => { _scrollDirty = true; updateNavScrolled(); }, { passive: true });
+updateNavScrolled();
 
 export function getScrollProgress() {
 	const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
