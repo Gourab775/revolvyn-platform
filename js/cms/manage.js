@@ -398,7 +398,7 @@
     $('drawer-body').querySelectorAll('.media-box').forEach(function (mb) {
       var h = mb.querySelector('input[type="hidden"]');
       var txt = mb.querySelector('input[type="text"]');
-      if (h && txt && txt.value.trim() && h.value !== txt.value.trim()) {
+      if (h && txt && h.value !== txt.value.trim()) {
         h.value = txt.value.trim();
       }
     });
@@ -540,7 +540,10 @@
       if (v) {
         var rm = el('button', 'btn small ghost', 'Remove');
         rm.type = 'button';
-        rm.onclick = function () { render(''); };
+        rm.onclick = function () {
+          unsavedForm = true;
+          render('');
+        };
         row.appendChild(rm);
       }
       box.appendChild(row);
@@ -1437,9 +1440,9 @@
         var def = defMap[s.slug];
         if (!def) return s;
         return Object.assign({}, def, s, {
-          video: (s.video != null && s.video !== '') ? s.video : (def.video || ''),
-          thumb: (s.thumb != null && s.thumb !== '') ? s.thumb : (def.thumb || ''),
-          liveUrl: (s.liveUrl != null && s.liveUrl !== '') ? s.liveUrl : (def.liveUrl || '')
+          video: s.video !== undefined ? (s.video || '') : (def.video || ''),
+          thumb: s.thumb !== undefined ? (s.thumb || '') : (def.thumb || ''),
+          liveUrl: s.liveUrl !== undefined ? (s.liveUrl || '') : (def.liveUrl || '')
         });
       });
     }
@@ -1688,8 +1691,8 @@
           techSummary: out.techSummary || '',
           stack: String(out.stackText || '').split('\n').map(function (x) { return x.trim(); }).filter(Boolean),
           techFeatures: String(out.techFeaturesText || '').split('\n').map(function (x) { return x.trim(); }).filter(Boolean),
-          video: (out.video && out.video.trim()) ? out.video.trim() : (existing.video || ''),
-          thumb: (out.thumb && out.thumb.trim()) ? out.thumb.trim() : (existing.thumb || ''),
+          video: out.video != null ? out.video.trim() : (existing.video || ''),
+          thumb: out.thumb != null ? out.thumb.trim() : (existing.thumb || ''),
           liveUrl: normalizedLiveUrl,
           visible: out.visible !== false
         };

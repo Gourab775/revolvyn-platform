@@ -927,9 +927,9 @@ p,h1,h2,h3,h4,li,blockquote,.stat-number,.brand-card-name{-webkit-user-select:te
 
 			const websiteShowcases = (raw.length ? raw : (window.REVOLVYN_WEBSITES || [])).map(site => {
 				const def = defaultMap[site.slug] || {};
-				const v = (site.video && site.video.trim()) ? site.video.trim() : (def.video || '');
-				const th = (site.thumb && site.thumb.trim()) ? site.thumb.trim() : (def.thumb || '');
-				let lUrl = (site.liveUrl && site.liveUrl.trim()) ? site.liveUrl.trim() : (def.liveUrl || '');
+				const v = site.video !== undefined ? (site.video ? site.video.trim() : '') : (def.video || '');
+				const th = site.thumb !== undefined ? (site.thumb ? site.thumb.trim() : '') : (def.thumb || '');
+				let lUrl = site.liveUrl !== undefined ? (site.liveUrl ? site.liveUrl.trim() : '') : (def.liveUrl || '');
 				if (lUrl && !/^https?:\/\//i.test(lUrl)) lUrl = 'https://' + lUrl;
 				return Object.assign({}, def, site, { video: v, thumb: th, liveUrl: lUrl });
 			});

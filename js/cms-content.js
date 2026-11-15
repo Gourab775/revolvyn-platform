@@ -560,19 +560,28 @@
           window.location.href = 'video.html?' + projectParams(pp, ii) + '&autoplay=1';
         };
       })(p, i);
-      var video = document.createElement('video');
-      video.muted = true; video.loop = true; video.playsInline = true;
-      video.preload = i < 6 ? 'auto' : 'none';
-      if (i < 6 && p.video) video.setAttribute('src', p.video);
-      else if (p.video) video.dataset.src = p.video;
-      video.setAttribute('controlsList', 'nodownload noplaybackrate nofullscreen');
-      video.oncontextmenu = function () { return false; };
-      if (p.thumbnail) {
-        video.setAttribute('poster', p.thumbnail);
-        video.classList.add('loaded');
+      if (p.video) {
+        var video = document.createElement('video');
+        video.muted = true; video.loop = true; video.playsInline = true;
+        video.preload = i < 6 ? 'auto' : 'none';
+        if (i < 6) video.setAttribute('src', p.video);
+        else video.dataset.src = p.video;
+        video.setAttribute('controlsList', 'nodownload noplaybackrate nofullscreen');
+        video.oncontextmenu = function () { return false; };
+        if (p.thumbnail) {
+          video.setAttribute('poster', p.thumbnail);
+          video.classList.add('loaded');
+        }
+        video.addEventListener('canplay', function () { video.classList.add('loaded'); }, { once: true });
+        item.appendChild(video);
+      } else if (p.thumbnail) {
+        var img = document.createElement('img');
+        img.src = p.thumbnail;
+        img.alt = p.title || '';
+        img.loading = i < 6 ? 'eager' : 'lazy';
+        img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
+        item.appendChild(img);
       }
-      video.addEventListener('canplay', function () { video.classList.add('loaded'); }, { once: true });
-      item.appendChild(video);
       var ov = document.createElement('div');
       ov.className = 'collage-overlay';
       var bn = document.createElement('div');

@@ -569,9 +569,9 @@ window.renderWebsiteShowcase = function (customSites, customLabels) {
 
 	const sites = (rawSites.length ? rawSites : (window.REVOLVYN_WEBSITES || [])).map(site => {
 		const def = defaultMap[site.slug] || {};
-		const v = (site.video && site.video.trim()) ? site.video.trim() : (def.video || '');
-		const th = (site.thumb && site.thumb.trim()) ? site.thumb.trim() : (def.thumb || '');
-		let lUrl = (site.liveUrl && site.liveUrl.trim()) ? site.liveUrl.trim() : (def.liveUrl || '');
+		const v = site.video !== undefined ? (site.video ? site.video.trim() : '') : (def.video || '');
+		const th = site.thumb !== undefined ? (site.thumb ? site.thumb.trim() : '') : (def.thumb || '');
+		let lUrl = site.liveUrl !== undefined ? (site.liveUrl ? site.liveUrl.trim() : '') : (def.liveUrl || '');
 		if (lUrl && !/^https?:\/\//i.test(lUrl)) lUrl = 'https://' + lUrl;
 		return Object.assign({}, def, site, { video: v, thumb: th, liveUrl: lUrl });
 	});
@@ -651,10 +651,17 @@ window.renderWebsiteShowcase = function (customSites, customLabels) {
 
 	const heroVideo = document.getElementById('wsHeroVideo');
 	if (site.thumb) heroVideo.poster = site.thumb;
-	if (site.video && heroVideo.getAttribute('src') !== site.video) {
-		heroVideo.setAttribute('src', site.video);
-		window.bindWebsiteSpeed(heroVideo, () => 'adaptive');
-		heroVideo.play().catch(() => {});
+	else heroVideo.removeAttribute('poster');
+
+	if (site.video) {
+		if (heroVideo.getAttribute('src') !== site.video) {
+			heroVideo.setAttribute('src', site.video);
+			window.bindWebsiteSpeed(heroVideo, () => 'adaptive');
+			heroVideo.play().catch(() => {});
+		}
+	} else {
+		heroVideo.removeAttribute('src');
+		try { heroVideo.pause(); heroVideo.load(); } catch (e) {}
 	}
 
 	orderedOtherSites = [];
@@ -684,8 +691,8 @@ function setupSidebarItem(item) {
 	card.draggable = false;
 	card.innerHTML = `
 		<div class="sidebar-thumb">
-			<img src="${item.thumb}" alt="${item.title} preview" loading="lazy">
-			<video muted loop playsinline preload="none" data-src="${item.video}"></video>
+			<img src="${item.thumb || ''}" alt="${item.title || ''} preview" loading="lazy">
+			${item.video ? `<video muted loop playsinline preload="none" data-src="${item.video}"></video>` : ''}
 		</div>
 		<div class="sidebar-item-info">
 			<div class="sidebar-item-title"></div>
@@ -695,12 +702,14 @@ function setupSidebarItem(item) {
 	card.querySelector('.sidebar-item-title').textContent = item.fullTitle;
 	card.querySelector('.sidebar-item-sub').textContent = item.category;
 	const v = card.querySelector('video');
-	window.bindWebsiteSpeed(v, () => 'adaptive');
-	card.addEventListener('mouseenter', () => {
-		if (!v.getAttribute('src') && v.dataset.src) v.setAttribute('src', v.dataset.src);
-		v.play().catch(() => {});
-	});
-	card.addEventListener('mouseleave', () => v.pause());
+	if (v) {
+		window.bindWebsiteSpeed(v, () => 'adaptive');
+		card.addEventListener('mouseenter', () => {
+			if (!v.getAttribute('src') && v.dataset.src) v.setAttribute('src', v.dataset.src);
+			v.play().catch(() => {});
+		});
+		card.addEventListener('mouseleave', () => v.pause());
+	}
 	return card;
 }
 
@@ -824,6 +833,12 @@ function prepareLivePreview(targetSite) {
 		if (window.bindWebsiteSpeed) window.bindWebsiteSpeed(vid, () => 'adaptive');
 		lpVideo = vid;
 		lpStage.appendChild(vid);
+	} else if (targetSite.thumb) {
+		const img = document.createElement('img');
+		img.src = targetSite.thumb;
+		img.alt = targetSite.title || '';
+		img.style.cssText = 'width:100%;height:100%;object-fit:contain;display:block;';
+		lpStage.appendChild(img);
 	}
 }
 
