@@ -160,6 +160,7 @@
 			font-family: 'Playfair Display', serif; font-size: clamp(40px, 7vw, 80px);
 			color: rgba(245, 250, 230, 0.92); font-weight: 400;
 			letter-spacing: -1px; line-height: 1.1;
+			transition: opacity 0.22s ease;
 		}
 		.portfolio-hero h1 em {
 			font-style: italic; color: rgba(230, 245, 120, 0.85);
@@ -167,6 +168,7 @@
 		.portfolio-hero p {
 			margin-top: 16px; font-size: 15px; color: rgba(215, 230, 190, 0.72);
 			letter-spacing: 3px; text-transform: uppercase;
+			transition: opacity 0.22s ease;
 		}
 		.hero-line {
 			width: 40px; height: 1px; background: rgba(230, 245, 120, 0.4);
@@ -244,7 +246,7 @@
 		.websites-grid {
 			display: none;
 			grid-template-columns: repeat(2, minmax(0, 1fr));
-			gap: 18px;
+			gap: 22px;
 		}
 		.websites-grid.active { display: grid; }
 		.website-card {
@@ -252,19 +254,25 @@
 			aspect-ratio: 16 / 9;
 			overflow: hidden;
 			cursor: pointer;
-			border-radius: 10px;
-			background: #0a0c08;
-			border: 1px solid rgba(180, 220, 100, 0.14);
+			border-radius: 14px;
+			background: #080b06;
+			border: 1px solid rgba(180, 220, 100, 0.16);
+			box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 			opacity: 0; transform: translateY(18px);
 			will-change: transform, opacity;
 			transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1),
 						transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
-						border-color 0.3s ease, box-shadow 0.3s ease;
+						border-color 0.35s ease, box-shadow 0.35s ease;
+		}
+		.website-card::before {
+			content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+			background: linear-gradient(90deg, transparent 5%, rgba(230, 245, 120, 0.35) 50%, transparent 95%);
+			z-index: 2; pointer-events: none;
 		}
 		.website-card.revealed { opacity: 1; transform: translateY(0); }
 		.website-card:hover {
-			border-color: rgba(230, 245, 120, 0.45);
-			box-shadow: 0 18px 45px rgba(0, 0, 0, 0.65);
+			border-color: rgba(230, 245, 120, 0.5);
+			box-shadow: 0 22px 60px rgba(0, 0, 0, 0.8), 0 0 35px rgba(230, 245, 120, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.18);
 		}
 		.website-card video {
 			width: 100%; height: 100%; object-fit: cover; display: block;
@@ -277,29 +285,43 @@
 		}
 		.website-overlay {
 			position: absolute; inset: 0;
-			background: linear-gradient(to top, rgba(0,0,0,0.84) 0%, rgba(0,0,0,0.18) 38%, transparent 62%);
-			display: flex; align-items: flex-end; justify-content: space-between; gap: 12px;
-			padding: 18px 20px; opacity: 0;
-			transition: opacity 0.28s ease;
+			background: linear-gradient(to top, rgba(4,6,3,0.92) 0%, rgba(4,6,3,0.38) 42%, transparent 75%);
+			display: flex; align-items: flex-end; justify-content: space-between; gap: 14px;
+			padding: 20px 24px; opacity: 0.88;
+			transition: opacity 0.3s ease, background 0.3s ease;
 		}
 		.website-card:hover .website-overlay,
 		.website-card:focus-visible .website-overlay { opacity: 1; }
 		.website-title {
 			font-family: 'Playfair Display', serif;
-			font-size: clamp(16px, 1.8vw, 22px);
-			color: rgba(248, 252, 240, 0.96);
+			font-size: clamp(17px, 1.8vw, 24px);
+			font-weight: 500;
+			letter-spacing: 0.5px;
+			color: #ffffff;
 			line-height: 1.2;
 			text-align: left;
+			text-shadow: 0 2px 14px rgba(0,0,0,0.85);
 		}
 		.website-arrow {
-			color: rgba(230, 245, 120, 0.94);
+			width: 38px; height: 38px;
+			border-radius: 50%;
+			background: rgba(255, 255, 255, 0.08);
+			border: 1px solid rgba(255, 255, 255, 0.16);
+			backdrop-filter: blur(8px);
+			color: rgba(230, 245, 120, 0.95);
 			display: inline-flex; align-items: center; justify-content: center;
 			flex-shrink: 0;
-			transition: transform 0.28s ease;
+			transition: all 0.28s cubic-bezier(0.22, 1, 0.36, 1);
 		}
-		.website-card:hover .website-arrow { transform: translateX(4px); }
+		.website-card:hover .website-arrow {
+			background: rgba(230, 245, 120, 0.96);
+			color: #080c05;
+			border-color: rgba(230, 245, 120, 1);
+			transform: translateX(5px) scale(1.05);
+			box-shadow: 0 4px 16px rgba(230, 245, 120, 0.35);
+		}
 		@media (hover: none) {
-			.website-overlay { opacity: 1; padding: 12px 14px; }
+			.website-overlay { opacity: 1; padding: 14px 16px; }
 		}
 
 		/* Collage masonry - no gaps, mixed portrait/landscape */
@@ -796,8 +818,17 @@ p,h1,h2,h3,h4,li,blockquote,.stat-number,.brand-card-name{-webkit-user-select:te
 			});
 		}, { rootMargin: '300px 0px', threshold: 0.05 });
 
+		const heroTitleEl = document.querySelector('.portfolio-hero h1');
 		const heroSubtitleEl = document.querySelector('.portfolio-hero p');
+		const DEFAULT_WEBSITES_TITLE = 'Custom Websites That <em>Convert</em>';
 		const DEFAULT_WEBSITES_SUBTITLE = 'Custom websites built to convert';
+		if (heroTitleEl) {
+			heroTitleEl.dataset.videosTitle = heroTitleEl.innerHTML.trim();
+			if (!heroTitleEl.dataset.websitesTitle) {
+				heroTitleEl.dataset.websitesTitle = DEFAULT_WEBSITES_TITLE;
+			}
+			heroTitleEl.style.transition = 'opacity 0.2s ease';
+		}
 		if (heroSubtitleEl) {
 			heroSubtitleEl.dataset.videosSubtitle = heroSubtitleEl.textContent.trim();
 			if (!heroSubtitleEl.dataset.websitesSubtitle) {
@@ -807,21 +838,37 @@ p,h1,h2,h3,h4,li,blockquote,.stat-number,.brand-card-name{-webkit-user-select:te
 		}
 
 		window.syncPortfolioHeroSubtitle = function (tab, immediate) {
-			if (!heroSubtitleEl) return;
 			const mode = tab === 'websites' || tab === 'videos' ? tab : activeWorkTab;
-			const targetText = mode === 'websites'
-				? (heroSubtitleEl.dataset.websitesSubtitle || DEFAULT_WEBSITES_SUBTITLE)
-				: (heroSubtitleEl.dataset.videosSubtitle || heroSubtitleEl.textContent);
-			if (heroSubtitleEl.textContent.trim() === targetText) return;
-			if (immediate) {
-				heroSubtitleEl.textContent = targetText;
-				return;
+			if (heroTitleEl) {
+				const targetTitle = mode === 'websites'
+					? (heroTitleEl.dataset.websitesTitle || DEFAULT_WEBSITES_TITLE)
+					: (heroTitleEl.dataset.videosTitle || heroTitleEl.innerHTML);
+				if (immediate) {
+					heroTitleEl.innerHTML = targetTitle;
+					heroTitleEl.style.opacity = '1';
+				} else if (heroTitleEl.innerHTML.trim() !== targetTitle.trim()) {
+					heroTitleEl.style.opacity = '0';
+					setTimeout(() => {
+						if (activeWorkTab === mode) heroTitleEl.innerHTML = targetTitle;
+						heroTitleEl.style.opacity = '1';
+					}, 140);
+				}
 			}
-			heroSubtitleEl.style.opacity = '0';
-			setTimeout(() => {
-				if (activeWorkTab === mode) heroSubtitleEl.textContent = targetText;
-				heroSubtitleEl.style.opacity = '1';
-			}, 140);
+			if (heroSubtitleEl) {
+				const targetText = mode === 'websites'
+					? (heroSubtitleEl.dataset.websitesSubtitle || DEFAULT_WEBSITES_SUBTITLE)
+					: (heroSubtitleEl.dataset.videosSubtitle || heroSubtitleEl.textContent);
+				if (immediate) {
+					heroSubtitleEl.textContent = targetText;
+					heroSubtitleEl.style.opacity = '1';
+				} else if (heroSubtitleEl.textContent.trim() !== targetText.trim()) {
+					heroSubtitleEl.style.opacity = '0';
+					setTimeout(() => {
+						if (activeWorkTab === mode) heroSubtitleEl.textContent = targetText;
+						heroSubtitleEl.style.opacity = '1';
+					}, 140);
+				}
+			}
 		};
 
 		window.renderPortfolioWebsites = function (customSites, uiLabels) {

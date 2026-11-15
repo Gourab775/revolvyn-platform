@@ -62,7 +62,7 @@
 			durationSec: 9.6,
 			video: 'portfolio/websites/bakery-store.mp4',
 			thumb: 'portfolio/websites/thumbs/bakery-store.jpg',
-			liveUrl: null
+			liveUrl: 'https://bakery-store-bice.vercel.app'
 		},
 		{
 			slug: 'biometic',
@@ -93,7 +93,7 @@
 			durationSec: 7.6,
 			video: 'portfolio/websites/biometic.mp4',
 			thumb: 'portfolio/websites/thumbs/biometic.jpg',
-			liveUrl: null
+			liveUrl: 'https://biometic-eight.vercel.app'
 		},
 		{
 			slug: 'closet-studio',
@@ -124,7 +124,7 @@
 			durationSec: 11.3,
 			video: 'portfolio/websites/closet-studio.mp4',
 			thumb: 'portfolio/websites/thumbs/closet-studio.jpg',
-			liveUrl: 'https://closet-e-commerce-store.vercel.app'
+			liveUrl: 'https://closet-studio.vercel.app'
 		},
 		{
 			slug: 'designer-brand',
@@ -155,7 +155,7 @@
 			durationSec: 7.1,
 			video: 'portfolio/websites/designer-brand.mp4',
 			thumb: 'portfolio/websites/thumbs/designer-brand.jpg',
-			liveUrl: null
+			liveUrl: 'https://designer-brand-pi.vercel.app'
 		},
 		{
 			slug: 'evasion-e-commerce',
@@ -186,7 +186,7 @@
 			durationSec: 11.6,
 			video: 'portfolio/websites/evasion-e-commerce.mp4',
 			thumb: 'portfolio/websites/thumbs/evasion-e-commerce.jpg',
-			liveUrl: null
+			liveUrl: 'https://evasion-ecommerce.vercel.app'
 		},
 		{
 			slug: 'fitness-platform',
@@ -217,7 +217,7 @@
 			durationSec: 11.6,
 			video: 'portfolio/websites/fitness-platform.mp4',
 			thumb: 'portfolio/websites/thumbs/fitness-platform.jpg',
-			liveUrl: 'https://fitness-app-gamma-three.vercel.app'
+			liveUrl: 'https://fitness-platform.vercel.app'
 		},
 		{
 			slug: 'fork-of-cake-shop',
@@ -248,7 +248,7 @@
 			durationSec: 10.7,
 			video: 'portfolio/websites/fork-of-cake-shop.mp4',
 			thumb: 'portfolio/websites/thumbs/fork-of-cake-shop.jpg',
-			liveUrl: null
+			liveUrl: 'https://fork-of-cake-shop.vercel.app'
 		},
 		{
 			slug: 'homie',
@@ -279,7 +279,7 @@
 			durationSec: 11.6,
 			video: 'portfolio/websites/homie.mp4',
 			thumb: 'portfolio/websites/thumbs/homie.jpg',
-			liveUrl: 'https://homie-eight-gamma.vercel.app'
+			liveUrl: 'https://homie.vercel.app'
 		},
 		{
 			slug: 'hously-architecture',
@@ -310,7 +310,7 @@
 			durationSec: 9.8,
 			video: 'portfolio/websites/hously-architecture.mp4',
 			thumb: 'portfolio/websites/thumbs/hously-architecture.jpg',
-			liveUrl: 'https://hously-modern-architecture.vercel.app'
+			liveUrl: 'https://hously-architecture.vercel.app'
 		},
 		{
 			slug: 'katachi',
@@ -341,7 +341,7 @@
 			durationSec: 8.9,
 			video: 'portfolio/websites/katachi.mp4',
 			thumb: 'portfolio/websites/thumbs/katachi.jpg',
-			liveUrl: null
+			liveUrl: 'https://katachi-kappa-five.vercel.app'
 		},
 		{
 			slug: 'luxury-jewellery',
@@ -372,7 +372,7 @@
 			durationSec: 9.9,
 			video: 'portfolio/websites/luxury-jewellery.mp4',
 			thumb: 'portfolio/websites/thumbs/luxury-jewellery.jpg',
-			liveUrl: null
+			liveUrl: 'https://luxury-jewellery-ecru.vercel.app'
 		},
 		{
 			slug: 'modern-pet-store',
@@ -403,7 +403,7 @@
 			durationSec: 7.1,
 			video: 'portfolio/websites/modern-pet-store.mp4',
 			thumb: 'portfolio/websites/thumbs/modern-pet-store.jpg',
-			liveUrl: null
+			liveUrl: 'https://modern-pet-store.vercel.app'
 		},
 		{
 			slug: 'mono-e-commerce',
@@ -465,7 +465,7 @@
 			durationSec: 9.1,
 			video: 'portfolio/websites/olea.mp4',
 			thumb: 'portfolio/websites/thumbs/olea.jpg',
-			liveUrl: null
+			liveUrl: 'https://olea-kappa-coral.vercel.app'
 		},
 		{
 			slug: 'pixelforge',
@@ -527,7 +527,7 @@
 			durationSec: 7.1,
 			video: 'portfolio/websites/premium-luxury-store.mp4',
 			thumb: 'portfolio/websites/thumbs/premium-luxury-store.jpg',
-			liveUrl: null
+			liveUrl: 'https://premium-luxury-store.vercel.app'
 		},
 		{
 			slug: 'thudarum-luxury-fashion',
@@ -558,7 +558,7 @@
 			durationSec: 7.1,
 			video: 'portfolio/websites/thudarum-luxury-fashion.mp4',
 			thumb: 'portfolio/websites/thumbs/thudarum-luxury-fashion.jpg',
-			liveUrl: null
+			liveUrl: 'https://thudarum-luxury-fashion.vercel.app'
 		},
 		{
 			slug: 'webrenew',
@@ -589,7 +589,7 @@
 			durationSec: 7.1,
 			video: 'portfolio/websites/webrenew.mp4',
 			thumb: 'portfolio/websites/thumbs/webrenew.jpg',
-			liveUrl: 'https://agency-website-one-teal.vercel.app'
+			liveUrl: 'https://agency-website.vercel.app'
 		}
 	];
 

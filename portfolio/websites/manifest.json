@@ -2,42 +2,46 @@
   {
     "folder": "amber-skincare",
     "slug": "amber-skincare",
-    "title": "AMBER \u2014 Natural Skincare",
+    "title": "AMBER — Natural Skincare",
     "video": "portfolio/websites/amber-skincare.mp4",
     "thumb": "portfolio/websites/thumbs/amber-skincare.jpg",
     "scrollHeight": 10609,
     "durationSec": 11.6,
-    "sizeKB": 4275
+    "sizeKB": 4275,
+    "liveUrl": "https://amber-skincare.vercel.app"
   },
   {
     "folder": "bakery-store",
     "slug": "bakery-store",
-    "title": "L'\u00c9toile Artisan Bakery | Fresh Sourdough, Pastries & Celebration Cakes",
+    "title": "L'Étoile Artisan Bakery | Fresh Sourdough, Pastries & Celebration Cakes",
     "video": "portfolio/websites/bakery-store.mp4",
     "thumb": "portfolio/websites/thumbs/bakery-store.jpg",
     "scrollHeight": 6226,
     "durationSec": 9.6,
-    "sizeKB": 7718
+    "sizeKB": 7718,
+    "liveUrl": "https://bakery-store-bice.vercel.app"
   },
   {
     "folder": "biometic",
     "slug": "biometic",
-    "title": "Biometic \u2014 Science du Microbiome",
+    "title": "Biometic — Science du Microbiome",
     "video": "portfolio/websites/biometic.mp4",
     "thumb": "portfolio/websites/thumbs/biometic.jpg",
     "scrollHeight": 4909,
     "durationSec": 7.6,
-    "sizeKB": 3234
+    "sizeKB": 3234,
+    "liveUrl": "https://biometic-eight.vercel.app"
   },
   {
     "folder": "closet-studio",
     "slug": "closet-studio",
-    "title": "CLOSET Studio \u2014 Timeless Minimalist Fashion",
+    "title": "CLOSET Studio — Timeless Minimalist Fashion",
     "video": "portfolio/websites/closet-studio.mp4",
     "thumb": "portfolio/websites/thumbs/closet-studio.jpg",
     "scrollHeight": 7389,
     "durationSec": 11.3,
-    "sizeKB": 3009
+    "sizeKB": 3009,
+    "liveUrl": "https://closet-studio.vercel.app"
   },
   {
     "folder": "designer-brand",
@@ -47,7 +51,8 @@
     "thumb": "portfolio/websites/thumbs/designer-brand.jpg",
     "scrollHeight": 3477,
     "durationSec": 7.1,
-    "sizeKB": 1444
+    "sizeKB": 1444,
+    "liveUrl": "https://designer-brand-pi.vercel.app"
   },
   {
     "folder": "Evasion E-Commerce",
@@ -57,7 +62,8 @@
     "thumb": "portfolio/websites/thumbs/evasion-e-commerce.jpg",
     "scrollHeight": 18639,
     "durationSec": 11.6,
-    "sizeKB": 4858
+    "sizeKB": 4858,
+    "liveUrl": "https://evasion-ecommerce.vercel.app"
   },
   {
     "folder": "Fitness Platform",
@@ -67,7 +73,8 @@
     "thumb": "portfolio/websites/thumbs/fitness-platform.jpg",
     "scrollHeight": 7810,
     "durationSec": 11.6,
-    "sizeKB": 552
+    "sizeKB": 552,
+    "liveUrl": "https://fitness-platform.vercel.app"
   },
   {
     "folder": "fork-of-cake-shop",
@@ -77,7 +84,8 @@
     "thumb": "portfolio/websites/thumbs/fork-of-cake-shop.jpg",
     "scrollHeight": 6991,
     "durationSec": 10.7,
-    "sizeKB": 6067
+    "sizeKB": 6067,
+    "liveUrl": "https://fork-of-cake-shop.vercel.app"
   },
   {
     "folder": "Homie",
@@ -87,37 +95,41 @@
     "thumb": "portfolio/websites/thumbs/homie.jpg",
     "scrollHeight": 7797,
     "durationSec": 11.6,
-    "sizeKB": 5251
+    "sizeKB": 5251,
+    "liveUrl": "https://homie.vercel.app"
   },
   {
     "folder": "Hously Architecture",
     "slug": "hously-architecture",
-    "title": "Hously \u2014 Modern Architecture Experience",
+    "title": "Hously — Modern Architecture Experience",
     "video": "portfolio/websites/hously-architecture.mp4",
     "thumb": "portfolio/websites/thumbs/hously-architecture.jpg",
     "scrollHeight": 6382,
     "durationSec": 9.8,
-    "sizeKB": 3301
+    "sizeKB": 3301,
+    "liveUrl": "https://hously-architecture.vercel.app"
   },
   {
     "folder": "katachi",
     "slug": "katachi",
-    "title": "Katachi \u2014 Design furniture for spaces that breathe.",
+    "title": "Katachi — Design furniture for spaces that breathe.",
     "video": "portfolio/websites/katachi.mp4",
     "thumb": "portfolio/websites/thumbs/katachi.jpg",
     "scrollHeight": 5743,
     "durationSec": 8.9,
-    "sizeKB": 4842
+    "sizeKB": 4842,
+    "liveUrl": "https://katachi-kappa-five.vercel.app"
   },
   {
     "folder": "luxury-jewellery",
     "slug": "luxury-jewellery",
-    "title": "Aurelia \u2014 Luxury Fine Jewelry, Paris since 1924",
+    "title": "Aurelia — Luxury Fine Jewelry, Paris since 1924",
     "video": "portfolio/websites/luxury-jewellery.mp4",
     "thumb": "portfolio/websites/thumbs/luxury-jewellery.jpg",
     "scrollHeight": 6444,
     "durationSec": 9.9,
-    "sizeKB": 4378
+    "sizeKB": 4378,
+    "liveUrl": "https://luxury-jewellery-ecru.vercel.app"
   },
   {
     "folder": "modern-pet-store",
@@ -127,7 +139,8 @@
     "thumb": "portfolio/websites/thumbs/modern-pet-store.jpg",
     "scrollHeight": 4004,
     "durationSec": 7.1,
-    "sizeKB": 3391
+    "sizeKB": 3391,
+    "liveUrl": "https://modern-pet-store.vercel.app"
   },
   {
     "folder": "mono-e-commerce",
@@ -137,7 +150,8 @@
     "thumb": "portfolio/websites/thumbs/mono-e-commerce.jpg",
     "scrollHeight": 17804,
     "durationSec": 11.6,
-    "sizeKB": 3999
+    "sizeKB": 3999,
+    "liveUrl": "https://mono-e-commerce.vercel.app"
   },
   {
     "folder": "Olea",
@@ -147,7 +161,8 @@
     "thumb": "portfolio/websites/thumbs/olea.jpg",
     "scrollHeight": 5892,
     "durationSec": 9.1,
-    "sizeKB": 3962
+    "sizeKB": 3962,
+    "liveUrl": "https://olea-kappa-coral.vercel.app"
   },
   {
     "folder": "PixelForge",
@@ -157,7 +172,8 @@
     "thumb": "portfolio/websites/thumbs/pixelforge.jpg",
     "scrollHeight": 5250,
     "durationSec": 8.1,
-    "sizeKB": 2292
+    "sizeKB": 2292,
+    "liveUrl": "https://video-expansion.vercel.app"
   },
   {
     "folder": "premium-luxury-store",
@@ -167,7 +183,8 @@
     "thumb": "portfolio/websites/thumbs/premium-luxury-store.jpg",
     "scrollHeight": 4144,
     "durationSec": 7.1,
-    "sizeKB": 1979
+    "sizeKB": 1979,
+    "liveUrl": "https://premium-luxury-store.vercel.app"
   },
   {
     "folder": "thudarum-luxury-fashion",
@@ -177,7 +194,8 @@
     "thumb": "portfolio/websites/thumbs/thudarum-luxury-fashion.jpg",
     "scrollHeight": 2283,
     "durationSec": 7.1,
-    "sizeKB": 1996
+    "sizeKB": 1996,
+    "liveUrl": "https://thudarum-luxury-fashion.vercel.app"
   },
   {
     "folder": "Webrenew",
@@ -187,6 +205,7 @@
     "thumb": "portfolio/websites/thumbs/webrenew.jpg",
     "scrollHeight": 3024,
     "durationSec": 7.1,
-    "sizeKB": 731
+    "sizeKB": 731,
+    "liveUrl": "https://agency-website.vercel.app"
   }
 ]
