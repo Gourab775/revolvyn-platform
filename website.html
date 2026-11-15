@@ -153,18 +153,17 @@ button { border: none; cursor: pointer; font-family: inherit; background: none; 
 .video-info { padding: 16px 0 12px; }
 .video-title { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 600; line-height: 1.35; color: #fff; }
 .channel-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-top: 14px; }
-.channel-info { display: flex; align-items: center; gap: 12px; }
+.channel-info { display: flex; align-items: center; gap: 12px; text-decoration: none; cursor: pointer; }
 .channel-avatar {
-	width: 42px; height: 42px; border-radius: 50%;
-	background: #0d120a;
-	border: 1px solid rgba(230,245,120,0.3);
-	box-shadow: 0 0 16px rgba(230,245,120,0.12);
+	width: 40px; height: 40px; border-radius: 50%;
+	background: #000;
 	display: flex; align-items: center; justify-content: center;
+	font-weight: 700; font-size: 16px; color: #000;
 	flex-shrink: 0; overflow: hidden;
 }
 .channel-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block; }
-.channel-name { font-weight: 600; font-size: 15px; letter-spacing: 0.5px; color: #f5f8ea; }
-.channel-subs { font-size: 11.5px; color: rgba(230,245,120,0.78); font-weight: 500; letter-spacing: 0.8px; text-transform: uppercase; }
+.channel-name { font-weight: 600; font-size: 15px; color: #fff; line-height: 1.2; }
+.channel-subs { font-size: 12px; color: #aaa; text-transform: none; letter-spacing: normal; margin-top: 2px; }
 
 .action-buttons { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .nav-switch-pill { display: inline-flex; align-items: center; background: rgba(255,255,255,0.08); border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
@@ -391,7 +390,7 @@ button { border: none; cursor: pointer; font-family: inherit; background: none; 
 <div class="main-layout" id="main">
 	<div class="main-content">
 		<div class="video-top-bar">
-			<a href="portfolio.html?tab=websites" class="video-back-btn" id="videoBackBtn" onclick="if(window.history.length>1){window.history.back();return false;}" aria-label="Back to Portfolio">
+			<a href="portfolio.html?tab=websites" class="video-back-btn" id="videoBackBtn" aria-label="Back to Portfolio">
 				<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
 				<span>Back</span>
 			</a>
@@ -399,7 +398,7 @@ button { border: none; cursor: pointer; font-family: inherit; background: none; 
 		<!-- Clean Autoplay Video Frame with Hover Preview Arrow -->
 		<div class="video-player-wrapper" id="wsVideoWrapper">
 			<video id="wsHeroVideo" muted loop playsinline autoplay preload="metadata" controlsList="nodownload noplaybackrate nofullscreen" oncontextmenu="return false;"></video>
-			<button type="button" class="video-preview-arrow-btn" id="wsPreviewArrowBtn" title="Open Interactive Live Preview" aria-label="Open Interactive Live Preview">
+			<button type="button" class="video-preview-arrow-btn" id="wsPreviewArrowBtn" onclick="openLivePreview()" title="Open Interactive Live Preview" aria-label="Open Interactive Live Preview">
 				<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
 			</button>
 		</div>
@@ -407,7 +406,7 @@ button { border: none; cursor: pointer; font-family: inherit; background: none; 
 		<div class="video-info">
 			<h1 class="video-title" id="wsTitle">Website Showcase</h1>
 			<div class="channel-row">
-				<a href="index.html" class="channel-info">
+				<a href="index.html" class="channel-info" style="cursor:pointer">
 					<div class="channel-avatar"><img src="favicon.png" alt="REVOLVYN"></div>
 					<div>
 						<div class="channel-name">REVOLVYN</div>
@@ -416,7 +415,7 @@ button { border: none; cursor: pointer; font-family: inherit; background: none; 
 				</a>
 
 				<div class="action-buttons">
-					<button type="button" class="preview-btn" id="livePreviewBtn">
+					<button type="button" class="preview-btn" id="livePreviewBtn" onclick="openLivePreview()">
 						<span class="live-dot" aria-hidden="true"></span>
 						<span id="livePreviewBtnText">Live Preview</span>
 					</button>
@@ -424,7 +423,7 @@ button { border: none; cursor: pointer; font-family: inherit; background: none; 
 						<a href="#" id="wsPrevLink" aria-label="Previous website">&#8592; Prev</a>
 						<a href="#" id="wsNextLink" aria-label="Next website">Next &#8594;</a>
 					</div>
-					<button type="button" class="share-btn" id="shareBtn">
+					<button type="button" class="share-btn" id="shareBtn" onclick="shareWebsite()">
 						<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 9V3L22 12 14 21V15C8.44 15 4.78 17.03 2 21 3.11 15.33 6.67 9.67 14 9Z"/></svg>
 						<span id="shareText">Share</span>
 					</button>
@@ -495,7 +494,7 @@ button { border: none; cursor: pointer; font-family: inherit; background: none; 
 				<span>Open Site</span>
 				<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
 			</a>
-			<button type="button" class="lp-close" id="lpCloseBtn" aria-label="Close live preview">&times;</button>
+			<button type="button" class="lp-close" id="lpCloseBtn" onclick="closeLivePreview()" aria-label="Close live preview">&times;</button>
 		</div>
 	</div>
 
@@ -520,6 +519,48 @@ const params = new URLSearchParams(window.location.search);
 let site = null;
 let orderedOtherSites = [];
 
+// Live Preview modal elements & state (defined top-level to avoid TDZ ReferenceError)
+const lpModal = document.getElementById('lpModal');
+const lpStage = document.getElementById('lpStage');
+const lpFrameShell = document.getElementById('lpFrameShell');
+const lpOpenSiteBtn = document.getElementById('lpOpenSiteBtn');
+let lpVideo = null;
+let currentLoadedUrl = null;
+let currentLiveIframe = null;
+
+function makeInteractiveScroller(container, axis) {
+	if (!container) return;
+	let isDown = false;
+	let startPos = 0;
+	let startScroll = 0;
+	let moved = false;
+
+	container.addEventListener('mousedown', (e) => {
+		if (e.button !== 0) return;
+		isDown = true;
+		moved = false;
+		startPos = axis === 'x' ? e.pageX : e.pageY;
+		startScroll = axis === 'x' ? container.scrollLeft : container.scrollTop;
+		container.classList.add('dragging');
+	});
+	window.addEventListener('mousemove', (e) => {
+		if (!isDown) return;
+		const delta = (axis === 'x' ? e.pageX : e.pageY) - startPos;
+		if (Math.abs(delta) > 6) moved = true;
+		if (axis === 'x') container.scrollLeft = startScroll - delta;
+		else container.scrollTop = startScroll - delta;
+	});
+	window.addEventListener('mouseup', () => {
+		if (!isDown) return;
+		isDown = false;
+		container.classList.remove('dragging');
+		setTimeout(() => { moved = false; }, 40);
+	});
+	container.addEventListener('click', (e) => {
+		if (moved) e.preventDefault();
+	});
+}
+
 function setupInfiniteScrollTrigger(container, axis) {
 	if (!container || container.dataset.loopBound) return;
 	container.dataset.loopBound = '1';
@@ -540,6 +581,7 @@ function setupInfiniteScrollTrigger(container, axis) {
 }
 
 function renderCheckList(ulEl, items) {
+	if (!ulEl) return;
 	ulEl.innerHTML = '';
 	(items || []).forEach(text => {
 		const li = document.createElement('li');
@@ -548,6 +590,152 @@ function renderCheckList(ulEl, items) {
 		ulEl.appendChild(li);
 	});
 }
+
+function prepareLivePreview(targetSite) {
+	if (!targetSite || !lpStage) return;
+	let targetUrl = targetSite.liveUrl ? (targetSite.liveUrl.trim().startsWith('http') ? targetSite.liveUrl.trim() : 'https://' + targetSite.liveUrl.trim()) : '';
+
+	// Preconnect & dns-prefetch to target origin for instant SSL & socket setup
+	if (targetUrl) {
+		try {
+			const u = new URL(targetUrl);
+			if (!document.querySelector(`link[rel="preconnect"][href="${u.origin}"]`)) {
+				const pre = document.createElement('link');
+				pre.rel = 'preconnect';
+				pre.href = u.origin;
+				pre.crossOrigin = 'anonymous';
+				document.head.appendChild(pre);
+				const dns = document.createElement('link');
+				dns.rel = 'dns-prefetch';
+				dns.href = u.origin;
+				document.head.appendChild(dns);
+			}
+		} catch (e) {}
+	}
+
+	// If already prepared for this exact URL, do not re-create
+	if (targetUrl && currentLoadedUrl === targetUrl && currentLiveIframe) {
+		return;
+	}
+
+	currentLoadedUrl = targetUrl;
+	lpStage.innerHTML = '';
+	lpVideo = null;
+	currentLiveIframe = null;
+
+	if (targetUrl) {
+		const loader = document.createElement('div');
+		loader.className = 'lp-loader';
+		loader.innerHTML = '<div class="lp-spinner"></div><span>Connecting to live preview…</span>';
+		lpStage.appendChild(loader);
+
+		const iframe = document.createElement('iframe');
+		iframe.src = targetUrl;
+		iframe.title = `${targetSite.title} Live Preview`;
+		iframe.loading = 'eager';
+		iframe.referrerPolicy = 'no-referrer';
+		iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+		
+		const removeLoader = () => {
+			loader.style.opacity = '0';
+			setTimeout(() => { try { loader.remove(); } catch(e){} }, 260);
+		};
+		iframe.onload = removeLoader;
+		setTimeout(removeLoader, 2500); // Fail-safe fallback so user is never blocked
+
+		lpStage.appendChild(iframe);
+		currentLiveIframe = iframe;
+	} else if (targetSite.video) {
+		const vid = document.createElement('video');
+		vid.muted = true;
+		vid.loop = true;
+		vid.playsInline = true;
+		vid.poster = targetSite.thumb || '';
+		vid.src = targetSite.video;
+		if (window.bindWebsiteSpeed) window.bindWebsiteSpeed(vid, () => 'adaptive');
+		lpVideo = vid;
+		lpStage.appendChild(vid);
+	} else if (targetSite.thumb) {
+		const img = document.createElement('img');
+		img.src = targetSite.thumb;
+		img.alt = targetSite.title || '';
+		img.style.cssText = 'width:100%;height:100%;object-fit:contain;display:block;';
+		lpStage.appendChild(img);
+	}
+}
+
+function openLivePreview() {
+	if (!site || !lpModal) return;
+	const titleEl = document.getElementById('lpTitle');
+	if (titleEl) titleEl.textContent = site.fullTitle || site.title;
+	let targetUrl = site.liveUrl ? (site.liveUrl.trim().startsWith('http') ? site.liveUrl.trim() : 'https://' + site.liveUrl.trim()) : '';
+	if (lpOpenSiteBtn) lpOpenSiteBtn.href = targetUrl || `live.html?slug=${encodeURIComponent(site.slug)}`;
+
+	// If not already prepared for this site, prepare immediately
+	if (currentLoadedUrl !== targetUrl || (!currentLiveIframe && !lpVideo)) {
+		prepareLivePreview(site);
+	}
+
+	if (lpVideo) {
+		lpVideo.play().catch(() => {});
+	}
+
+	lpModal.classList.add('open');
+	document.body.style.overflow = 'hidden';
+}
+
+function closeLivePreview() {
+	if (lpVideo) lpVideo.pause();
+	if (lpModal) lpModal.classList.remove('open');
+	document.body.style.overflow = '';
+}
+
+function shareWebsite() {
+	const url = window.location.href;
+	const title = site ? (site.fullTitle || site.title) : 'REVOLVYN';
+	if (navigator.clipboard && navigator.clipboard.writeText) {
+		navigator.clipboard.writeText(url).then(() => showShareToast()).catch(() => fallbackCopy(url));
+	} else {
+		fallbackCopy(url);
+	}
+	if (navigator.share) {
+		navigator.share({ title: title, url: url }).catch(() => {});
+	}
+	const st = document.getElementById('shareText');
+	if (st) {
+		st.textContent = 'Copied!';
+		setTimeout(() => { st.textContent = 'Share'; }, 1600);
+	}
+}
+
+function fallbackCopy(text) {
+	const ta = document.createElement('textarea');
+	ta.value = text;
+	ta.style.position = 'fixed';
+	ta.style.left = '-9999px';
+	document.body.appendChild(ta);
+	ta.select();
+	try { document.execCommand('copy'); showShareToast(); } catch(e) {}
+	document.body.removeChild(ta);
+}
+
+function showShareToast() {
+	let toast = document.getElementById('shareToast');
+	if (!toast) {
+		toast = document.createElement('div');
+		toast.id = 'shareToast';
+		toast.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(230,245,120,0.95);color:#000;padding:10px 24px;border-radius:8px;font-size:14px;font-weight:600;z-index:9999;opacity:0;transition:opacity 0.3s;pointer-events:none;';
+		document.body.appendChild(toast);
+	}
+	toast.textContent = 'Link copied!';
+	toast.style.opacity = '1';
+	setTimeout(() => { toast.style.opacity = '0'; }, 2000);
+}
+
+window.openLivePreview = openLivePreview;
+window.closeLivePreview = closeLivePreview;
+window.shareWebsite = shareWebsite;
+window.prepareLivePreview = prepareLivePreview;
 
 setupInfiniteScrollTrigger(deskSidebar, 'y');
 setupInfiniteScrollTrigger(mobContainer, 'x');
@@ -596,7 +784,7 @@ window.renderWebsiteShowcase = function (customSites, customLabels) {
 			document.querySelectorAll('.sidebar-title, .mobile-more-title').forEach(el => { el.textContent = customLabels.exploreHeading; });
 		}
 		if (customLabels.livePreviewText) {
-			const span = document.querySelector('#livePreviewBtn span');
+			const span = document.getElementById('livePreviewBtnText') || document.querySelector('#livePreviewBtn span:not(.live-dot)');
 			if (span) span.textContent = customLabels.livePreviewText;
 		}
 		const wk = document.querySelector('.work-btn');
@@ -713,165 +901,24 @@ function setupSidebarItem(item) {
 	return card;
 }
 
-function makeInteractiveScroller(container, axis) {
-	let isDown = false;
-	let startPos = 0;
-	let startScroll = 0;
-	let moved = false;
-
-	container.addEventListener('mousedown', (e) => {
-		if (e.button !== 0) return;
-		isDown = true;
-		moved = false;
-		startPos = axis === 'x' ? e.pageX : e.pageY;
-		startScroll = axis === 'x' ? container.scrollLeft : container.scrollTop;
-		container.classList.add('dragging');
-	});
-	window.addEventListener('mousemove', (e) => {
-		if (!isDown) return;
-		const delta = (axis === 'x' ? e.pageX : e.pageY) - startPos;
-		if (Math.abs(delta) > 6) moved = true;
-		if (axis === 'x') container.scrollLeft = startScroll - delta;
-		else container.scrollTop = startScroll - delta;
-	});
-	window.addEventListener('mouseup', () => {
-		if (!isDown) return;
-		isDown = false;
-		container.classList.remove('dragging');
-		setTimeout(() => { moved = false; }, 40);
-	});
-	container.addEventListener('click', (e) => {
-		if (moved) e.preventDefault();
-	});
+const liveBtn = document.getElementById('livePreviewBtn');
+if (liveBtn) {
+	liveBtn.addEventListener('click', openLivePreview);
+	liveBtn.addEventListener('pointerenter', () => { if (site) prepareLivePreview(site); }, { passive: true });
 }
 
-// Setup helper only; main rendering runs via window.renderWebsiteShowcase above
-
-// Share button matching video.html
-document.getElementById('shareBtn').addEventListener('click', () => {
-	const url = window.location.href;
-	if (navigator.share) {
-		navigator.share({ title: document.title, url }).catch(() => {});
-	} else if (navigator.clipboard) {
-		navigator.clipboard.writeText(url).then(() => {
-			document.getElementById('shareText').textContent = 'Copied!';
-			setTimeout(() => { document.getElementById('shareText').textContent = 'Share'; }, 1600);
-		}).catch(() => {});
-	}
-});
-
-// Live Preview Modal + Open Site Option
-const lpModal = document.getElementById('lpModal');
-const lpStage = document.getElementById('lpStage');
-const lpFrameShell = document.getElementById('lpFrameShell');
-const lpOpenSiteBtn = document.getElementById('lpOpenSiteBtn');
-let lpVideo = null;
-let currentLoadedUrl = null;
-let currentLiveIframe = null;
-
-function prepareLivePreview(targetSite) {
-	if (!targetSite) return;
-	let targetUrl = targetSite.liveUrl ? (targetSite.liveUrl.trim().startsWith('http') ? targetSite.liveUrl.trim() : 'https://' + targetSite.liveUrl.trim()) : '';
-
-	// Preconnect & dns-prefetch to target origin for instant SSL & socket setup
-	if (targetUrl) {
-		try {
-			const u = new URL(targetUrl);
-			if (!document.querySelector(`link[rel="preconnect"][href="${u.origin}"]`)) {
-				const pre = document.createElement('link');
-				pre.rel = 'preconnect';
-				pre.href = u.origin;
-				pre.crossOrigin = 'anonymous';
-				document.head.appendChild(pre);
-				const dns = document.createElement('link');
-				dns.rel = 'dns-prefetch';
-				dns.href = u.origin;
-				document.head.appendChild(dns);
-			}
-		} catch (e) {}
-	}
-
-	// If already prepared for this exact URL, do not re-create
-	if (targetUrl && currentLoadedUrl === targetUrl && currentLiveIframe) {
-		return;
-	}
-
-	currentLoadedUrl = targetUrl;
-	lpStage.innerHTML = '';
-	lpVideo = null;
-	currentLiveIframe = null;
-
-	if (targetUrl) {
-		const loader = document.createElement('div');
-		loader.className = 'lp-loader';
-		loader.innerHTML = '<div class="lp-spinner"></div><span>Connecting to live preview…</span>';
-		lpStage.appendChild(loader);
-
-		const iframe = document.createElement('iframe');
-		iframe.src = targetUrl;
-		iframe.title = `${targetSite.title} Live Preview`;
-		iframe.loading = 'eager';
-		iframe.referrerPolicy = 'no-referrer';
-		iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
-		
-		const removeLoader = () => {
-			loader.style.opacity = '0';
-			setTimeout(() => { try { loader.remove(); } catch(e){} }, 260);
-		};
-		iframe.onload = removeLoader;
-		setTimeout(removeLoader, 2500); // Fail-safe fallback so user is never blocked
-
-		lpStage.appendChild(iframe);
-		currentLiveIframe = iframe;
-	} else if (targetSite.video) {
-		const vid = document.createElement('video');
-		vid.muted = true;
-		vid.loop = true;
-		vid.playsInline = true;
-		vid.poster = targetSite.thumb || '';
-		vid.src = targetSite.video;
-		if (window.bindWebsiteSpeed) window.bindWebsiteSpeed(vid, () => 'adaptive');
-		lpVideo = vid;
-		lpStage.appendChild(vid);
-	} else if (targetSite.thumb) {
-		const img = document.createElement('img');
-		img.src = targetSite.thumb;
-		img.alt = targetSite.title || '';
-		img.style.cssText = 'width:100%;height:100%;object-fit:contain;display:block;';
-		lpStage.appendChild(img);
-	}
+const shareBtn = document.getElementById('shareBtn');
+if (shareBtn) {
+	shareBtn.addEventListener('click', shareWebsite);
 }
 
-function openLivePreview() {
-	if (!site) return;
-	document.getElementById('lpTitle').textContent = site.fullTitle || site.title;
-	let targetUrl = site.liveUrl ? (site.liveUrl.trim().startsWith('http') ? site.liveUrl.trim() : 'https://' + site.liveUrl.trim()) : '';
-	lpOpenSiteBtn.href = targetUrl || `live.html?slug=${encodeURIComponent(site.slug)}`;
+const lpClose = document.getElementById('lpCloseBtn');
+if (lpClose) lpClose.addEventListener('click', closeLivePreview);
 
-	// If not already prepared for this site, prepare immediately
-	if (currentLoadedUrl !== targetUrl || (!currentLiveIframe && !lpVideo)) {
-		prepareLivePreview(site);
-	}
-
-	if (lpVideo) {
-		lpVideo.play().catch(() => {});
-	}
-
-	lpModal.classList.add('open');
-	document.body.style.overflow = 'hidden';
+if (lpModal) {
+	lpModal.addEventListener('click', (e) => { if (e.target === lpModal) closeLivePreview(); });
 }
-
-function closeLivePreview() {
-	if (lpVideo) lpVideo.pause();
-	lpModal.classList.remove('open');
-	document.body.style.overflow = '';
-}
-
-document.getElementById('livePreviewBtn').addEventListener('click', openLivePreview);
-document.getElementById('livePreviewBtn').addEventListener('pointerenter', () => { if (site) prepareLivePreview(site); }, { passive: true });
-document.getElementById('lpCloseBtn').addEventListener('click', closeLivePreview);
-lpModal.addEventListener('click', (e) => { if (e.target === lpModal) closeLivePreview(); });
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && lpModal.classList.contains('open')) closeLivePreview(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && lpModal && lpModal.classList.contains('open')) closeLivePreview(); });
 
 const wsArrow = document.getElementById('wsPreviewArrowBtn');
 if (wsArrow) {
