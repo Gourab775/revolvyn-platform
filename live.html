@@ -189,7 +189,8 @@
 			liveTitle.textContent = site.fullTitle || site.title;
 			liveBack.href = `website.html?slug=${site.slug}`;
 
-			const targetUrl = site.liveUrl || '';
+			let targetUrl = (site.liveUrl || '').trim();
+			if (targetUrl && !/^https?:\/\//i.test(targetUrl)) targetUrl = 'https://' + targetUrl;
 			if (targetUrl) {
 				liveOpenTabBtn.href = targetUrl;
 

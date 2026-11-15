@@ -7,6 +7,7 @@ import { send, handleError } from '../_lib/auth.js';
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
   try {
     if (req.method !== 'GET') {
       res.setHeader('Allow', 'GET');

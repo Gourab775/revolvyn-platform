@@ -172,10 +172,10 @@
   // Canonical home of the CMS backend. Mirror deployments without database
   // access fall back to reading published content from here (plain public
   // JSON over CORS — no secrets, no drafts involved).
-  var CONTENT_SOURCE = 'https://revolvyn-platform-gourab-neogi.vercel.app/api/public/content';
+  var CONTENT_SOURCE = 'https://revolvynmedia.com/api/public/content';
 
   var CACHE_KEY = 'revolvyn_pub_cache_v2';
-  var CACHE_TTL = 3 * 60 * 1000; // 3 minutes
+  var CACHE_TTL = 30 * 1000; // 30 seconds max (freshness first)
 
   async function fetchPublished() {
     try {
@@ -183,7 +183,7 @@
       if (cached) {
         var parsed = JSON.parse(cached);
         if (parsed && parsed.ts && (Date.now() - parsed.ts < CACHE_TTL) && parsed.content) {
-          if (Date.now() - parsed.ts > 30000) {
+          if (Date.now() - parsed.ts > 5000) {
             refreshPublishedInBackground();
           }
           return parsed.content;
@@ -194,23 +194,30 @@
   }
 
   async function fetchPublishedFromNetwork() {
+    var ts = Date.now();
     try {
-      var res = await fetch('/api/public/content');
+      var res = await fetch('/api/public/content?_ts=' + ts, { cache: 'no-store' });
       if (res.ok) {
-        var j = await res.json();
-        if (j.published && j.content) {
-          try { sessionStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), content: j.content })); } catch (e) {}
-          return j.content;
+        var ct = res.headers.get('content-type') || '';
+        if (ct.indexOf('json') >= 0) {
+          var j = await res.json();
+          if (j.published && j.content) {
+            try { sessionStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), content: j.content })); } catch (e) {}
+            return j.content;
+          }
         }
       }
     } catch (e) {}
     try {
-      var res2 = await fetch(CONTENT_SOURCE, { mode: 'cors' });
+      var res2 = await fetch(CONTENT_SOURCE + '?_ts=' + ts, { mode: 'cors', cache: 'no-store' });
       if (res2.ok) {
-        var j2 = await res2.json();
-        if (j2.published && j2.content) {
-          try { sessionStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), content: j2.content })); } catch (e) {}
-          return j2.content;
+        var ct2 = res2.headers.get('content-type') || '';
+        if (ct2.indexOf('json') >= 0) {
+          var j2 = await res2.json();
+          if (j2.published && j2.content) {
+            try { sessionStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), content: j2.content })); } catch (e) {}
+            return j2.content;
+          }
         }
       }
     } catch (e) {}
@@ -227,6 +234,19 @@
       } catch (e) {}
     }, 120);
   }
+
+  // Cross-tab live update listener: when Website Manager publishes in another tab,
+  // update the live website immediately without requiring manual refresh.
+  try {
+    window.addEventListener('storage', function (e) {
+      if (e.key === 'revolvyn_cms_updated') {
+        try { sessionStorage.removeItem(CACHE_KEY); } catch (err) {}
+        fetchPublishedFromNetwork().then(function (fresh) {
+          if (fresh) apply(fresh);
+        });
+      }
+    });
+  } catch (e) {}
 
   async function load() {
     var m = window.location.search.match(/[?&]cms_preview=([^&]+)/);

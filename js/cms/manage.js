@@ -171,6 +171,28 @@
     }
   }
 
+  async function autoPublish(doneMsg) {
+    try {
+      await api('/api/cms/publish', { method: 'POST' });
+      if (draft) {
+        ['sections', 'portfolio', 'brands', 'services', 'testimonials'].forEach(function (k) {
+          (draft[k] || []).forEach(function (x) { x.has_unpublished_changes = false; });
+        });
+        (draft.settings || []).forEach(function (s) { s.has_unpublished_changes = false; });
+        draft.settings = (draft.settings || []).filter(function (s) { return s.key !== '_sync.deleted'; });
+      }
+      dirty = false;
+      renderPill();
+      try { sessionStorage.removeItem('revolvyn_pub_cache_v2'); } catch (e) {}
+      try { localStorage.setItem('revolvyn_cms_updated', String(Date.now())); } catch (e) {}
+      notifyPreview();
+      toast(doneMsg || 'Changes published live to website ✓');
+    } catch (err) {
+      console.warn('[cms auto-publish]', err);
+      toast(doneMsg ? doneMsg + ' (draft saved — click Publish changes)' : 'Saved as draft — click Publish changes', false);
+    }
+  }
+
   var SETTING_LABELS_SHORT = {
     'contact.email': ['Contact email', 'contact'], 'contact.phone': ['Phone number', 'contact'],
     'contact.office': ['Office / address', 'contact'], 'contact.hours': ['Opening hours', 'contact'],
@@ -372,6 +394,14 @@
   function collectDrawer(validate) {
     var out = {};
     var firstBad = null;
+    // Pre-sync any media link inputs so values pasted right before clicking Save are not lost
+    $('drawer-body').querySelectorAll('.media-box').forEach(function (mb) {
+      var h = mb.querySelector('input[type="hidden"]');
+      var txt = mb.querySelector('input[type="text"]');
+      if (h && txt && txt.value.trim() && h.value !== txt.value.trim()) {
+        h.value = txt.value.trim();
+      }
+    });
     $('drawer-body').querySelectorAll('[data-key]').forEach(function (node) {
       var k = node.dataset.key;
       if (node.dataset.complex) {
@@ -521,6 +551,10 @@
       var link = document.createElement('input');
       link.type = 'text'; link.placeholder = 'Paste link here…'; link.value = v || '';
       link.style.cssText = 'width:100%;margin-top:8px;padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:rgba(9,12,6,.7);color:var(--ink);font-size:13px;font-family:inherit;';
+      link.oninput = function () {
+        hidden.value = link.value.trim();
+        unsavedForm = true;
+      };
       link.onchange = function () { render(link.value.trim()); };
       box.appendChild(link);
     }
@@ -816,8 +850,8 @@
         var i = draft.sections.findIndex(function (x) { return x.id === ns.id; });
         if (i >= 0) draft.sections[i] = Object.assign({}, draft.sections[i], ns);
       });
-      markDirty(); render(); toast('Saved ✓ — not live until you Publish');
-      notifyPreview();
+      markDirty(); render();
+      await autoPublish('Saved & published live to website ✓');
     } catch (e) { toast(e.message, true); throw e; }
   }
 
@@ -1111,14 +1145,14 @@
         if (isNew) {
           var r = await api('/api/cms/' + resource, { method: 'POST', body: out });
           draft[resource].push(r.item);
-          markDirty(); render(); toast('Added ✓ — not live until you Publish');
-          notifyPreview();
+          markDirty(); render();
+          await autoPublish('Added & published live to website ✓');
         } else {
           out.id = it.id;
           var r2 = await api('/api/cms/' + resource, { method: 'PATCH', body: out });
           Object.assign(it, r2.item);
-          markDirty(); render(); toast('Saved ✓ — not live until you Publish');
-          notifyPreview();
+          markDirty(); render();
+          await autoPublish('Saved & published live to website ✓');
         }
       }
     });
@@ -1130,8 +1164,8 @@
     try {
       await api('/api/cms/' + resource + '?id=' + it.id, { method: 'DELETE' });
       draft[resource] = draft[resource].filter(function (x) { return x.id !== it.id; });
-      markDirty(); render(); toast('Deleted ✓ — not live until you Publish');
-      notifyPreview();
+      markDirty(); render();
+      await autoPublish('Deleted & live on website ✓');
     } catch (e) { toast(e.message, true); }
   }
   async function moveItem(resource, it, dir) {
@@ -1159,16 +1193,16 @@
         var o = draft[resource].filter(function (y) { return y.id === x.id; })[0];
         if (o) o.sort_order = k;
       });
-      markDirty(); render(); toast('Order saved ✓ — not live until you Publish');
-      notifyPreview();
+      markDirty(); render();
+      await autoPublish('Order saved & published live to website ✓');
     } catch (e) { toast(e.message, true); }
   }
   async function toggleVis(resource, it, on) {
     try {
       var r = await api('/api/cms/' + resource, { method: 'PATCH', body: { id: it.id, is_visible: on } });
       Object.assign(it, r.item);
-      markDirty(); render(); toast(on ? 'Will show on website after Publish ✓' : 'Hidden ✓ — takes effect on Publish');
-      notifyPreview();
+      markDirty(); render();
+      await autoPublish(on ? 'Shown on live website ✓' : 'Hidden on live website ✓');
     } catch (e) { toast(e.message, true); render(); }
   }
 
@@ -1396,11 +1430,23 @@
   }
   function getWebsitesCatalog() {
     var saved = settingObj('websites.catalog');
-    if (Array.isArray(saved) && saved.length) return saved;
+    if (Array.isArray(saved) && saved.length) {
+      var defMap = {};
+      defaultWebsitesCatalog().forEach(function (d) { defMap[d.slug] = d; });
+      return saved.map(function (s) {
+        var def = defMap[s.slug];
+        if (!def) return s;
+        return Object.assign({}, def, s, {
+          video: (s.video != null && s.video !== '') ? s.video : (def.video || ''),
+          thumb: (s.thumb != null && s.thumb !== '') ? s.thumb : (def.thumb || ''),
+          liveUrl: (s.liveUrl != null && s.liveUrl !== '') ? s.liveUrl : (def.liveUrl || '')
+        });
+      });
+    }
     return defaultWebsitesCatalog();
   }
   function saveWebsitesCatalog(list, doneMsg) {
-    return saveSettings({ 'websites.catalog': list }, doneMsg || 'Website showcase updated ✓ — Publish to go live');
+    return saveSettings({ 'websites.catalog': list }, doneMsg || 'Website showcase updated & live on website ✓');
   }
 
   function renderNavCard(c) {
@@ -1626,6 +1672,9 @@
       ],
       onSave: async function (out) {
         var cleanSlug = (out.slug || out.title || 'site').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || ('site-' + Date.now().toString(36));
+        var rawUrl = (out.liveUrl || '').trim();
+        var normalizedLiveUrl = rawUrl ? (/^https?:\/\//i.test(rawUrl) ? rawUrl : 'https://' + rawUrl) : null;
+        var existing = (!isNew && list[idx]) ? list[idx] : {};
         var updated = {
           slug: cleanSlug,
           title: out.title || cleanSlug.toUpperCase(),
@@ -1639,14 +1688,14 @@
           techSummary: out.techSummary || '',
           stack: String(out.stackText || '').split('\n').map(function (x) { return x.trim(); }).filter(Boolean),
           techFeatures: String(out.techFeaturesText || '').split('\n').map(function (x) { return x.trim(); }).filter(Boolean),
-          video: out.video || '',
-          thumb: out.thumb || '',
-          liveUrl: out.liveUrl ? out.liveUrl.trim() : null,
+          video: (out.video && out.video.trim()) ? out.video.trim() : (existing.video || ''),
+          thumb: (out.thumb && out.thumb.trim()) ? out.thumb.trim() : (existing.thumb || ''),
+          liveUrl: normalizedLiveUrl,
           visible: out.visible !== false
         };
         if (isNew) list.push(updated);
         else list[idx] = Object.assign({}, list[idx], updated);
-        await saveWebsitesCatalog(list, 'Website saved ✓ — Publish to go live');
+        await saveWebsitesCatalog(list, 'Website saved & published live to website ✓');
       }
     });
   }
@@ -1856,8 +1905,7 @@
       if (i >= 0) draft.settings[i] = ns; else draft.settings.push(ns);
     });
     markDirty(); render();
-    toast(doneMsg || 'Saved ✓ — not live until you Publish');
-    notifyPreview();
+    await autoPublish(doneMsg || 'Saved & published live to website ✓');
   }
   function settingsCard(parent, title, desc, rows, saveLabel) {
     // rows: [{key, label, type}]
@@ -2358,6 +2406,8 @@
       setBusy(true, $('btn-publish'), 'Publishing…');
       try {
         await api('/api/cms/publish', { method: 'POST' });
+        try { sessionStorage.removeItem('revolvyn_pub_cache_v2'); } catch (e4) {}
+        try { localStorage.setItem('revolvyn_cms_updated', String(Date.now())); } catch (e5) {}
         await reload(true); render(); notifyPreview();
         var go = await confirmDialog('Published successfully ✓', 'Your changes are now live on the website.', 'View live site', { okKind: 'primary', cancelLabel: 'Stay here' });
         if (go) { try { window.open(liveForTab(), '_blank'); } catch (e2) {} }

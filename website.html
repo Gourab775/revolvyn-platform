@@ -278,11 +278,12 @@ button { border: none; cursor: pointer; font-family: inherit; background: none; 
 	position: fixed; inset: 0; z-index: 1200;
 	background: rgba(6, 6, 6, 0.94);
 	backdrop-filter: blur(12px);
-	display: none; flex-direction: column;
+	display: flex; flex-direction: column;
 	padding: 16px 20px 20px;
+	opacity: 0; pointer-events: none; visibility: hidden;
+	transition: opacity 0.22s ease, visibility 0.22s ease;
 }
-.lp-modal.open { display: flex; animation: fadeIn 0.22s ease; }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.lp-modal.open { opacity: 1; pointer-events: auto; visibility: visible; }
 .lp-toolbar {
 	display: flex; align-items: center; justify-content: space-between; gap: 14px;
 	padding: 10px 18px; border-radius: 12px;
@@ -559,10 +560,21 @@ document.getElementById('mobPrevBtn').addEventListener('click', () => mobContain
 document.getElementById('mobNextBtn').addEventListener('click', () => mobContainer.scrollBy({ left: 290, behavior: 'smooth' }));
 
 window.renderWebsiteShowcase = function (customSites, customLabels) {
+	const defaultMap = {};
+	(window.REVOLVYN_WEBSITES || []).forEach(d => { defaultMap[d.slug] = d; });
+
 	const rawSites = Array.isArray(customSites) && customSites.length
 		? customSites.filter(s => s.visible !== false)
 		: (window.REVOLVYN_WEBSITES || []);
-	const sites = rawSites.length ? rawSites : (window.REVOLVYN_WEBSITES || []);
+
+	const sites = (rawSites.length ? rawSites : (window.REVOLVYN_WEBSITES || [])).map(site => {
+		const def = defaultMap[site.slug] || {};
+		const v = (site.video && site.video.trim()) ? site.video.trim() : (def.video || '');
+		const th = (site.thumb && site.thumb.trim()) ? site.thumb.trim() : (def.thumb || '');
+		let lUrl = (site.liveUrl && site.liveUrl.trim()) ? site.liveUrl.trim() : (def.liveUrl || '');
+		if (lUrl && !/^https?:\/\//i.test(lUrl)) lUrl = 'https://' + lUrl;
+		return Object.assign({}, def, site, { video: v, thumb: th, liveUrl: lUrl });
+	});
 	const reqSlug = params.get('slug') || (sites[0] && sites[0].slug);
 	let currentIndex = sites.findIndex(s => s.slug === reqSlug);
 	if (currentIndex < 0) currentIndex = 0;
@@ -659,6 +671,8 @@ window.renderWebsiteShowcase = function (customSites, customLabels) {
 			container.appendChild(frag);
 		}
 	});
+
+	if (site) prepareLivePreview(site);
 };
 
 window.renderWebsiteShowcase(window.REVOLVYN_WEBSITES || [], null);
@@ -743,69 +757,113 @@ const lpStage = document.getElementById('lpStage');
 const lpFrameShell = document.getElementById('lpFrameShell');
 const lpOpenSiteBtn = document.getElementById('lpOpenSiteBtn');
 let lpVideo = null;
+let currentLoadedUrl = null;
+let currentLiveIframe = null;
 
-function openLivePreview() {
-	if (!site) return;
-	document.getElementById('lpTitle').textContent = site.fullTitle;
-	lpOpenSiteBtn.href = site.liveUrl ? site.liveUrl : `live.html?slug=${site.slug}`;
+function prepareLivePreview(targetSite) {
+	if (!targetSite) return;
+	let targetUrl = targetSite.liveUrl ? (targetSite.liveUrl.trim().startsWith('http') ? targetSite.liveUrl.trim() : 'https://' + targetSite.liveUrl.trim()) : '';
+
+	// Preconnect & dns-prefetch to target origin for instant SSL & socket setup
+	if (targetUrl) {
+		try {
+			const u = new URL(targetUrl);
+			if (!document.querySelector(`link[rel="preconnect"][href="${u.origin}"]`)) {
+				const pre = document.createElement('link');
+				pre.rel = 'preconnect';
+				pre.href = u.origin;
+				pre.crossOrigin = 'anonymous';
+				document.head.appendChild(pre);
+				const dns = document.createElement('link');
+				dns.rel = 'dns-prefetch';
+				dns.href = u.origin;
+				document.head.appendChild(dns);
+			}
+		} catch (e) {}
+	}
+
+	// If already prepared for this exact URL, do not re-create
+	if (targetUrl && currentLoadedUrl === targetUrl && currentLiveIframe) {
+		return;
+	}
+
+	currentLoadedUrl = targetUrl;
 	lpStage.innerHTML = '';
 	lpVideo = null;
+	currentLiveIframe = null;
 
-	if (site.liveUrl) {
+	if (targetUrl) {
 		const loader = document.createElement('div');
 		loader.className = 'lp-loader';
 		loader.innerHTML = '<div class="lp-spinner"></div><span>Connecting to live preview…</span>';
 		lpStage.appendChild(loader);
 
 		const iframe = document.createElement('iframe');
-		iframe.src = site.liveUrl;
-		iframe.title = `${site.title} Live Preview`;
+		iframe.src = targetUrl;
+		iframe.title = `${targetSite.title} Live Preview`;
 		iframe.loading = 'eager';
 		iframe.referrerPolicy = 'no-referrer';
 		iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
-		iframe.onload = () => {
+		
+		const removeLoader = () => {
 			loader.style.opacity = '0';
 			setTimeout(() => { try { loader.remove(); } catch(e){} }, 260);
 		};
+		iframe.onload = removeLoader;
+		setTimeout(removeLoader, 2500); // Fail-safe fallback so user is never blocked
+
 		lpStage.appendChild(iframe);
-	} else {
+		currentLiveIframe = iframe;
+	} else if (targetSite.video) {
 		const vid = document.createElement('video');
 		vid.muted = true;
 		vid.loop = true;
 		vid.playsInline = true;
-		vid.autoplay = true;
-		vid.poster = site.thumb;
-		vid.src = site.video;
-		window.bindWebsiteSpeed(vid, () => 'adaptive');
-		vid.play().catch(() => {});
+		vid.poster = targetSite.thumb || '';
+		vid.src = targetSite.video;
+		if (window.bindWebsiteSpeed) window.bindWebsiteSpeed(vid, () => 'adaptive');
 		lpVideo = vid;
 		lpStage.appendChild(vid);
 	}
+}
+
+function openLivePreview() {
+	if (!site) return;
+	document.getElementById('lpTitle').textContent = site.fullTitle || site.title;
+	let targetUrl = site.liveUrl ? (site.liveUrl.trim().startsWith('http') ? site.liveUrl.trim() : 'https://' + site.liveUrl.trim()) : '';
+	lpOpenSiteBtn.href = targetUrl || `live.html?slug=${encodeURIComponent(site.slug)}`;
+
+	// If not already prepared for this site, prepare immediately
+	if (currentLoadedUrl !== targetUrl || (!currentLiveIframe && !lpVideo)) {
+		prepareLivePreview(site);
+	}
+
+	if (lpVideo) {
+		lpVideo.play().catch(() => {});
+	}
+
 	lpModal.classList.add('open');
 	document.body.style.overflow = 'hidden';
 }
 
 function closeLivePreview() {
 	if (lpVideo) lpVideo.pause();
-	lpStage.innerHTML = '';
 	lpModal.classList.remove('open');
 	document.body.style.overflow = '';
 }
 
 document.getElementById('livePreviewBtn').addEventListener('click', openLivePreview);
+document.getElementById('livePreviewBtn').addEventListener('pointerenter', () => { if (site) prepareLivePreview(site); }, { passive: true });
 document.getElementById('lpCloseBtn').addEventListener('click', closeLivePreview);
 lpModal.addEventListener('click', (e) => { if (e.target === lpModal) closeLivePreview(); });
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && lpModal.classList.contains('open')) closeLivePreview(); });
 
 const wsArrow = document.getElementById('wsPreviewArrowBtn');
 if (wsArrow) {
+	wsArrow.addEventListener('pointerenter', () => { if (site) prepareLivePreview(site); }, { passive: true });
 	wsArrow.addEventListener('click', (e) => {
 		e.stopPropagation();
-		if (site && site.slug) {
-			window.location.href = `live.html?slug=${encodeURIComponent(site.slug)}`;
-		} else {
-			openLivePreview();
-		}
+		openLivePreview();
 	});
 }
 

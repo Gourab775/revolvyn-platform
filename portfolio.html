@@ -288,12 +288,12 @@
 			border-color: rgba(230, 245, 120, 0.5);
 			box-shadow: 0 22px 60px rgba(0, 0, 0, 0.8), 0 0 35px rgba(230, 245, 120, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.18);
 		}
-		.website-card video {
+		.website-card video, .website-card img {
 			width: 100%; height: 100%; object-fit: cover; display: block;
 			filter: brightness(1);
 			transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 		}
-		.website-card:hover video {
+		.website-card:hover video, .website-card:hover img {
 			transform: scale(1.025);
 		}
 		.website-overlay {
@@ -338,6 +338,9 @@
 			flex-shrink: 0;
 			transform: translateY(6px);
 			transition: all 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+			pointer-events: auto;
+			text-decoration: none;
+			cursor: pointer;
 		}
 		.website-card:hover .website-arrow,
 		.website-card:focus-visible .website-arrow,
@@ -914,31 +917,78 @@ p,h1,h2,h3,h4,li,blockquote,.stat-number,.brand-card-name{-webkit-user-select:te
 					window.syncPortfolioHeroSubtitle(activeWorkTab, true);
 				}
 			}
+
+			const defaultMap = {};
+			(window.REVOLVYN_WEBSITES || []).forEach(d => { defaultMap[d.slug] = d; });
+
 			const raw = Array.isArray(customSites) && customSites.length
 				? customSites.filter(s => s.visible !== false)
 				: (window.REVOLVYN_WEBSITES || []);
-			const websiteShowcases = raw.length ? raw : (window.REVOLVYN_WEBSITES || []);
+
+			const websiteShowcases = (raw.length ? raw : (window.REVOLVYN_WEBSITES || [])).map(site => {
+				const def = defaultMap[site.slug] || {};
+				const v = (site.video && site.video.trim()) ? site.video.trim() : (def.video || '');
+				const th = (site.thumb && site.thumb.trim()) ? site.thumb.trim() : (def.thumb || '');
+				let lUrl = (site.liveUrl && site.liveUrl.trim()) ? site.liveUrl.trim() : (def.liveUrl || '');
+				if (lUrl && !/^https?:\/\//i.test(lUrl)) lUrl = 'https://' + lUrl;
+				return Object.assign({}, def, site, { video: v, thumb: th, liveUrl: lUrl });
+			});
 
 			websitesGrid.innerHTML = '';
 			websiteShowcases.forEach((site) => {
-				const detailUrl = `website.html?slug=${site.slug}`;
+				const detailUrl = `website.html?slug=${encodeURIComponent(site.slug)}`;
 				const card = document.createElement('div');
 				card.className = 'website-card' + (activeWorkTab === 'websites' ? ' revealed' : '');
 				card.tabIndex = 0;
 				card.setAttribute('role', 'link');
 				card.setAttribute('aria-label', `Explore ${site.title} website showcase details`);
+				if (site.liveUrl) card.dataset.liveUrl = site.liveUrl;
+				card.dataset.detailUrl = detailUrl;
+
+				const hasVideo = !!site.video;
+				const mediaMarkup = hasVideo
+					? `<video muted loop playsinline preload="none" poster="${site.thumb || ''}" data-src="${site.video || ''}"></video>`
+					: `<img class="website-img" src="${site.thumb || ''}" alt="${site.title || ''}" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;" />`;
+
 				card.innerHTML = `
-					<video muted loop playsinline preload="none" poster="${site.thumb || ''}" data-src="${site.video || ''}"></video>
+					${mediaMarkup}
 					<div class="website-overlay">
 						<div class="website-title"></div>
-						<span class="website-arrow" aria-hidden="true">
+						<a class="website-arrow" ${site.liveUrl ? `href="${site.liveUrl}" target="_blank" rel="noopener noreferrer" title="Open ${site.title} live website"` : `href="${detailUrl}" title="View details"`} aria-label="Open ${site.title} website link">
 							<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-						</span>
+						</a>
 					</div>
 				`;
 				card.querySelector('.website-title').textContent = site.title || '';
 				const vid = card.querySelector('video');
-				if (window.bindWebsiteSpeed) window.bindWebsiteSpeed(vid);
+				if (vid && window.bindWebsiteSpeed) window.bindWebsiteSpeed(vid);
+
+				const arrowBtn = card.querySelector('.website-arrow');
+				if (arrowBtn && site.liveUrl) {
+					arrowBtn.addEventListener('click', (e) => {
+						e.stopPropagation();
+					});
+				}
+
+				if (site.liveUrl) {
+					card.addEventListener('pointerenter', () => {
+						try {
+							const u = new URL(site.liveUrl);
+							if (!document.querySelector(`link[rel="preconnect"][href="${u.origin}"]`)) {
+								const pre = document.createElement('link');
+								pre.rel = 'preconnect';
+								pre.href = u.origin;
+								pre.crossOrigin = 'anonymous';
+								document.head.appendChild(pre);
+								const dns = document.createElement('link');
+								dns.rel = 'dns-prefetch';
+								dns.href = u.origin;
+								document.head.appendChild(dns);
+							}
+						} catch (e) {}
+					}, { once: true, passive: true });
+				}
+
 				card.addEventListener('click', () => smoothNavigate(null, detailUrl));
 				card.addEventListener('keydown', (e) => {
 					if (e.key === 'Enter' || e.key === ' ') {
