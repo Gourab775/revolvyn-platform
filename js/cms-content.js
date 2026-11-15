@@ -174,22 +174,58 @@
   // JSON over CORS — no secrets, no drafts involved).
   var CONTENT_SOURCE = 'https://revolvyn-platform-gourab-neogi.vercel.app/api/public/content';
 
+  var CACHE_KEY = 'revolvyn_pub_cache_v2';
+  var CACHE_TTL = 3 * 60 * 1000; // 3 minutes
+
   async function fetchPublished() {
+    try {
+      var cached = sessionStorage.getItem(CACHE_KEY);
+      if (cached) {
+        var parsed = JSON.parse(cached);
+        if (parsed && parsed.ts && (Date.now() - parsed.ts < CACHE_TTL) && parsed.content) {
+          if (Date.now() - parsed.ts > 30000) {
+            refreshPublishedInBackground();
+          }
+          return parsed.content;
+        }
+      }
+    } catch (e) {}
+    return await fetchPublishedFromNetwork();
+  }
+
+  async function fetchPublishedFromNetwork() {
     try {
       var res = await fetch('/api/public/content');
       if (res.ok) {
         var j = await res.json();
-        if (j.published && j.content) return j.content;
+        if (j.published && j.content) {
+          try { sessionStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), content: j.content })); } catch (e) {}
+          return j.content;
+        }
       }
     } catch (e) {}
     try {
       var res2 = await fetch(CONTENT_SOURCE, { mode: 'cors' });
       if (res2.ok) {
         var j2 = await res2.json();
-        if (j2.published && j2.content) return j2.content;
+        if (j2.published && j2.content) {
+          try { sessionStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), content: j2.content })); } catch (e) {}
+          return j2.content;
+        }
       }
     } catch (e) {}
     return null;
+  }
+
+  function refreshPublishedInBackground() {
+    setTimeout(async function () {
+      try {
+        var fresh = await fetchPublishedFromNetwork();
+        if (fresh && activeData) {
+          apply(fresh);
+        }
+      } catch (e) {}
+    }, 120);
   }
 
   async function load() {
@@ -1637,18 +1673,35 @@
     } catch (e) {}
   }
 
-  // Global anti-select, anti-drag, anti-download protection across the entire website
+  // Global anti-select, anti-drag, anti-download protection across ALL devices (Desktop, Mobile, Tablet)
   try {
     var protectStyle = document.createElement('style');
     protectStyle.id = 'revolvyn-global-protect';
     protectStyle.textContent =
-      '*, *::before, *::after { -webkit-user-select: none !important; -moz-user-select: none !important; -ms-user-select: none !important; user-select: none !important; -webkit-touch-callout: none !important; }\n' +
-      'input, textarea, [contenteditable], [contenteditable] * { -webkit-user-select: text !important; -moz-user-select: text !important; -ms-user-select: text !important; user-select: text !important; }\n' +
-      'img, video { -webkit-user-drag: none !important; -khtml-user-drag: none !important; -moz-user-drag: none !important; -o-user-drag: none !important; user-drag: none !important; pointer-events: auto; }\n' +
-      '::selection { background: transparent !important; }';
+      ':root, html, body, *, *::before, *::after { -webkit-user-select: none !important; -moz-user-select: none !important; -ms-user-select: none !important; user-select: none !important; -webkit-touch-callout: none !important; }\n' +
+      'input, textarea, [contenteditable], [contenteditable] * { -webkit-user-select: text !important; -moz-user-select: text !important; -ms-user-select: text !important; user-select: text !important; -webkit-touch-callout: default !important; }\n' +
+      'img, video { -webkit-user-drag: none !important; -khtml-user-drag: none !important; -moz-user-drag: none !important; -o-user-drag: none !important; user-drag: none !important; -webkit-touch-callout: none !important; pointer-events: auto; }\n' +
+      '::selection { background: transparent !important; color: inherit !important; }\n' +
+      '::-moz-selection { background: transparent !important; color: inherit !important; }';
     if (!document.getElementById('revolvyn-global-protect') && document.head) {
       document.head.appendChild(protectStyle);
     }
+
+    document.addEventListener('selectstart', function (e) {
+      var tag = (e.target && e.target.tagName) ? e.target.tagName.toUpperCase() : '';
+      if (tag !== 'INPUT' && tag !== 'TEXTAREA') {
+        e.preventDefault();
+        return false;
+      }
+    }, { capture: true });
+
+    document.addEventListener('selectionchange', function () {
+      var active = document.activeElement;
+      if (!active || (active.tagName !== 'INPUT' && active.tagName !== 'TEXTAREA')) {
+        var sel = window.getSelection();
+        if (sel && sel.removeAllRanges) sel.removeAllRanges();
+      }
+    });
 
     document.addEventListener('contextmenu', function (e) {
       var tag = (e.target && e.target.tagName) ? e.target.tagName.toUpperCase() : '';

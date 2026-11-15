@@ -54,25 +54,28 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-*, *::before, *::after {
+:root, html, body, *, *::before, *::after {
   margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent;
   -webkit-user-select: none !important; -moz-user-select: none !important; -ms-user-select: none !important; user-select: none !important;
   -webkit-touch-callout: none !important;
 }
 input, textarea, [contenteditable], [contenteditable] * {
   -webkit-user-select: text !important; -moz-user-select: text !important; -ms-user-select: text !important; user-select: text !important;
+  -webkit-touch-callout: default !important;
 }
 img, video {
   -webkit-user-drag: none !important; -khtml-user-drag: none !important; -moz-user-drag: none !important; -o-user-drag: none !important; user-drag: none !important;
+  -webkit-touch-callout: none !important;
   pointer-events: auto;
 }
-body { font-family: 'Inter', sans-serif; background: #0f0f0f; color: #f1f1f1; min-height: 100vh; overflow-x: hidden; touch-action: manipulation; }
+body { font-family: 'Inter', sans-serif; background: #0f0f0f; color: #f1f1f1; min-height: 100vh; overflow-x: hidden; touch-action: pan-y; }
 a { text-decoration: none; color: inherit; }
 button { border: none; cursor: pointer; font-family: inherit; }
 
 ::-webkit-scrollbar { width: 0; height: 0; }
 * { scrollbar-width: none; -ms-overflow-style: none; }
-::selection { background: transparent; }
+::selection { background: transparent !important; color: inherit !important; }
+::-moz-selection { background: transparent !important; color: inherit !important; }
 .skip-link{position:absolute;left:-9999px;top:8px;background:#e6f578;color:#000;padding:10px 18px;z-index:10000;font-size:13px;font-weight:600;border-radius:0 0 8px 0;text-decoration:none}
 .skip-link:focus{left:8px}
 :focus-visible{outline:2px solid rgba(230,245,120,.9);outline-offset:3px}
@@ -98,28 +101,37 @@ button { border: none; cursor: pointer; font-family: inherit; }
 .sidebar { width: 402px; flex-shrink: 0; position: sticky; top: 104px; height: calc(100vh - 120px); display: flex; flex-direction: column; }
 .sidebar-section { flex: 1; min-height: 0; display: flex; flex-direction: column; }
 .sidebar-header { position: sticky; top: 0; z-index: 4; background: #0f0f0f; display: flex; align-items: center; justify-content: space-between; padding: 2px 0 12px; flex-shrink: 0; border-bottom: 1px solid rgba(255,255,255,0.06); margin-bottom: 10px; }
-.sidebar-header-left { display: inline-flex; align-items: center; gap: 10px; min-width: 0; }
-.sidebar-back-btn {
-  display: inline-flex; align-items: center; gap: 5px;
-  padding: 5px 12px; border-radius: 999px;
+.sidebar-title { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 0; }
+.sidebar-arrows { display: inline-flex; gap: 6px; flex-shrink: 0; }
+.rail-arrow-btn {
+  width: 30px; height: 30px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
   background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.14);
-  color: rgba(230,245,120,0.95);
-  font-size: 11.5px; font-weight: 600; letter-spacing: 0.5px;
-  text-transform: uppercase;
-  transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.2s;
-  text-decoration: none; cursor: pointer; flex-shrink: 0;
+  border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(230,245,120,0.9);
+  transition: background 0.2s, border-color 0.2s, transform 0.2s;
 }
-.sidebar-back-btn:hover {
-  background: rgba(230,245,120,0.18);
-  border-color: rgba(230,245,120,0.6);
-  color: #fff;
+.rail-arrow-btn:hover { background: rgba(230,245,120,0.16); border-color: rgba(230,245,120,0.55); transform: scale(1.06); }
+.sidebar-scroll { flex: 1; overflow-y: auto; padding-right: 4px; }
+
+/* Video Info Top Bar with Back Button */
+.video-info-top { display: flex; align-items: center; gap: 14px; margin-bottom: 6px; flex-wrap: wrap; }
+.video-back-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px; border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(230, 245, 120, 0.3);
+  color: rgba(230, 245, 120, 0.95);
+  font-size: 11.5px; font-weight: 600; letter-spacing: 0.6px;
+  text-transform: uppercase; text-decoration: none; cursor: pointer; flex-shrink: 0;
+  transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.2s;
+}
+.video-back-btn:hover {
+  background: #e6f578; color: #000; border-color: #e6f578;
   transform: translateX(-2px);
 }
-.sidebar-back-btn svg { transition: transform 0.2s; }
-.sidebar-back-btn:hover svg { transform: translateX(-2px); }
-.sidebar-title { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 0; flex-shrink: 0; }
-.sidebar-scroll { flex: 1; overflow-y: auto; padding-right: 4px; }
+.video-back-btn svg { transition: transform 0.2s; }
+.video-back-btn:hover svg { transform: translateX(-2px); }
 
 /* Video Player */
 .video-player-wrapper { position: relative; width: 100%; border-radius: 12px; overflow: hidden; background: #000; aspect-ratio: 16 / 9; cursor: pointer; contain: layout paint; will-change: transform;
@@ -346,7 +358,13 @@ button { border: none; cursor: pointer; font-family: inherit; }
     </div>
 
     <div class="video-info">
-      <h1 class="video-title" id="videoTitle">Brand Ad Films</h1>
+      <div class="video-info-top">
+        <a href="portfolio.html" class="video-back-btn" id="videoBackBtn" aria-label="Back to Portfolio">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          <span>Back</span>
+        </a>
+        <h1 class="video-title" id="videoTitle">Brand Ad Films</h1>
+      </div>
       <div class="channel-row">
         <a href="index.html" class="channel-info" style="cursor:pointer">
           <div class="channel-avatar"><img src="favicon.png" alt="REVOLVYN"></div>
@@ -394,13 +412,11 @@ button { border: none; cursor: pointer; font-family: inherit; }
     </div>
 
     <div class="mobile-more-section" id="mobileMoreSection">
-      <div class="sidebar-header" style="border:none;margin-bottom:6px">
-        <div class="sidebar-header-left">
-          <a href="portfolio.html" class="sidebar-back-btn" aria-label="Back to Portfolio">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-            <span>Back</span>
-          </a>
-          <div class="mobile-more-title" style="font-size:15px;font-weight:600">More from REVOLVYN</div>
+      <div class="mobile-more-head" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div class="mobile-more-title" style="font-size:15px;font-weight:600">More from REVOLVYN</div>
+        <div class="sidebar-arrows">
+          <button type="button" class="rail-arrow-btn" id="mobPrevBtn" aria-label="Slide left">&#8592;</button>
+          <button type="button" class="rail-arrow-btn" id="mobNextBtn" aria-label="Slide right">&#8594;</button>
         </div>
       </div>
       <div class="mobile-more-scroll" id="mobileMoreContainer"></div>
@@ -410,12 +426,10 @@ button { border: none; cursor: pointer; font-family: inherit; }
   <div class="sidebar" id="desktopSidebar">
     <div class="sidebar-section">
       <div class="sidebar-header">
-        <div class="sidebar-header-left">
-          <a href="portfolio.html" class="sidebar-back-btn" id="sidebarBackBtn" aria-label="Back to Portfolio">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-            <span>Back</span>
-          </a>
-          <div class="sidebar-title">More from REVOLVYN</div>
+        <div class="sidebar-title">More from REVOLVYN</div>
+        <div class="sidebar-arrows">
+          <button type="button" class="rail-arrow-btn" id="deskUpBtn" aria-label="Scroll videos up">&#8593;</button>
+          <button type="button" class="rail-arrow-btn" id="deskDownBtn" aria-label="Scroll videos down">&#8595;</button>
         </div>
       </div>
       <div class="sidebar-scroll" id="sidebarContainer"></div>
@@ -1066,9 +1080,34 @@ function loadProject() {
   video.onclick = togglePlay;
 }
 
-document.addEventListener('DOMContentLoaded', loadProject);
+document.addEventListener('DOMContentLoaded', () => {
+  loadProject();
+  const deskSidebar = document.getElementById('sidebarContainer');
+  const mobContainer = document.getElementById('mobileMoreContainer');
+  const deskUp = document.getElementById('deskUpBtn');
+  const deskDown = document.getElementById('deskDownBtn');
+  if (deskUp && deskSidebar) deskUp.addEventListener('click', () => deskSidebar.scrollBy({ top: -320, behavior: 'smooth' }));
+  if (deskDown && deskSidebar) deskDown.addEventListener('click', () => deskSidebar.scrollBy({ top: 320, behavior: 'smooth' }));
+  const mobPrev = document.getElementById('mobPrevBtn');
+  const mobNext = document.getElementById('mobNextBtn');
+  if (mobPrev && mobContainer) mobPrev.addEventListener('click', () => mobContainer.scrollBy({ left: -290, behavior: 'smooth' }));
+  if (mobNext && mobContainer) mobNext.addEventListener('click', () => mobContainer.scrollBy({ left: 290, behavior: 'smooth' }));
+});
 
-// Global Security & Anti-Download Protection
+// Global Security & Anti-Download Protection across all devices (Desktop, Mobile, Tablet)
+document.addEventListener('selectstart', (e) => {
+  const tag = (e.target && e.target.tagName) ? e.target.tagName.toUpperCase() : '';
+  if (tag !== 'INPUT' && tag !== 'TEXTAREA') e.preventDefault();
+}, { capture: true });
+
+document.addEventListener('selectionchange', () => {
+  const active = document.activeElement;
+  if (!active || (active.tagName !== 'INPUT' && active.tagName !== 'TEXTAREA')) {
+    const sel = window.getSelection();
+    if (sel && sel.removeAllRanges) sel.removeAllRanges();
+  }
+});
+
 document.addEventListener('contextmenu', (e) => {
   const tag = (e.target && e.target.tagName) ? e.target.tagName.toUpperCase() : '';
   if (tag !== 'INPUT' && tag !== 'TEXTAREA') e.preventDefault();

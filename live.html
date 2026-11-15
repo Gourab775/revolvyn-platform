@@ -235,7 +235,20 @@
 			});
 		});
 
-		// Global Security & Anti-Download Protection
+		// Global Security & Anti-Download Protection across all devices (Desktop, Mobile, Tablet)
+		document.addEventListener('selectstart', (e) => {
+			const tag = (e.target && e.target.tagName) ? e.target.tagName.toUpperCase() : '';
+			if (tag !== 'INPUT' && tag !== 'TEXTAREA') e.preventDefault();
+		}, { capture: true });
+
+		document.addEventListener('selectionchange', () => {
+			const active = document.activeElement;
+			if (!active || (active.tagName !== 'INPUT' && active.tagName !== 'TEXTAREA')) {
+				const sel = window.getSelection();
+				if (sel && sel.removeAllRanges) sel.removeAllRanges();
+			}
+		});
+
 		document.addEventListener('contextmenu', (e) => {
 			const tag = (e.target && e.target.tagName) ? e.target.tagName.toUpperCase() : '';
 			if (tag !== 'INPUT' && tag !== 'TEXTAREA') e.preventDefault();
