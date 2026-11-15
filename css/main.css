@@ -1,12 +1,21 @@
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+*, *::before, *::after {
+	margin: 0; padding: 0; box-sizing: border-box;
+	-webkit-user-select: none !important; -moz-user-select: none !important; -ms-user-select: none !important; user-select: none !important;
+	-webkit-touch-callout: none !important;
+}
+input, textarea, [contenteditable], [contenteditable] * {
+	-webkit-user-select: text !important; -moz-user-select: text !important; -ms-user-select: text !important; user-select: text !important;
+}
+img, video {
+	-webkit-user-drag: none !important; -khtml-user-drag: none !important; -moz-user-drag: none !important; -o-user-drag: none !important; user-drag: none !important;
+	pointer-events: auto;
+}
 html, body {
 	width: 100%; min-height: 100%; background: #000; overflow-x: hidden;
 	font-family: 'Inter', system-ui, sans-serif; color: #e8ece4;
 	scrollbar-width: none; -ms-overflow-style: none;
 	-webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
-	-webkit-touch-callout: none; user-select: none; -webkit-user-select: none;
 }
-input, textarea, [contenteditable] { user-select: auto; -webkit-user-select: auto; }
 html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
 
 .gpu-accelerated {

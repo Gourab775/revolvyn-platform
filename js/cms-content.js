@@ -509,7 +509,12 @@
       video.preload = i < 6 ? 'auto' : 'none';
       if (i < 6 && p.video) video.setAttribute('src', p.video);
       else if (p.video) video.dataset.src = p.video;
-      if (p.thumbnail) video.setAttribute('poster', p.thumbnail);
+      video.setAttribute('controlsList', 'nodownload noplaybackrate nofullscreen');
+      video.oncontextmenu = function () { return false; };
+      if (p.thumbnail) {
+        video.setAttribute('poster', p.thumbnail);
+        video.classList.add('loaded');
+      }
       video.addEventListener('canplay', function () { video.classList.add('loaded'); }, { once: true });
       item.appendChild(video);
       var ov = document.createElement('div');
@@ -1462,7 +1467,7 @@
         featuresHeading: (document.getElementById('featuresHeading') || {}).textContent || 'Website Features',
         techHeading: (document.getElementById('techHeading') || {}).textContent || 'Technology Stack',
         exploreHeading: (document.querySelector('.sidebar-title') || {}).textContent || 'Explore Other Websites',
-        livePreviewText: (document.querySelector('#livePreviewBtn span') || {}).textContent || 'Live Preview',
+        livePreviewText: (document.getElementById('livePreviewBtnText') || document.querySelector('#livePreviewBtn span:not(.live-dot)') || {}).textContent || 'Live Preview',
         workText: (document.querySelector('.work-btn') || {}).textContent || 'Work With Us',
         workUrl: (document.querySelector('.work-btn') || { getAttribute: function () { return 'contact.html'; } }).getAttribute('href')
       };
@@ -1631,6 +1636,42 @@
       else previewToast('Preview updated ✓');
     } catch (e) {}
   }
+
+  // Global anti-select, anti-drag, anti-download protection across the entire website
+  try {
+    var protectStyle = document.createElement('style');
+    protectStyle.id = 'revolvyn-global-protect';
+    protectStyle.textContent =
+      '*, *::before, *::after { -webkit-user-select: none !important; -moz-user-select: none !important; -ms-user-select: none !important; user-select: none !important; -webkit-touch-callout: none !important; }\n' +
+      'input, textarea, [contenteditable], [contenteditable] * { -webkit-user-select: text !important; -moz-user-select: text !important; -ms-user-select: text !important; user-select: text !important; }\n' +
+      'img, video { -webkit-user-drag: none !important; -khtml-user-drag: none !important; -moz-user-drag: none !important; -o-user-drag: none !important; user-drag: none !important; pointer-events: auto; }\n' +
+      '::selection { background: transparent !important; }';
+    if (!document.getElementById('revolvyn-global-protect') && document.head) {
+      document.head.appendChild(protectStyle);
+    }
+
+    document.addEventListener('contextmenu', function (e) {
+      var tag = (e.target && e.target.tagName) ? e.target.tagName.toUpperCase() : '';
+      if (tag !== 'INPUT' && tag !== 'TEXTAREA') {
+        e.preventDefault();
+        return false;
+      }
+    }, { capture: true });
+
+    document.addEventListener('dragstart', function (e) {
+      var tag = (e.target && e.target.tagName) ? e.target.tagName.toUpperCase() : '';
+      if (tag === 'IMG' || tag === 'VIDEO' || tag === 'A') {
+        e.preventDefault();
+        return false;
+      }
+    }, { capture: true });
+
+    document.addEventListener('keydown', function (e) {
+      if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S' || e.key === 'u' || e.key === 'U')) {
+        e.preventDefault();
+      }
+    });
+  } catch (err) {}
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', load);
   else load();

@@ -1,5 +1,6 @@
 { "name": "revolvyn-platform",
   "redirects": [
+    { "source": "/portfolio", "destination": "/portfolio.html", "permanent": true },
     { "source": "/services", "destination": "/services.html", "permanent": true },
     { "source": "/privacy-policy", "destination": "/privacy.html", "permanent": true }
   ],

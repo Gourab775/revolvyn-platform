@@ -22,7 +22,18 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+*, *::before, *::after {
+	margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent;
+	-webkit-user-select: none !important; -moz-user-select: none !important; -ms-user-select: none !important; user-select: none !important;
+	-webkit-touch-callout: none !important;
+}
+input, textarea, [contenteditable], [contenteditable] * {
+	-webkit-user-select: text !important; -moz-user-select: text !important; -ms-user-select: text !important; user-select: text !important;
+}
+img, video {
+	-webkit-user-drag: none !important; -khtml-user-drag: none !important; -moz-user-drag: none !important; -o-user-drag: none !important; user-drag: none !important;
+	pointer-events: auto;
+}
 body { font-family: 'Inter', sans-serif; background: #0f0f0f; color: #f1f1f1; min-height: 100vh; overflow-x: clip; }
 a { text-decoration: none; color: inherit; }
 button { border: none; cursor: pointer; font-family: inherit; background: none; }
@@ -30,7 +41,7 @@ button { border: none; cursor: pointer; font-family: inherit; background: none; 
 ::-webkit-scrollbar { width: 0; height: 0; }
 * { scrollbar-width: none; -ms-overflow-style: none; }
 :focus-visible { outline: 2px solid rgba(230,245,120,.9); outline-offset: 3px; }
-::selection { background: rgba(230,245,120,.35); }
+::selection { background: transparent; }
 
 .skip-link { position: absolute; left: -9999px; top: 8px; background: #e6f578; color: #000; padding: 10px 18px; z-index: 10000; font-size: 13px; font-weight: 600; border-radius: 0 0 8px 0; }
 .skip-link:focus { left: 8px; }
@@ -50,15 +61,35 @@ button { border: none; cursor: pointer; font-family: inherit; background: none; 
 .nav-mobile-overlay.open { opacity: 1; pointer-events: auto; }
 .nav-mobile-overlay a { font-size: 14px; letter-spacing: 3px; text-transform: uppercase; color: rgba(215, 230, 190, 0.7); font-weight: 500; }
 
-/* Main Layout matching video.html */
-.main-layout { display: flex; align-items: flex-start; max-width: 1800px; margin: 76px auto 32px; min-height: calc(100vh - 108px); padding: 0 24px; gap: 24px; }
+/* Main Layout matching video.html — comfortable top clearance for video player */
+.main-layout { display: flex; align-items: flex-start; max-width: 1800px; margin: 108px auto 32px; min-height: calc(100vh - 140px); padding: 0 24px; gap: 24px; }
 .main-content { flex: 1; min-width: 0; }
-.sidebar { width: 402px; flex-shrink: 0; align-self: flex-start; position: sticky; top: 76px; height: calc(100vh - 108px); display: flex; flex-direction: column; }
+.sidebar { width: 402px; flex-shrink: 0; align-self: flex-start; position: sticky; top: 108px; height: calc(100vh - 140px); display: flex; flex-direction: column; }
 .sidebar-section { flex: 1; min-height: 0; display: flex; flex-direction: column; }
 
 .sidebar-header { position: sticky; top: 0; z-index: 4; background: #0f0f0f; display: flex; align-items: center; justify-content: space-between; padding: 2px 0 12px; flex-shrink: 0; border-bottom: 1px solid rgba(255,255,255,0.06); margin-bottom: 10px; }
-.sidebar-title { font-size: 16px; font-weight: 600; }
-.sidebar-arrows { display: inline-flex; gap: 6px; }
+.sidebar-header-left { display: inline-flex; align-items: center; gap: 10px; min-width: 0; }
+.sidebar-back-btn {
+	display: inline-flex; align-items: center; gap: 5px;
+	padding: 5px 12px; border-radius: 999px;
+	background: rgba(255,255,255,0.06);
+	border: 1px solid rgba(255,255,255,0.14);
+	color: rgba(230,245,120,0.95);
+	font-size: 11.5px; font-weight: 600; letter-spacing: 0.5px;
+	text-transform: uppercase;
+	transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.2s;
+	text-decoration: none; cursor: pointer; flex-shrink: 0;
+}
+.sidebar-back-btn:hover {
+	background: rgba(230,245,120,0.18);
+	border-color: rgba(230,245,120,0.6);
+	color: #fff;
+	transform: translateX(-2px);
+}
+.sidebar-back-btn svg { transition: transform 0.2s; }
+.sidebar-back-btn:hover svg { transform: translateX(-2px); }
+.sidebar-title { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sidebar-arrows { display: inline-flex; gap: 6px; flex-shrink: 0; }
 .rail-arrow-btn {
 	width: 30px; height: 30px; border-radius: 50%;
 	display: inline-flex; align-items: center; justify-content: center;
@@ -72,9 +103,34 @@ button { border: none; cursor: pointer; font-family: inherit; background: none; 
 .sidebar-scroll { flex: 1; overflow-y: auto; padding-right: 4px; cursor: grab; scroll-behavior: smooth; }
 .sidebar-scroll.dragging { cursor: grabbing; scroll-behavior: auto; }
 
-/* Clean Video Player — Zero Overlays */
+/* Clean Video Player with Top-Right Hover Preview Arrow */
 .video-player-wrapper { position: relative; width: 100%; border-radius: 12px; overflow: hidden; background: #000; aspect-ratio: 16 / 9; border: 1px solid rgba(255,255,255,0.06); }
 .video-player-wrapper video { width: 100%; height: 100%; display: block; object-fit: cover; }
+.video-preview-arrow-btn {
+	position: absolute; top: 16px; right: 16px; z-index: 10;
+	width: 44px; height: 44px; border-radius: 50%;
+	background: rgba(12, 16, 10, 0.78);
+	border: 1px solid rgba(230, 245, 120, 0.45);
+	color: #e6f578;
+	display: inline-flex; align-items: center; justify-content: center;
+	backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+	box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+	opacity: 0;
+	transform: translate(6px, -6px) scale(0.9);
+	transition: opacity 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s;
+	cursor: pointer; text-decoration: none;
+}
+.video-player-wrapper:hover .video-preview-arrow-btn {
+	opacity: 1;
+	transform: translate(0, 0) scale(1);
+}
+.video-preview-arrow-btn:hover {
+	background: #e6f578;
+	color: #000;
+	border-color: #e6f578;
+	transform: scale(1.08);
+	box-shadow: 0 8px 24px rgba(230, 245, 120, 0.45);
+}
 
 /* Info & Channel Row matching video.html */
 .video-info { padding: 16px 0 12px; }
@@ -281,7 +337,7 @@ button { border: none; cursor: pointer; font-family: inherit; background: none; 
 	.nav-links { display: none; }
 	.nav-hamburger { display: flex; }
 	.nav-mobile-overlay { display: flex; }
-	.main-layout { padding: 0 12px; margin-top: 66px; }
+	.main-layout { padding: 0 12px; margin-top: 86px; }
 	.video-title { font-size: 19px; }
 	.channel-row { flex-direction: column; align-items: flex-start; }
 	.action-buttons { width: 100%; }
@@ -315,9 +371,12 @@ button { border: none; cursor: pointer; font-family: inherit; background: none; 
 
 <div class="main-layout" id="main">
 	<div class="main-content">
-		<!-- Clean Autoplay Video Frame (Zero Overlays) -->
-		<div class="video-player-wrapper">
-			<video id="wsHeroVideo" muted loop playsinline autoplay preload="metadata"></video>
+		<!-- Clean Autoplay Video Frame with Hover Preview Arrow -->
+		<div class="video-player-wrapper" id="wsVideoWrapper">
+			<video id="wsHeroVideo" muted loop playsinline autoplay preload="metadata" controlsList="nodownload noplaybackrate nofullscreen" oncontextmenu="return false;"></video>
+			<button type="button" class="video-preview-arrow-btn" id="wsPreviewArrowBtn" title="Open Interactive Live Preview" aria-label="Open Interactive Live Preview">
+				<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+			</button>
 		</div>
 
 		<div class="video-info">
@@ -334,8 +393,7 @@ button { border: none; cursor: pointer; font-family: inherit; background: none; 
 				<div class="action-buttons">
 					<button type="button" class="preview-btn" id="livePreviewBtn">
 						<span class="live-dot" aria-hidden="true"></span>
-						<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3.6 9h16.8"/><path d="M3.6 15h16.8"/><path d="M12 3a14 14 0 0 1 0 18"/><path d="M12 3a14 14 0 0 0 0 18"/></svg>
-						<span>Live Preview</span>
+						<span id="livePreviewBtnText">Live Preview</span>
 					</button>
 					<div class="nav-switch-pill">
 						<a href="#" id="wsPrevLink" aria-label="Previous website">&#8592; Prev</a>
@@ -371,7 +429,13 @@ button { border: none; cursor: pointer; font-family: inherit; background: none; 
 		<!-- Mobile Interactive Carousel -->
 		<section class="mobile-more-section" id="mobileMoreSection">
 			<div class="mobile-more-head">
-				<div class="mobile-more-title">Explore Other Websites</div>
+				<div class="sidebar-header-left">
+					<a href="portfolio.html?tab=websites" class="sidebar-back-btn" aria-label="Back to Portfolio">
+						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+						<span>Back</span>
+					</a>
+					<div class="mobile-more-title">Explore Other Websites</div>
+				</div>
 				<div class="sidebar-arrows">
 					<button type="button" class="rail-arrow-btn" id="mobPrevBtn" aria-label="Slide left">&#8592;</button>
 					<button type="button" class="rail-arrow-btn" id="mobNextBtn" aria-label="Slide right">&#8594;</button>
@@ -385,7 +449,13 @@ button { border: none; cursor: pointer; font-family: inherit; background: none; 
 	<aside class="sidebar" id="desktopSidebar">
 		<div class="sidebar-section">
 			<div class="sidebar-header">
-				<div class="sidebar-title">Explore Other Websites</div>
+				<div class="sidebar-header-left">
+					<a href="portfolio.html?tab=websites" class="sidebar-back-btn" id="sidebarBackBtn" aria-label="Back to Portfolio">
+						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+						<span>Back</span>
+					</a>
+					<div class="sidebar-title">Explore Other Websites</div>
+				</div>
 				<div class="sidebar-arrows">
 					<button type="button" class="rail-arrow-btn" id="deskUpBtn" aria-label="Scroll websites up">&#8593;</button>
 					<button type="button" class="rail-arrow-btn" id="deskDownBtn" aria-label="Scroll websites down">&#8595;</button>
@@ -714,6 +784,35 @@ document.getElementById('livePreviewBtn').addEventListener('click', openLivePrev
 document.getElementById('lpCloseBtn').addEventListener('click', closeLivePreview);
 lpModal.addEventListener('click', (e) => { if (e.target === lpModal) closeLivePreview(); });
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && lpModal.classList.contains('open')) closeLivePreview(); });
+
+const wsArrow = document.getElementById('wsPreviewArrowBtn');
+if (wsArrow) {
+	wsArrow.addEventListener('click', (e) => {
+		e.stopPropagation();
+		if (site && site.slug) {
+			window.location.href = `live.html?slug=${encodeURIComponent(site.slug)}`;
+		} else {
+			openLivePreview();
+		}
+	});
+}
+
+// Global Protection: Disable context menu, image/video drag, and inspect/save shortcuts
+document.addEventListener('contextmenu', (e) => {
+	const tag = (e.target && e.target.tagName) ? e.target.tagName.toUpperCase() : '';
+	if (tag !== 'INPUT' && tag !== 'TEXTAREA') e.preventDefault();
+}, { capture: true });
+
+document.addEventListener('dragstart', (e) => {
+	const tag = (e.target && e.target.tagName) ? e.target.tagName.toUpperCase() : '';
+	if (tag === 'IMG' || tag === 'VIDEO' || tag === 'A') e.preventDefault();
+}, { capture: true });
+
+document.addEventListener('keydown', (e) => {
+	if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S' || e.key === 'u' || e.key === 'U')) {
+		e.preventDefault();
+	}
+});
 
 document.querySelectorAll('.lp-dev-btn').forEach(btn => {
 	btn.addEventListener('click', () => {
